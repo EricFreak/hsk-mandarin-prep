@@ -39,10 +39,7 @@ async function getUserPlan(
 type MockExamRow = {
   score: number;
   created_at: string;
-  breakdown: {
-    attempts?: AttemptResult[];
-    weaknesses?: WeaknessEntry[];
-  } | null;
+  breakdown: unknown;
 };
 
 function formatDate(iso: string): string {
@@ -101,10 +98,34 @@ export default async function DashboardPage() {
 
   let fullBreakdown: WeaknessEntry[] = [];
 
-  if (exam?.breakdown?.weaknesses?.length) {
-    fullBreakdown = exam.breakdown.weaknesses;
-  } else if (exam?.breakdown?.attempts?.length) {
-    fullBreakdown = computeWeaknesses(exam.breakdown.attempts);
+  const normalizedBreakdown: {
+    attempts?: AttemptResult[];
+    weaknesses?: WeaknessEntry[];
+  } | null = (() => {
+    if (!exam?.breakdown) return null;
+    if (typeof exam.breakdown === "string") {
+      try {
+        return JSON.parse(exam.breakdown) as {
+          attempts?: AttemptResult[];
+          weaknesses?: WeaknessEntry[];
+        };
+      } catch {
+        return null;
+      }
+    }
+    if (typeof exam.breakdown === "object") {
+      return exam.breakdown as {
+        attempts?: AttemptResult[];
+        weaknesses?: WeaknessEntry[];
+      };
+    }
+    return null;
+  })();
+
+  if (normalizedBreakdown?.weaknesses?.length) {
+    fullBreakdown = normalizedBreakdown.weaknesses;
+  } else if (normalizedBreakdown?.attempts?.length) {
+    fullBreakdown = computeWeaknesses(normalizedBreakdown.attempts);
   } else if (practiceResults.length > 0) {
     fullBreakdown = computeWeaknesses(practiceResults);
   }
