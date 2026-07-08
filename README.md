@@ -14,6 +14,14 @@ No Stripe or OpenAI required for founder testing.
 4. `npm run dev` → run **[docs/launch/02-smoke-test.md](docs/launch/02-smoke-test.md)**
 5. Recruit testers with **[docs/launch/03-founder-beta-post.md](docs/launch/03-founder-beta-post.md)**
 
+### If `http://localhost:3000` stops responding
+
+Run:
+
+```bash
+npm run dev:fix
+```
+
 ## Features
 
 | Feature | Free | Pro |

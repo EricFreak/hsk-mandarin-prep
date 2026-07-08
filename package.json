@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:fix": "bash ./scripts/dev-fix.sh",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
