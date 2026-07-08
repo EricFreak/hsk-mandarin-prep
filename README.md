@@ -11,16 +11,26 @@ No Stripe or OpenAI required for founder testing.
 1. Follow **[docs/launch/01-supabase-setup.md](docs/launch/01-supabase-setup.md)** — create Supabase project, run migrations 001–003
 2. `cp .env.example .env.local` and fill Supabase keys + `NEXT_PUBLIC_APP_URL`
 3. `./scripts/check-phase1-env.sh` — verify env
-4. `npm run dev` → run **[docs/launch/02-smoke-test.md](docs/launch/02-smoke-test.md)**
+4. **`npm run dev:safe`** (recommended — always starts with a clean cache) → run **[docs/launch/02-smoke-test.md](docs/launch/02-smoke-test.md)**
 5. Recruit testers with **[docs/launch/03-founder-beta-post.md](docs/launch/03-founder-beta-post.md)**
+
+### Local dev commands
+
+| Command | When to use |
+| --- | --- |
+| `npm run dev:safe` | **Default.** Clean `.next` + start (avoids “no response” / missing chunk errors) |
+| `npm run dev` | Fast restart if server is already healthy |
+| `npm run dev:fix` | Same as `dev:safe` if the site is already broken |
 
 ### If `http://localhost:3000` stops responding
 
 Run:
 
 ```bash
-npm run dev:fix
+npm run dev:safe
 ```
+
+(or `npm run dev:fix` — same recovery steps)
 
 ## Features
 

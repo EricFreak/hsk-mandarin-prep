@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:safe": "bash ./scripts/dev-safe.sh",
     "dev:fix": "bash ./scripts/dev-fix.sh",
     "build": "next build",
     "start": "next start",
