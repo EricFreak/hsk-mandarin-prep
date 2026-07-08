@@ -2,10 +2,12 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type Mode = "magic_link" | "password";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [mode, setMode] = useState<Mode>("password");
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
@@ -57,6 +59,9 @@ export default function LoginPage() {
     }
 
     setMessage("Signed in successfully.");
+    const next = new URLSearchParams(window.location.search).get("next");
+    router.push(next && next.startsWith("/") ? next : "/dashboard");
+    router.refresh();
   }
 
   return (
