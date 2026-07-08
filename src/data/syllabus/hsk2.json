@@ -1,0 +1,16 @@
+{
+  "level": 2,
+  "meta": { "syllables": 468, "characters": 600, "vocabulary": 1272, "grammar": 129 },
+  "words": [
+    { "id": "hsk2-001", "hanzi": "餐厅", "pinyin": "cāntīng", "english": "restaurant" },
+    { "id": "hsk2-002", "hanzi": "鸡蛋", "pinyin": "jīdàn", "english": "egg" },
+    { "id": "hsk2-003", "hanzi": "游泳", "pinyin": "yóuyǒng", "english": "to swim" },
+    { "id": "hsk2-004", "hanzi": "快乐", "pinyin": "kuàilè", "english": "happy" },
+    { "id": "hsk2-005", "hanzi": "跑步", "pinyin": "pǎobù", "english": "to run" },
+    { "id": "hsk2-006", "hanzi": "运动", "pinyin": "yùndòng", "english": "exercise; sport" },
+    { "id": "hsk2-007", "hanzi": "旅游", "pinyin": "lǚyóu", "english": "to travel" },
+    { "id": "hsk2-008", "hanzi": "眼睛", "pinyin": "yǎnjing", "english": "eye" },
+    { "id": "hsk2-009", "hanzi": "休息", "pinyin": "xiūxi", "english": "to rest" },
+    { "id": "hsk2-010", "hanzi": "生日", "pinyin": "shēngrì", "english": "birthday" }
+  ]
+}

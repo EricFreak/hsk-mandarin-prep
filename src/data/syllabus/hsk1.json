@@ -1,0 +1,16 @@
+{
+  "level": 1,
+  "meta": { "syllables": 269, "characters": 300, "vocabulary": 500, "grammar": 48 },
+  "words": [
+    { "id": "hsk1-001", "hanzi": "你好", "pinyin": "nǐ hǎo", "english": "hello" },
+    { "id": "hsk1-002", "hanzi": "谢谢", "pinyin": "xièxie", "english": "thank you" },
+    { "id": "hsk1-003", "hanzi": "再见", "pinyin": "zàijiàn", "english": "goodbye" },
+    { "id": "hsk1-004", "hanzi": "我", "pinyin": "wǒ", "english": "I; me" },
+    { "id": "hsk1-005", "hanzi": "你", "pinyin": "nǐ", "english": "you" },
+    { "id": "hsk1-006", "hanzi": "他", "pinyin": "tā", "english": "he; him" },
+    { "id": "hsk1-007", "hanzi": "她", "pinyin": "tā", "english": "she; her" },
+    { "id": "hsk1-008", "hanzi": "我们", "pinyin": "wǒmen", "english": "we; us" },
+    { "id": "hsk1-009", "hanzi": "是", "pinyin": "shì", "english": "to be" },
+    { "id": "hsk1-010", "hanzi": "不", "pinyin": "bù", "english": "not; no" }
+  ]
+}

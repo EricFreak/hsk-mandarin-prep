@@ -1,0 +1,16 @@
+{
+  "level": 3,
+  "meta": { "syllables": 608, "characters": 900, "vocabulary": 2245, "grammar": 210 },
+  "words": [
+    { "id": "hsk3-001", "hanzi": "其实", "pinyin": "qíshí", "english": "actually; in fact" },
+    { "id": "hsk3-002", "hanzi": "办法", "pinyin": "bànfǎ", "english": "method; way" },
+    { "id": "hsk3-003", "hanzi": "参加", "pinyin": "cānjiā", "english": "to participate; to join" },
+    { "id": "hsk3-004", "hanzi": "长城", "pinyin": "Chángchéng", "english": "Great Wall" },
+    { "id": "hsk3-005", "hanzi": "锻炼", "pinyin": "duànliàn", "english": "to exercise; to work out" },
+    { "id": "hsk3-006", "hanzi": "环境", "pinyin": "huánjìng", "english": "environment" },
+    { "id": "hsk3-007", "hanzi": "历史", "pinyin": "lìshǐ", "english": "history" },
+    { "id": "hsk3-008", "hanzi": "解决", "pinyin": "jiějué", "english": "to solve; to resolve" },
+    { "id": "hsk3-009", "hanzi": "离开", "pinyin": "líkāi", "english": "to leave; to depart" },
+    { "id": "hsk3-010", "hanzi": "机会", "pinyin": "jīhuì", "english": "opportunity; chance" }
+  ]
+}
