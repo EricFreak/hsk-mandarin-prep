@@ -28,3 +28,11 @@ export function getLevelMeta(level: 1 | 2 | 3) {
 export function getWordsForLevel(level: 1 | 2 | 3): HskWord[] {
   return BY_LEVEL[level].words;
 }
+
+export function getWordById(wordId: string): HskWord | undefined {
+  for (const level of [1, 2, 3] as const) {
+    const word = getWordsForLevel(level).find((w) => w.id === wordId);
+    if (word) return word;
+  }
+  return undefined;
+}
