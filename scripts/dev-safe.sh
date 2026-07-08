@@ -1,8 +1,26 @@
 #!/usr/bin/env bash
-# Start dev server with a clean .next cache every time (prevents chunk-missing 500s).
+# Foolproof dev start: always clean .next, free port 3000, then npm run dev.
 set -euo pipefail
 
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${ROOT}"
+
 APP_PORT="${APP_PORT:-3000}"
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "ERROR: Node.js not found. Install from https://nodejs.org then retry."
+  exit 1
+fi
+
+if [ ! -f package.json ]; then
+  echo "ERROR: package.json not found in ${ROOT}"
+  exit 1
+fi
+
+if [ ! -d node_modules ]; then
+  echo "==> node_modules missing — running npm install..."
+  npm install
+fi
 
 echo "==> Checking port ${APP_PORT}..."
 pids="$(lsof -nP -iTCP:"${APP_PORT}" -sTCP:LISTEN -t 2>/dev/null || true)"
@@ -16,5 +34,6 @@ fi
 echo "==> Clearing .next cache..."
 rm -rf .next
 
-echo "==> Starting dev server (clean)..."
+echo "==> Starting dev server..."
+echo "    Open http://localhost:${APP_PORT} when you see 'Ready'"
 exec npm run dev

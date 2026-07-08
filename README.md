@@ -18,9 +18,9 @@ No Stripe or OpenAI required for founder testing.
 
 | Command | When to use |
 | --- | --- |
-| `npm run dev:safe` | **Default.** Clean `.next` + start (avoids “no response” / missing chunk errors) |
+| `npm run dev:safe` | **Default.** Auto `npm install` if needed, kill port 3000, clean `.next`, start |
 | `npm run dev` | Fast restart if server is already healthy |
-| `npm run dev:fix` | Same as `dev:safe` if the site is already broken |
+| `npm run dev:fix` | Emergency recovery — same steps as `dev:safe` |
 
 ### If `http://localhost:3000` stops responding
 
