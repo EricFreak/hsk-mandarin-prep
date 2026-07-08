@@ -193,7 +193,11 @@ export default async function DashboardPage() {
 
         {fullBreakdown.length === 0 ? (
           <p className="mt-4 text-sm text-gray-600">
-            Complete a mock exam or practice session to see skill weaknesses here.
+            {exam
+              ? "No weaknesses detected in your latest mock exam — great job. (You answered everything correctly.)"
+              : practiceResults.length > 0
+                ? "No weaknesses detected in your recent practice — great job."
+                : "Complete a mock exam or practice session to see skill weaknesses here."}
           </p>
         ) : (
           <div className="relative mt-4">
