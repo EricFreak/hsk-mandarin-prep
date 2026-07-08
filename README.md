@@ -4,6 +4,16 @@ AI-powered HSK 3.0 exam preparation for learners targeting HSK levels 1–3. The
 
 The product UI is in English. Syllabus content follows the official HSK 3.0 standard (GF0025-2021).
 
+## Quick start (Phase 1 beta — Supabase only)
+
+No Stripe or OpenAI required for founder testing.
+
+1. Follow **[docs/launch/01-supabase-setup.md](docs/launch/01-supabase-setup.md)** — create Supabase project, run migrations 001–003
+2. `cp .env.example .env.local` and fill Supabase keys + `NEXT_PUBLIC_APP_URL`
+3. `./scripts/check-phase1-env.sh` — verify env
+4. `npm run dev` → run **[docs/launch/02-smoke-test.md](docs/launch/02-smoke-test.md)**
+5. Recruit testers with **[docs/launch/03-founder-beta-post.md](docs/launch/03-founder-beta-post.md)**
+
 ## Features
 
 | Feature | Free | Pro |
