@@ -1,5 +1,22 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Stripe Pro subscription
+
+Set these env vars (see `.env.example`):
+
+- `STRIPE_SECRET_KEY` — required for checkout; returns 503 if missing
+- `STRIPE_WEBHOOK_SECRET` — required for `/api/stripe/webhook`
+- `NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY` / `NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY` — Stripe Price IDs
+- `SUPABASE_SERVICE_ROLE_KEY` — webhook updates `profiles.plan`
+
+Optional migration for storing Stripe customer IDs (see `supabase/migrations/002_stripe_customer_id.sql`):
+
+```sql
+alter table profiles add column if not exists stripe_customer_id text;
+```
+
+Founder cohort: run `scripts/founder-cohort.sql` in the Supabase SQL editor.
+
 ## Getting Started
 
 First, run the development server:
