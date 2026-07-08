@@ -1,14 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UpgradeCTA from "@/components/paywall/UpgradeCTA";
+import { canUseAiWritingScore, type Plan } from "@/lib/entitlements";
 import {
   HSK3_MOCK_EXAM,
   HSK3_MOCK_EXAM_MCQ_COUNT,
   type MockExamQuestion,
 } from "@/lib/mock-exam/hsk3-template";
+import type { WritingScoreResult } from "@/lib/openai/writing-score";
 import type { WeaknessEntry } from "@/lib/weakness";
+
+const WRITING_QUESTION = HSK3_MOCK_EXAM.find((q) => q.section === "writing");
 
 type AnswerState = {
   selectedIndex?: number;
@@ -24,12 +28,24 @@ type SubmitResponse = {
   upgrade?: boolean;
 };
 
-export default function MockExamSession() {
+type MockExamSessionProps = {
+  plan?: Plan;
+};
+
+export default function MockExamSession({ plan = "free" }: MockExamSessionProps) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, AnswerState>>({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<SubmitResponse | null>(null);
+  const [writingScore, setWritingScore] = useState<WritingScoreResult | null>(null);
+  const [writingScoreLoading, setWritingScoreLoading] = useState(false);
+  const [writingScoreError, setWritingScoreError] = useState<string | null>(null);
+
+  const canScoreWriting = canUseAiWritingScore(plan);
+  const writingAnswer = WRITING_QUESTION
+    ? answers[WRITING_QUESTION.id]?.writingText?.trim()
+    : undefined;
 
   const question = HSK3_MOCK_EXAM[step];
   const isLast = step === HSK3_MOCK_EXAM.length - 1;
@@ -104,6 +120,65 @@ export default function MockExamSession() {
     if (step > 0) setStep((prev) => prev - 1);
   }
 
+  useEffect(() => {
+    const writingQuestion = WRITING_QUESTION;
+    if (!result || !canScoreWriting || !writingQuestion || !writingAnswer) {
+      return;
+    }
+
+    const prompt = writingQuestion.stem;
+    let cancelled = false;
+
+    async function fetchWritingScore() {
+      setWritingScoreLoading(true);
+      setWritingScoreError(null);
+
+      try {
+        const response = await fetch("/api/writing/score", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt,
+            userText: writingAnswer,
+          }),
+        });
+
+        const data = (await response.json()) as WritingScoreResult & {
+          upgrade?: boolean;
+          error?: string;
+        };
+
+        if (cancelled) return;
+
+        if (response.status === 403 && data.upgrade) {
+          setWritingScoreError("upgrade_required");
+          return;
+        }
+
+        if (!response.ok) {
+          setWritingScoreError(data.error ?? "Failed to score writing response");
+          return;
+        }
+
+        setWritingScore(data);
+      } catch {
+        if (!cancelled) {
+          setWritingScoreError("Failed to score writing response");
+        }
+      } finally {
+        if (!cancelled) {
+          setWritingScoreLoading(false);
+        }
+      }
+    }
+
+    void fetchWritingScore();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [result, canScoreWriting, writingAnswer]);
+
   if (error === "limit_reached") {
     return (
       <UpgradeCTA
@@ -142,6 +217,104 @@ export default function MockExamSession() {
             Great work — no major skill gaps detected on this attempt.
           </div>
         )}
+
+        {WRITING_QUESTION && writingAnswer ? (
+          <div className="rounded-lg border border-gray-200 bg-white p-6">
+            <h3 className="text-sm font-semibold text-gray-900">AI writing feedback</h3>
+            <p className="mt-1 text-xs text-gray-500">
+              Pro feature — personalized score and suggestions for your writing response.
+            </p>
+
+            {canScoreWriting ? (
+              <div className="mt-4 space-y-4">
+                {writingScoreLoading ? (
+                  <p className="text-sm text-gray-600">Analyzing your writing...</p>
+                ) : writingScoreError ? (
+                  <p className="text-sm text-red-600">{writingScoreError}</p>
+                ) : writingScore ? (
+                  <>
+                    <p className="text-3xl font-bold text-blue-700">
+                      {writingScore.score}
+                      <span className="text-base font-medium text-gray-500"> / 100</span>
+                    </p>
+
+                    {writingScore.grammarNotes.length > 0 ? (
+                      <div>
+                        <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                          Grammar
+                        </h4>
+                        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-700">
+                          {writingScore.grammarNotes.map((note) => (
+                            <li key={note}>{note}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+
+                    {writingScore.vocabularyNotes.length > 0 ? (
+                      <div>
+                        <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                          Vocabulary
+                        </h4>
+                        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-700">
+                          {writingScore.vocabularyNotes.map((note) => (
+                            <li key={note}>{note}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+
+                    {writingScore.suggestions.length > 0 ? (
+                      <div>
+                        <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                          Suggestions
+                        </h4>
+                        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-700">
+                          {writingScore.suggestions.map((note) => (
+                            <li key={note}>{note}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+                  </>
+                ) : null}
+              </div>
+            ) : (
+              <div className="relative mt-4">
+                <div className="pointer-events-none select-none space-y-4 blur-sm">
+                  <p className="text-3xl font-bold text-blue-700">
+                    82<span className="text-base font-medium text-gray-500"> / 100</span>
+                  </p>
+                  <div>
+                    <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                      Grammar
+                    </h4>
+                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-700">
+                      <li>Good use of 因为…所以… to explain your reason.</li>
+                      <li>Watch particle placement for more natural flow.</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                      Suggestions
+                    </h4>
+                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-700">
+                      <li>Add a specific example of when you do this sport.</li>
+                      <li>Expand your answer with more HSK 3 vocabulary.</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <UpgradeCTA
+                    title="Unlock AI writing feedback"
+                    description="Upgrade to Pro for an instant AI score, grammar notes, vocabulary feedback, and personalized suggestions on your writing responses."
+                    className="text-left"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        ) : null}
 
         <div className="flex flex-wrap gap-3">
           <Link

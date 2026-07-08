@@ -36,7 +36,7 @@ export default async function MockExamPage() {
             Supabase is not configured. Set environment variables to take the exam.
           </p>
         </div>
-        <MockExamSession />
+        <MockExamSession plan="free" />
       </div>
     );
   }
@@ -72,7 +72,7 @@ export default async function MockExamPage() {
       </div>
 
       {canTake ? (
-        <MockExamSession />
+        <MockExamSession plan={plan} />
       ) : (
         <UpgradeCTA
           title="Mock exam limit reached"
