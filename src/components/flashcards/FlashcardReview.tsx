@@ -28,7 +28,7 @@ type ReviewResponse = {
 const GRADES = [
   { quality: 1, label: "Again" },
   { quality: 2, label: "Hard" },
-  { quality: 3, label: "Good" },
+  { quality: 3, label: "Hesitant" },
   { quality: 4, label: "Good" },
   { quality: 5, label: "Easy" },
 ] as const;
