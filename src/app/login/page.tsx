@@ -65,9 +65,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
-        <h1 className="text-2xl font-semibold text-gray-900">Sign in</h1>
+    <div className="flex min-h-screen items-center justify-center bg-paper px-4">
+      <div className="surface-card w-full max-w-md p-8">
+        <p className="section-eyebrow">Welcome back</p>
+        <h1 className="mt-2 font-display text-2xl font-semibold text-ink">Sign in</h1>
         <p className="mt-2 text-sm text-gray-600">
           Use password sign-in for beta testing (avoids email rate limits). Magic
           links are still available.
@@ -79,8 +80,8 @@ export default function LoginPage() {
             onClick={() => setMode("password")}
             className={`rounded-md px-3 py-1.5 text-sm ${
               mode === "password"
-                ? "bg-gray-900 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-ink text-white"
+                : "bg-paper-dark text-ink-muted hover:bg-mist"
             }`}
           >
             Password
@@ -90,8 +91,8 @@ export default function LoginPage() {
             onClick={() => setMode("magic_link")}
             className={`rounded-md px-3 py-1.5 text-sm ${
               mode === "magic_link"
-                ? "bg-gray-900 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-ink text-white"
+                : "bg-paper-dark text-ink-muted hover:bg-mist"
             }`}
           >
             Magic link
@@ -155,7 +156,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full btn-primary disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading
               ? "Working..."

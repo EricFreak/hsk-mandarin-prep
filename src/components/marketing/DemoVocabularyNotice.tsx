@@ -7,10 +7,10 @@ export default function DemoVocabularyNotice({
 }: DemoVocabularyNoticeProps) {
   return (
     <div
-      className={`rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 ${className}`}
+      className={`rounded-xl border border-jade/20 bg-jade/5 px-4 py-3 text-sm text-ink ${className}`}
       role="status"
     >
-      <span className="font-medium">Beta demo:</span> This build uses sample vocabulary
+      <span className="font-semibold text-jade">Beta demo:</span> This build uses sample vocabulary
       only — 10 words per HSK level. Full GF0025 word lists are coming after beta.
     </div>
   );

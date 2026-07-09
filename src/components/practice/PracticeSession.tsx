@@ -144,7 +144,7 @@ export default function PracticeSession() {
         </p>
         <Link
           href="/pricing"
-          className="mt-6 inline-block rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+          className="mt-6 inline-block btn-primary"
         >
           View pricing
         </Link>
@@ -194,8 +194,8 @@ export default function PracticeSession() {
               onClick={() => setLevel(value)}
               className={`rounded-md px-3 py-1.5 text-sm font-medium ${
                 level === value
-                  ? "bg-blue-600 text-white"
-                  : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                  ? "bg-jade text-white"
+                  : "border border-mist bg-white text-ink-muted hover:bg-paper-dark"
               } disabled:cursor-not-allowed disabled:opacity-60`}
             >
               {value}
@@ -230,7 +230,7 @@ export default function PracticeSession() {
               choiceClass += " border-gray-200 bg-white text-gray-700";
             }
           } else if (selectedIndex === index) {
-            choiceClass += " border-blue-600 bg-blue-50 text-blue-900";
+            choiceClass += " border-jade bg-jade/10 text-jade";
           } else {
             choiceClass += " border-gray-200 bg-white text-gray-800 hover:border-blue-300";
           }
@@ -273,7 +273,7 @@ export default function PracticeSession() {
           type="button"
           disabled={selectedIndex === null || submitting}
           onClick={() => void handleSubmit()}
-          className="w-full rounded-md bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full btn-primary py-3 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {submitting ? "Submitting..." : "Submit answer"}
         </button>

@@ -321,7 +321,7 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
         <div className="flex flex-wrap gap-3">
           <Link
             href="/dashboard"
-            className="rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+            className="btn-primary"
           >
             View dashboard
           </Link>
@@ -347,7 +347,7 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
 
       <div className="h-2 overflow-hidden rounded-full bg-gray-200">
         <div
-          className="h-full rounded-full bg-blue-600 transition-all"
+          className="h-full rounded-full bg-jade transition-all"
           style={{ width: `${((step + 1) / HSK3_MOCK_EXAM.length) * 100}%` }}
         />
       </div>
@@ -397,7 +397,7 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
               onClick={() => updateAnswer(question.id, { selectedIndex: index })}
               className={`rounded-lg border px-4 py-3 text-left text-sm font-medium transition ${
                 currentAnswer.selectedIndex === index
-                  ? "border-blue-600 bg-blue-50 text-blue-900"
+                  ? "border-jade bg-jade/10 text-jade"
                   : "border-gray-200 bg-white text-gray-800 hover:border-blue-300"
               }`}
             >
@@ -424,7 +424,7 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
           type="button"
           disabled={!canAdvance(question) || submitting}
           onClick={handleNext}
-          className="rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="btn-primary disabled:cursor-not-allowed disabled:opacity-60"
         >
           {submitting
             ? "Submitting..."

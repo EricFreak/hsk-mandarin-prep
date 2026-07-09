@@ -149,14 +149,14 @@ export default function FlashcardReview() {
       <button
         type="button"
         onClick={() => setFlipped((value) => !value)}
-        className="w-full rounded-xl border border-gray-200 bg-white p-10 text-center shadow-sm transition hover:border-blue-300 hover:shadow-md"
+        className="w-full rounded-2xl border border-mist bg-white p-10 text-center shadow-card transition hover:border-jade/30 hover:shadow-lift"
       >
         {!flipped ? (
           <p className="text-5xl font-medium text-gray-900">{word.hanzi}</p>
         ) : (
           <div className="space-y-3">
             <p className="text-4xl font-medium text-gray-900">{word.hanzi}</p>
-            <p className="text-xl text-blue-700">{formatPinyinSpaced(word.pinyin)}</p>
+            <p className="text-xl text-jade">{formatPinyinSpaced(word.pinyin)}</p>
             <p className="text-lg text-gray-700">{word.english}</p>
           </div>
         )}
@@ -177,7 +177,7 @@ export default function FlashcardReview() {
               type="button"
               disabled={submitting}
               onClick={() => void handleGrade(quality)}
-              className="rounded-md bg-gray-900 px-3 py-3 text-sm font-medium text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-lg bg-ink px-3 py-3 text-sm font-medium text-white hover:bg-ink/90 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {label}
             </button>

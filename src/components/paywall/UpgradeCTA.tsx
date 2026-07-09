@@ -25,7 +25,7 @@ export default function UpgradeCTA({
         <p className="mt-2 text-sm text-gray-600">{description}</p>
         <button
           type="button"
-          className="mt-4 inline-block rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+          className="mt-4 inline-block btn-primary"
           onClick={() => setModalOpen(true)}
         >
           Upgrade to Pro

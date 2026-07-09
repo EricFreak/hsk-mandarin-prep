@@ -1,4 +1,4 @@
-import Link from "next/link";
+import MarketingHeader from "@/components/marketing/MarketingHeader";
 import PricingCheckout from "@/components/paywall/PricingCheckout";
 
 export const metadata = {
@@ -9,37 +9,18 @@ export const metadata = {
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="border-b border-gray-200 bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
-          <Link href="/" className="text-lg font-semibold text-gray-900">
-            HSK Mandarin Prep
-          </Link>
-          <nav className="flex items-center gap-6">
-            <Link
-              href="/dashboard"
-              className="text-sm text-gray-600 hover:text-gray-900"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/login"
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            >
-              Login
-            </Link>
-          </nav>
-        </div>
-      </header>
+    <div className="min-h-screen bg-paper">
+      <MarketingHeader />
 
-      <main className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+      <main className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <p className="section-eyebrow">Plans</p>
+          <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
             Simple, transparent pricing
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-gray-600">
-            Start free. Upgrade to Pro when you need unlimited practice, all
-            mock exams, and AI writing feedback.
+          <p className="mx-auto mt-4 max-w-2xl text-ink-muted">
+            Start free. Upgrade to Pro when you need unlimited practice, all mock
+            exams, and AI writing feedback.
           </p>
         </div>
 
@@ -48,8 +29,8 @@ export default function PricingPage() {
         </div>
       </main>
 
-      <footer className="border-t border-gray-200 bg-white">
-        <div className="mx-auto max-w-5xl px-4 py-8 text-center text-sm text-gray-500 sm:px-6">
+      <footer className="border-t border-mist bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-8 text-center text-sm text-ink-muted sm:px-6">
           <p>
             Aligned with the official HSK 3.0 syllabus (GF0025-2021). Not
             affiliated with Hanban or chinesetest.cn.

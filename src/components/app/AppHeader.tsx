@@ -1,0 +1,57 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const NAV_ITEMS = [
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/flashcards", label: "Flashcards" },
+  { href: "/practice", label: "Practice" },
+  { href: "/mock-exam", label: "Mock Exam" },
+] as const;
+
+export default function AppHeader() {
+  const pathname = usePathname();
+
+  return (
+    <header className="sticky top-0 z-50 border-b border-mist/80 bg-paper/90 backdrop-blur-md">
+      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <Link href="/dashboard" className="group flex items-center gap-2">
+          <span
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-seal font-display text-base font-semibold text-white"
+            aria-hidden="true"
+          >
+            考
+          </span>
+          <span className="font-display text-lg font-semibold text-ink group-hover:text-seal">
+            HSK Prep
+          </span>
+        </Link>
+        <nav className="flex flex-wrap items-center gap-1 sm:gap-2">
+          {NAV_ITEMS.map(({ href, label }) => {
+            const active = pathname === href || pathname.startsWith(`${href}/`);
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
+                  active
+                    ? "bg-jade/10 text-jade"
+                    : "text-ink-muted hover:bg-paper-dark hover:text-ink"
+                }`}
+              >
+                {label}
+              </Link>
+            );
+          })}
+          <Link
+            href="/pricing"
+            className="ml-1 rounded-lg px-3 py-2 text-sm font-medium text-ink-muted transition hover:text-seal"
+          >
+            Pro
+          </Link>
+        </nav>
+      </div>
+    </header>
+  );
+}
