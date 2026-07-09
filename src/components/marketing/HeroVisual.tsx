@@ -3,48 +3,72 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-const SKILLS = [
-  { label: "Listening", value: 72, color: "bg-jade" },
-  { label: "Reading", value: 88, color: "bg-jade-light" },
-  { label: "Vocabulary", value: 65, color: "bg-seal" },
-  { label: "Grammar", value: 91, color: "bg-ink/80" },
+const WEAKNESSES = [
+  { label: "Listening", value: 60, tag: "Weak", color: "bg-seal" },
+  { label: "Vocabulary", value: 82, tag: "Strong", color: "bg-jade" },
 ];
 
 function BuiltInScoreCard() {
   return (
     <div className="surface-card relative overflow-hidden p-6 shadow-lift">
-      <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-jade/10" />
-      <div className="absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-seal/10" />
-      <p className="section-eyebrow">HSK 3 mock result</p>
-      <div className="mt-4 flex items-end gap-3">
-        <span className="font-display text-6xl font-semibold text-ink">82</span>
-        <span className="mb-2 text-2xl font-medium text-ink-muted">%</span>
+      <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-jade/10" />
+      <p className="text-center text-sm font-semibold text-ink">Mock Exam Result</p>
+      <div className="relative mx-auto mt-5 flex h-36 w-36 items-center justify-center">
+        <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#E8E4DF" strokeWidth="8" />
+          <circle
+            cx="50"
+            cy="50"
+            r="42"
+            fill="none"
+            stroke="#2D6A6A"
+            strokeWidth="8"
+            strokeDasharray={`${78 * 2.64} 264`}
+            strokeLinecap="round"
+          />
+        </svg>
+        <div className="text-center">
+          <p className="font-display text-4xl font-semibold text-ink">78%</p>
+        </div>
       </div>
-      <p className="mt-1 text-sm text-ink-muted">Indicative score · beta</p>
-      <div className="mt-6 space-y-3">
-        {SKILLS.map((skill) => (
-          <div key={skill.label}>
-            <div className="mb-1 flex justify-between text-xs font-medium text-ink-muted">
-              <span>{skill.label}</span>
-              <span>{skill.value}%</span>
-            </div>
-            <div className="h-2 overflow-hidden rounded-full bg-paper-dark">
-              <div
-                className={`h-full rounded-full ${skill.color}`}
-                style={{ width: `${skill.value}%` }}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-      <p className="mt-6 rounded-lg bg-paper px-3 py-2 text-center text-xs font-medium text-jade">
-        Practice weak areas →
+      <p className="mt-2 text-center text-sm text-ink-muted">
+        Score: <span className="font-semibold text-ink">234</span>/300
       </p>
+      <p className="mt-1 text-center text-xs font-medium text-jade">Top 28%</p>
+      <div className="mt-6 border-t border-mist pt-5">
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
+          Weakness Report
+        </p>
+        <div className="mt-3 space-y-3">
+          {WEAKNESSES.map((item) => (
+            <div key={item.label}>
+              <div className="mb-1 flex items-center justify-between text-xs">
+                <span className="font-medium text-ink">{item.label}</span>
+                <span
+                  className={
+                    item.tag === "Weak"
+                      ? "font-semibold text-seal"
+                      : "font-semibold text-jade"
+                  }
+                >
+                  {item.tag}
+                </span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-paper-dark">
+                <div
+                  className={`h-full rounded-full ${item.color}`}
+                  style={{ width: `${item.value}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
 
-/** Lovart hero: drop file at public/brand/hero-mockup.png */
+/** Drop Lovart crop at public/brand/hero-mockup.png to override */
 export default function HeroVisual() {
   const [lovartReady, setLovartReady] = useState(false);
 
@@ -56,7 +80,7 @@ export default function HeroVisual() {
 
   return (
     <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-      <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-jade/10 via-transparent to-seal/10" />
+      <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-jade/10 via-transparent to-seal/5" />
       <div className="relative">
         {lovartReady ? (
           <Image

@@ -5,31 +5,34 @@ type Tier = {
   badge?: string;
   features: string[];
   highlighted?: boolean;
+  cta?: string;
 };
 
 const TIERS: Tier[] = [
   {
     name: "Free",
     price: "$0",
+    period: "Forever",
     features: [
-      "SRS flashcards (HSK 1–3)",
+      "1 full mock exam",
+      "AI scoring & weakness summary",
       "20 practice questions per day",
-      "1 free mock exam with score",
-      "Weakness summary report",
+      "SRS flashcards (beta demo deck)",
     ],
   },
   {
     name: "Pro",
-    price: "$8–12",
+    price: "$9.9",
     period: "/month",
     features: [
+      "Unlimited mock exams",
       "Unlimited AI practice",
-      "All mock exams",
-      "AI writing score",
+      "AI writing feedback",
       "Detailed weakness report",
-      "Mistake review bank",
+      "Mistake review bank (coming soon)",
     ],
     highlighted: true,
+    cta: "Start 7-day free trial",
   },
   {
     name: "HSK 3 Course Pack",
@@ -53,7 +56,7 @@ export default function PricingTable() {
           className={`relative flex flex-col rounded-2xl border p-6 ${
             tier.highlighted
               ? "border-seal bg-white shadow-lift ring-2 ring-seal/20"
-              : "border-mist bg-paper-dark/30 shadow-card"
+              : "border-mist bg-white shadow-card"
           }`}
         >
           {tier.badge ? (
@@ -99,6 +102,9 @@ export default function PricingTable() {
               </li>
             ))}
           </ul>
+          {tier.cta ? (
+            <p className="mt-6 text-center text-sm font-semibold text-seal">{tier.cta}</p>
+          ) : null}
         </div>
       ))}
     </div>

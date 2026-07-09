@@ -12,7 +12,7 @@ export default function MarketingHeader() {
             考
           </span>
           <span className="font-display text-lg font-semibold text-ink group-hover:text-seal">
-            HSK Prep
+            HSK Mandarin Prep
           </span>
         </Link>
         <nav className="flex items-center gap-4 sm:gap-8">
@@ -20,7 +20,7 @@ export default function MarketingHeader() {
             href="/hsk-2-vs-3"
             className="hidden text-sm font-medium text-ink-muted transition hover:text-ink sm:inline"
           >
-            HSK 2.0 vs 3.0
+            HSK 2 vs 3
           </Link>
           <Link
             href="/pricing"
