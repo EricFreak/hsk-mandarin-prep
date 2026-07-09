@@ -1,5 +1,6 @@
 "use client";
 
+import { FlashcardSkeleton } from "@/components/ui/Skeleton";
 import { formatPinyinSpaced } from "@/lib/pinyin";
 import { useCallback, useEffect, useState } from "react";
 
@@ -103,11 +104,7 @@ export default function FlashcardReview() {
   }
 
   if (loading) {
-    return (
-      <div className="flex min-h-[320px] items-center justify-center surface-card p-8">
-        <p className="text-sm text-ink-muted">Loading your next card...</p>
-      </div>
-    );
+    return <FlashcardSkeleton />;
   }
 
   if (error) {

@@ -1,6 +1,7 @@
 "use client";
 
 import PracticeStem from "@/components/practice/PracticeStem";
+import { PracticeQuestionSkeleton } from "@/components/ui/Skeleton";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -167,11 +168,7 @@ export default function PracticeSession() {
   }
 
   if (loading) {
-    return (
-      <div className="flex min-h-[320px] items-center justify-center surface-card p-8">
-        <p className="text-sm text-ink-muted">Generating your next question...</p>
-      </div>
-    );
+    return <PracticeQuestionSkeleton />;
   }
 
   if (error) {
@@ -204,8 +201,12 @@ export default function PracticeSession() {
             <button
               key={value}
               type="button"
-              disabled={submitting || submitted}
-              onClick={() => setLevel(value)}
+              disabled={loading || submitting || submitted}
+              onClick={() => {
+                if (value !== level) {
+                  setLevel(value);
+                }
+              }}
               className={`rounded-md px-3 py-1.5 text-sm font-medium ${
                 level === value
                   ? "bg-jade text-white"

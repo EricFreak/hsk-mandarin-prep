@@ -23,19 +23,6 @@ function hasSupabaseEnv() {
   );
 }
 
-async function getUserPlan(
-  supabase: ReturnType<typeof createClient>,
-  userId: string,
-): Promise<Plan> {
-  const { data } = await supabase
-    .from("profiles")
-    .select("plan")
-    .eq("id", userId)
-    .maybeSingle();
-
-  return data?.plan === "pro" ? "pro" : "free";
-}
-
 type MockExamRow = {
   id: string;
   score: number;
@@ -92,23 +79,18 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const plan = await getUserPlan(supabase, user.id);
+  const since30 = sinceDays(30);
+  const since7Ms = new Date(sinceDays(7)).getTime();
 
   const [
-    { data: recentExam },
-    { data: recentAttempts },
+    { data: profile },
+    { data: examAttempts },
     { data: practiceAttempts },
   ] = await Promise.all([
+    supabase.from("profiles").select("plan").eq("id", user.id).maybeSingle(),
     supabase
       .from("mock_exam_attempts")
       .select("id, score, created_at, breakdown")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    supabase
-      .from("mock_exam_attempts")
-      .select("id, score, created_at")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(10),
@@ -117,17 +99,18 @@ export default async function DashboardPage() {
       .select("skill, correct, created_at")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
-      .gte("created_at", sinceDays(30))
-      .limit(2000),
+      .gte("created_at", since30)
+      .limit(500),
   ]);
 
-  const exam = recentExam as MockExamRow | null;
-  const attempts = (recentAttempts ?? []) as Pick<MockExamRow, "id" | "score" | "created_at">[];
+  const plan: Plan = profile?.plan === "pro" ? "pro" : "free";
+  const attempts = (examAttempts ?? []) as MockExamRow[];
+  const exam = attempts[0] ?? null;
   const practiceTrends = (practiceAttempts ?? []) as PracticeAttemptRow[];
   const practiceResults = practiceTrends as unknown as AttemptResult[];
 
   const last7 = practiceTrends.filter(
-    (row) => new Date(row.created_at).getTime() >= new Date(sinceDays(7)).getTime(),
+    (row) => new Date(row.created_at).getTime() >= since7Ms,
   );
   const last30 = practiceTrends;
 

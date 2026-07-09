@@ -1,7 +1,9 @@
-import PracticeSession from "@/components/practice/PracticeSession";
 import DemoVocabularyNotice from "@/components/marketing/DemoVocabularyNotice";
+import PracticeSession from "@/components/practice/PracticeSession";
+import { PracticeQuestionSkeleton } from "@/components/ui/Skeleton";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +32,9 @@ export default async function PracticePage() {
         </p>
         <DemoVocabularyNotice className="mt-4" />
       </div>
-      <PracticeSession />
+      <Suspense fallback={<PracticeQuestionSkeleton />}>
+        <PracticeSession />
+      </Suspense>
     </div>
   );
 }

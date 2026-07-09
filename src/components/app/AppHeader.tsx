@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import AppNavLink from "@/components/app/AppNavLink";
 import BrandLogo from "@/components/marketing/BrandLogo";
 
 const NAV_ITEMS = [
@@ -13,31 +13,17 @@ const NAV_ITEMS = [
 ] as const;
 
 export default function AppHeader() {
-  const pathname = usePathname();
-
   return (
     <header className="sticky top-0 z-50 border-b border-mist/80 bg-paper/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <BrandLogo href="/dashboard" title="HSK Prep" size="sm" />
         <nav className="flex flex-wrap items-center gap-1 sm:gap-2">
-          {NAV_ITEMS.map(({ href, label }) => {
-            const active = pathname === href || pathname.startsWith(`${href}/`);
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-                  active
-                    ? "bg-jade/10 text-jade"
-                    : "text-ink-muted hover:bg-paper-dark hover:text-ink"
-                }`}
-              >
-                {label}
-              </Link>
-            );
-          })}
+          {NAV_ITEMS.map(({ href, label }) => (
+            <AppNavLink key={href} href={href} label={label} />
+          ))}
           <Link
             href="/pricing"
+            prefetch
             className="ml-1 rounded-lg px-3 py-2 text-sm font-medium text-ink-muted transition hover:text-seal"
           >
             Pro
