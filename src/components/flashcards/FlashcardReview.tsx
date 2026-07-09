@@ -26,7 +26,7 @@ type ReviewResponse = {
 };
 
 const GRADES = [
-  { quality: 1, label: "Again" },
+  { quality: 1, label: "Forgot" },
   { quality: 2, label: "Hard" },
   { quality: 3, label: "Hesitant" },
   { quality: 4, label: "Good" },
@@ -166,7 +166,11 @@ export default function FlashcardReview() {
       </button>
 
       {flipped ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+        <div className="space-y-3">
+          <p className="text-center text-xs text-gray-500">
+            How well did you remember this word before flipping?
+          </p>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
           {GRADES.map(({ quality, label }) => (
             <button
               key={quality}
@@ -178,6 +182,7 @@ export default function FlashcardReview() {
               {label}
             </button>
           ))}
+          </div>
         </div>
       ) : null}
     </div>
