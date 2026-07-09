@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+
+const PREFETCH_APIS: Record<string, string> = {
+  "/dashboard": "/api/dashboard",
+};
 
 type AppNavLinkProps = {
   href: string;
@@ -11,46 +15,33 @@ type AppNavLinkProps = {
 
 export default function AppNavLink({ href, label }: AppNavLinkProps) {
   const pathname = usePathname();
-  const [pendingHref, setPendingHref] = useState<string | null>(null);
 
   const active = pathname === href || pathname.startsWith(`${href}/`);
-  const pending = pendingHref === href && !active;
 
   useEffect(() => {
-    if (
-      pendingHref &&
-      (pathname === pendingHref || pathname.startsWith(`${pendingHref}/`))
-    ) {
-      setPendingHref(null);
+    const api = PREFETCH_APIS[href];
+    if (api) {
+      void fetch(api, { credentials: "same-origin" });
     }
-  }, [pathname, pendingHref]);
+  }, [href]);
 
   return (
     <Link
       href={href}
       prefetch
-      onClick={() => {
-        if (!active) {
-          setPendingHref(href);
+      onMouseEnter={() => {
+        const api = PREFETCH_APIS[href];
+        if (api) {
+          void fetch(api, { credentials: "same-origin" });
         }
       }}
-      aria-busy={pending}
       className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
         active
           ? "bg-jade/10 text-jade"
-          : pending
-            ? "bg-paper-dark text-ink opacity-80"
-            : "text-ink-muted hover:bg-paper-dark hover:text-ink"
+          : "text-ink-muted hover:bg-paper-dark hover:text-ink"
       }`}
     >
-      {pending ? (
-        <span className="inline-flex items-center gap-1.5">
-          <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-jade/30 border-t-jade" />
-          {label}
-        </span>
-      ) : (
-        label
-      )}
+      {label}
     </Link>
   );
 }

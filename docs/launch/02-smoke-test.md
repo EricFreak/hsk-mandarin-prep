@@ -22,7 +22,10 @@ Run after `npm run dev` with Supabase configured. ~10 minutes.
 - [ ] Answer until you hit daily limit message (or change plan to pro in DB for testing)
 - [ ] `/mock-exam` — complete full exam (listening + reading + writing)
 - [ ] See score on results screen
+- [ ] Click **Review exam** → attempt detail shows your answers
+- [ ] `/mock-exam/attempts` — history list loads
 - [ ] `/dashboard` — shows plan, latest score, weakness summary
+- [ ] `/mistakes` — wrong practice/mock answers listed (after wrong answers)
 
 ## D. Paywall (free user)
 
@@ -42,4 +45,4 @@ In Supabase SQL Editor, run `scripts/founder-cohort.sql` with your email.
 
 All items in A–C pass. D–E optional for first run.
 
-If A passes but C fails, check migration 003 (RLS) and auth callback.
+If A passes but C fails, check migrations **003–005** (RLS + mock metadata + practice snapshots). See `docs/testing/app-test-matrix.md`.

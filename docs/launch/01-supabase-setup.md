@@ -15,6 +15,8 @@ Open **SQL Editor** → **New query**, run in order:
 1. `supabase/migrations/001_init.sql`
 2. `supabase/migrations/002_stripe_customer_id.sql`
 3. `supabase/migrations/003_rls_policies.sql`
+4. `supabase/migrations/004_mock_exam_attempt_metadata.sql` — **required for mock exam submit**
+5. `supabase/migrations/005_practice_question_snapshots.sql` — **required for AI practice generate**
 
 Each should return success with no errors.
 

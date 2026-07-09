@@ -10,7 +10,11 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "verify": "node scripts/verify-migrations.mjs",
+    "verify:full": "node scripts/full-app-verify.mjs",
+    "test:e2e": "playwright test",
+    "test:all": "node scripts/run-all-tests.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
@@ -20,9 +24,11 @@
     "react": "^18",
     "react-dom": "^18",
     "stripe": "^22.3.0",
+    "swr": "^2.4.2",
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^20",
     "@types/react": "^18",

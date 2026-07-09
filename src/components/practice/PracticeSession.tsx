@@ -1,7 +1,7 @@
 "use client";
 
 import PracticeStem from "@/components/practice/PracticeStem";
-import { PracticeQuestionSkeleton } from "@/components/ui/Skeleton";
+import LoadingPulse, { AsyncOverlay } from "@/components/ui/LoadingPulse";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -50,10 +50,9 @@ export default function PracticeSession() {
     setError(null);
     setLimitReached(false);
     setReviewOnly(false);
-    setQuestionId(null);
-    setQuestion(null);
     setSelectedIndex(null);
     setSubmitted(false);
+    // Keep the current question visible while the next one generates.
 
     try {
       const replayQuestionId = searchParams.get("questionId");
@@ -167,8 +166,33 @@ export default function PracticeSession() {
     );
   }
 
-  if (loading) {
-    return <PracticeQuestionSkeleton />;
+  if (loading && !question) {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-ink">HSK level</span>
+            {LEVELS.map((value) => (
+              <button
+                key={value}
+                type="button"
+                disabled
+                className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+                  level === value
+                    ? "bg-jade text-white"
+                    : "border border-mist bg-white text-ink-muted"
+                } opacity-60`}
+              >
+                {value}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="surface-card relative flex min-h-[280px] items-center justify-center p-8">
+          <LoadingPulse label="Generating your first question…" />
+        </div>
+      </div>
+    );
   }
 
   if (error) {
@@ -193,7 +217,8 @@ export default function PracticeSession() {
   const isCorrect = selectedIndex === question.answerIndex;
 
   return (
-    <div className="space-y-6">
+    <div className="relative space-y-6">
+      <AsyncOverlay active={loading} label="Generating next question…" />
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-ink">HSK level</span>

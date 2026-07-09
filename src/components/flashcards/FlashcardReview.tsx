@@ -1,6 +1,6 @@
 "use client";
 
-import { FlashcardSkeleton } from "@/components/ui/Skeleton";
+import LoadingPulse, { AsyncOverlay } from "@/components/ui/LoadingPulse";
 import { formatPinyinSpaced } from "@/lib/pinyin";
 import { useCallback, useEffect, useState } from "react";
 
@@ -103,8 +103,12 @@ export default function FlashcardReview() {
     }
   }
 
-  if (loading) {
-    return <FlashcardSkeleton />;
+  if (loading && !card) {
+    return (
+      <div className="surface-card relative flex min-h-[280px] items-center justify-center p-8">
+        <LoadingPulse label="Loading your next card…" />
+      </div>
+    );
   }
 
   if (error) {
@@ -142,7 +146,8 @@ export default function FlashcardReview() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="relative space-y-6">
+      <AsyncOverlay active={loading} label="Loading next card…" />
       <button
         type="button"
         onClick={() => setFlipped((value) => !value)}
