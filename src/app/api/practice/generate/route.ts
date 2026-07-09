@@ -94,8 +94,41 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const levelParam = searchParams.get("level");
   const level = parseLevel(levelParam) ?? 3;
+  const existingQuestionId = searchParams.get("questionId");
 
   try {
+    if (existingQuestionId) {
+      const { data, error } = await supabase
+        .from("practice_questions")
+        .select("id, level, stem, choices, answer_index, explanation, skill")
+        .eq("id", existingQuestionId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (error || !data) {
+        return NextResponse.json(
+          { error: "Practice question not found" },
+          { status: 404 },
+        );
+      }
+
+      return NextResponse.json({
+        questionId: data.id,
+        question: {
+          stem: data.stem,
+          choices: Array.isArray(data.choices) ? data.choices : [],
+          answerIndex: data.answer_index,
+          explanation: data.explanation,
+          skill: data.skill,
+        },
+        level: data.level,
+        plan: await getUserPlan(supabase, user.id),
+        usedToday: await countPracticeAttemptsToday(supabase, user.id),
+        limit: FREE_DAILY_PRACTICE_LIMIT,
+        reviewOnly: true,
+      });
+    }
+
     const [plan, usedToday] = await Promise.all([
       getUserPlan(supabase, user.id),
       countPracticeAttemptsToday(supabase, user.id),
@@ -112,7 +145,29 @@ export async function GET(request: Request) {
     const seedParam = searchParams.get("seed");
     const seed = seedParam ? Number.parseInt(seedParam, 10) : Date.now();
     const question = await generatePracticeQuestion(level, words, Number.isFinite(seed) ? seed : Date.now());
-    const questionId = crypto.randomUUID();
+    const model = process.env.OPENAI_API_KEY ? "gpt-4o-mini" : null;
+
+    const { data: inserted, error: insertError } = await supabase
+      .from("practice_questions")
+      .insert({
+        user_id: user.id,
+        level,
+        stem: question.stem,
+        choices: question.choices,
+        answer_index: question.answerIndex,
+        explanation: question.explanation,
+        skill: question.skill,
+        seed: Number.isFinite(seed) ? seed : Date.now(),
+        model,
+      })
+      .select("id")
+      .maybeSingle();
+
+    if (insertError) {
+      throw insertError;
+    }
+
+    const questionId = inserted?.id ?? crypto.randomUUID();
 
     return NextResponse.json({
       questionId,
@@ -132,7 +187,7 @@ export async function GET(request: Request) {
 }
 
 const submitSchema = z.object({
-  questionId: z.string().min(1),
+  questionId: z.string().uuid(),
   correct: z.boolean(),
   skill: z.string().min(1),
   level: z.union([z.literal(1), z.literal(2), z.literal(3)]),
@@ -173,6 +228,7 @@ export async function POST(request: Request) {
       user_id: user.id,
       level,
       question_id: questionId,
+      practice_question_id: questionId,
       correct,
       skill,
     });

@@ -22,6 +22,7 @@ type AnswerState = {
 };
 
 type SubmitResponse = {
+  attemptId?: string | null;
   score?: number;
   correctCount?: number;
   totalMcq?: number;
@@ -40,6 +41,7 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<SubmitResponse | null>(null);
+  const [startedAt] = useState(() => new Date().toISOString());
   const [writingScore, setWritingScore] = useState<WritingScoreResult | null>(null);
   const [writingScoreLoading, setWritingScoreLoading] = useState(false);
   const [writingScoreError, setWritingScoreError] = useState<string | null>(null);
@@ -75,12 +77,18 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
     setError(null);
 
     try {
+      const durationSeconds = Math.max(
+        0,
+        Math.round((Date.now() - new Date(startedAt).getTime()) / 1000),
+      );
       const payload = {
         answers: HSK3_MOCK_EXAM.map((q) => ({
           questionId: q.id,
           selectedIndex: answers[q.id]?.selectedIndex,
           writingText: answers[q.id]?.writingText,
         })),
+        startedAt,
+        durationSeconds,
       };
 
       const response = await fetch("/api/mock-exam/submit", {
@@ -319,9 +327,14 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
         ) : null}
 
         <div className="flex flex-wrap gap-3">
+          {result.attemptId ? (
+            <Link href={`/mock-exam/attempts/${result.attemptId}`} className="btn-primary">
+              Review exam
+            </Link>
+          ) : null}
           <Link
             href="/dashboard"
-            className="btn-primary"
+            className={result.attemptId ? "btn-secondary" : "btn-primary"}
           >
             View dashboard
           </Link>

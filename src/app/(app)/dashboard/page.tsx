@@ -37,9 +37,16 @@ async function getUserPlan(
 }
 
 type MockExamRow = {
+  id: string;
   score: number;
   created_at: string;
   breakdown: unknown;
+};
+
+type PracticeAttemptRow = {
+  created_at: string;
+  correct: boolean;
+  skill: string;
 };
 
 function formatDate(iso: string): string {
@@ -50,8 +57,18 @@ function formatDate(iso: string): string {
   });
 }
 
+function formatPercent(value: number): string {
+  return `${Math.round(value)}%`;
+}
+
 function capitalizeSkill(skill: string): string {
   return skill.charAt(0).toUpperCase() + skill.slice(1);
+}
+
+function sinceDays(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  return d.toISOString();
 }
 
 export default async function DashboardPage() {
@@ -77,24 +94,52 @@ export default async function DashboardPage() {
 
   const plan = await getUserPlan(supabase, user.id);
 
-  const [{ data: recentExam }, { data: practiceAttempts }] = await Promise.all([
+  const [
+    { data: recentExam },
+    { data: recentAttempts },
+    { data: practiceAttempts },
+  ] = await Promise.all([
     supabase
       .from("mock_exam_attempts")
-      .select("score, created_at, breakdown")
+      .select("id, score, created_at, breakdown")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
     supabase
-      .from("practice_attempts")
-      .select("skill, correct")
+      .from("mock_exam_attempts")
+      .select("id, score, created_at")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
-      .limit(100),
+      .limit(10),
+    supabase
+      .from("practice_attempts")
+      .select("skill, correct, created_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .gte("created_at", sinceDays(30))
+      .limit(2000),
   ]);
 
   const exam = recentExam as MockExamRow | null;
-  const practiceResults = (practiceAttempts ?? []) as AttemptResult[];
+  const attempts = (recentAttempts ?? []) as Pick<MockExamRow, "id" | "score" | "created_at">[];
+  const practiceTrends = (practiceAttempts ?? []) as PracticeAttemptRow[];
+  const practiceResults = practiceTrends as unknown as AttemptResult[];
+
+  const last7 = practiceTrends.filter(
+    (row) => new Date(row.created_at).getTime() >= new Date(sinceDays(7)).getTime(),
+  );
+  const last30 = practiceTrends;
+
+  const last7Answered = last7.length;
+  const last7Accuracy =
+    last7Answered === 0 ? null : (last7.filter((row) => row.correct).length / last7Answered) * 100;
+
+  const last30Answered = last30.length;
+  const last30Accuracy =
+    last30Answered === 0
+      ? null
+      : (last30.filter((row) => row.correct).length / last30Answered) * 100;
 
   let fullBreakdown: WeaknessEntry[] = [];
 
@@ -166,6 +211,14 @@ export default async function DashboardPage() {
               <p className="mt-1 text-sm text-ink-muted">
                 HSK 3 — {formatDate(exam.created_at)}
               </p>
+              <div className="mt-3 flex flex-wrap gap-3">
+                <Link href={`/mock-exam/attempts/${exam.id}`} className="text-sm text-link">
+                  Review attempt
+                </Link>
+                <Link href="/mock-exam/attempts" className="text-sm text-link">
+                  View history
+                </Link>
+              </div>
             </>
           ) : (
             <p className="mt-2 text-sm text-ink-muted">
@@ -176,6 +229,79 @@ export default async function DashboardPage() {
             </p>
           )}
         </div>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-3">
+        <div className="surface-card p-6">
+          <p className="text-sm font-medium text-ink-muted">Practice · last 7 days</p>
+          <p className="mt-2 font-display text-2xl font-semibold text-ink">
+            {last7Answered}
+          </p>
+          <p className="mt-1 text-sm text-ink-muted">
+            Accuracy: {last7Accuracy === null ? "—" : formatPercent(last7Accuracy)}
+          </p>
+        </div>
+        <div className="surface-card p-6">
+          <p className="text-sm font-medium text-ink-muted">Practice · last 30 days</p>
+          <p className="mt-2 font-display text-2xl font-semibold text-ink">
+            {last30Answered}
+          </p>
+          <p className="mt-1 text-sm text-ink-muted">
+            Accuracy: {last30Accuracy === null ? "—" : formatPercent(last30Accuracy)}
+          </p>
+        </div>
+        <div className="surface-card p-6">
+          <div className="flex items-center justify-between gap-4">
+            <p className="text-sm font-medium text-ink-muted">Mistake Bank</p>
+            <Link href="/mistakes" className="text-sm text-link">
+              Open
+            </Link>
+          </div>
+          <p className="mt-2 text-sm text-ink-muted">
+            Review recent incorrect answers from practice and mock exams.
+          </p>
+        </div>
+      </div>
+
+      <div className="surface-card p-6">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="font-display text-lg font-semibold text-ink">Mock exam history</h2>
+          <Link href="/mock-exam/attempts" className="text-sm text-link">
+            View all
+          </Link>
+        </div>
+
+        {attempts.length === 0 ? (
+          <p className="mt-4 text-sm text-ink-muted">
+            No attempts yet.{" "}
+            <Link href="/mock-exam" className="text-link">
+              Take your first exam
+            </Link>
+            .
+          </p>
+        ) : (
+          <ul className="mt-4 space-y-3">
+            {attempts.map((attempt) => (
+              <li
+                key={attempt.id}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-mist bg-paper-dark px-4 py-3"
+              >
+                <div>
+                  <p className="text-sm font-medium text-ink">
+                    {attempt.score}% <span className="text-ink-muted">·</span>{" "}
+                    {formatDate(attempt.created_at)}
+                  </p>
+                </div>
+                <Link
+                  href={`/mock-exam/attempts/${attempt.id}`}
+                  className="text-sm text-link"
+                >
+                  Review
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="surface-card p-6">

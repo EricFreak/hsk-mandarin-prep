@@ -13,6 +13,9 @@ export type MockExamQuestion = {
   answerIndex?: number;
 };
 
+export const HSK3_MOCK_EXAM_TEMPLATE_ID = "hsk3-mock-exam";
+export const HSK3_MOCK_EXAM_TEMPLATE_VERSION = 1;
+
 const HSK3_MOCK_EXAM_BASE: MockExamQuestion[] = [
   {
     id: "l1",

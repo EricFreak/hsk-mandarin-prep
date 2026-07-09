@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/flashcards", label: "Flashcards" },
   { href: "/practice", label: "Practice" },
+  { href: "/mistakes", label: "Mistakes" },
   { href: "/mock-exam", label: "Mock Exam" },
 ] as const;
 

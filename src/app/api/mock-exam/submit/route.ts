@@ -5,6 +5,8 @@ import {
 import {
   HSK3_MOCK_EXAM,
   HSK3_MOCK_EXAM_MCQ_COUNT,
+  HSK3_MOCK_EXAM_TEMPLATE_ID,
+  HSK3_MOCK_EXAM_TEMPLATE_VERSION,
 } from "@/lib/mock-exam/hsk3-template";
 import { computeWeaknesses } from "@/lib/weakness";
 import { createClient } from "@/lib/supabase/server";
@@ -86,6 +88,8 @@ const answerSchema = z.object({
 
 const submitSchema = z.object({
   answers: z.array(answerSchema).min(1),
+  startedAt: z.string().datetime().optional(),
+  durationSeconds: z.number().int().min(0).max(60 * 60 * 8).optional(),
 });
 
 export async function POST(request: Request) {
@@ -163,18 +167,49 @@ export async function POST(request: Request) {
     const weaknesses = computeWeaknesses(attempts);
 
     const breakdown = {
+      breakdown_version: 1,
       attempts,
       weaknesses,
       correctCount,
       totalMcq: HSK3_MOCK_EXAM_MCQ_COUNT,
     };
 
-    const { error } = await supabase.from("mock_exam_attempts").insert({
+    const completedAt = new Date().toISOString();
+    const startedAt = parsed.data.startedAt;
+    const durationSeconds = parsed.data.durationSeconds;
+
+    const answersForReview = parsed.data.answers.map((answer) => {
+      const question = questionById.get(answer.questionId);
+      return {
+        questionId: answer.questionId,
+        section: question?.section,
+        skill: question?.skill,
+        stem: question?.stem,
+        audioText: question?.audioText,
+        choices: question?.choices,
+        answerIndex: question?.answerIndex,
+        selectedIndex: answer.selectedIndex,
+        writingText: answer.writingText,
+      };
+    });
+
+    const { data: inserted, error } = await supabase
+      .from("mock_exam_attempts")
+      .insert({
       user_id: user.id,
       level: 3,
       score,
       breakdown,
-    });
+      template_id: HSK3_MOCK_EXAM_TEMPLATE_ID,
+      template_version: HSK3_MOCK_EXAM_TEMPLATE_VERSION,
+      answers: answersForReview,
+      started_at: startedAt,
+      completed_at: completedAt,
+      duration_seconds: durationSeconds,
+      status: "completed",
+    })
+      .select("id")
+      .maybeSingle();
 
     if (error) {
       throw error;
@@ -182,6 +217,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       ok: true,
+      attemptId: inserted?.id ?? null,
       score,
       correctCount,
       totalMcq: HSK3_MOCK_EXAM_MCQ_COUNT,

@@ -2,6 +2,7 @@
 
 import PracticeStem from "@/components/practice/PracticeStem";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type PracticeQuestion = {
@@ -18,6 +19,7 @@ type GenerateResponse = {
   level: 1 | 2 | 3;
   usedToday: number;
   limit: number | null;
+  reviewOnly?: boolean;
   error?: string;
   upgrade?: boolean;
 };
@@ -25,11 +27,13 @@ type GenerateResponse = {
 const LEVELS = [1, 2, 3] as const;
 
 export default function PracticeSession() {
+  const searchParams = useSearchParams();
   const [level, setLevel] = useState<1 | 2 | 3>(3);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [limitReached, setLimitReached] = useState(false);
+  const [reviewOnly, setReviewOnly] = useState(false);
   const [questionId, setQuestionId] = useState<string | null>(null);
   const [question, setQuestion] = useState<PracticeQuestion | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -44,14 +48,18 @@ export default function PracticeSession() {
     setLoading(true);
     setError(null);
     setLimitReached(false);
+    setReviewOnly(false);
     setQuestionId(null);
     setQuestion(null);
     setSelectedIndex(null);
     setSubmitted(false);
 
     try {
+      const replayQuestionId = searchParams.get("questionId");
       const response = await fetch(
-        `/api/practice/generate?level=${targetLevel}&seed=${seed}`,
+        replayQuestionId
+          ? `/api/practice/generate?questionId=${encodeURIComponent(replayQuestionId)}`
+          : `/api/practice/generate?level=${targetLevel}&seed=${seed}`,
       );
       const data = (await response.json()) as GenerateResponse;
 
@@ -70,12 +78,13 @@ export default function PracticeSession() {
       setQuestion(data.question);
       setUsedToday(data.usedToday);
       setLimit(data.limit);
+      setReviewOnly(Boolean(data.reviewOnly));
     } catch {
       setError("Failed to load practice question");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [searchParams]);
 
   useEffect(() => {
     void loadQuestion(level);
@@ -92,6 +101,11 @@ export default function PracticeSession() {
     const correct = selectedIndex === question.answerIndex;
 
     try {
+      if (reviewOnly) {
+        setSubmitted(true);
+        return;
+      }
+
       const response = await fetch("/api/practice/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -259,14 +273,20 @@ export default function PracticeSession() {
         >
           <p className="font-medium">{isCorrect ? "Correct!" : "Not quite."}</p>
           <p className="mt-2 text-sm">{question.explanation}</p>
-          <button
-            type="button"
-            disabled={limitReached}
-            onClick={() => void loadQuestion(level)}
-            className="mt-4 btn-primary"
-          >
-            Next question
-          </button>
+          {reviewOnly ? (
+            <Link href="/practice" className="mt-4 inline-block btn-primary">
+              Back to practice
+            </Link>
+          ) : (
+            <button
+              type="button"
+              disabled={limitReached}
+              onClick={() => void loadQuestion(level)}
+              className="mt-4 btn-primary"
+            >
+              Next question
+            </button>
+          )}
         </div>
       ) : (
         <button
