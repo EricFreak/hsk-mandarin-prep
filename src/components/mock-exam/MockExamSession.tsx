@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import SpeakChineseButton from "@/components/audio/SpeakChineseButton";
+import PracticeStem from "@/components/practice/PracticeStem";
 import UpgradeCTA from "@/components/paywall/UpgradeCTA";
 import { canUseAiWritingScore, type Plan } from "@/lib/entitlements";
 import {
@@ -354,9 +356,26 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
         <p className="text-xs font-medium uppercase tracking-wide text-blue-700">
           {question.skill}
         </p>
-        <p className="mt-4 whitespace-pre-line text-xl font-medium text-gray-900">
-          {question.stem}
-        </p>
+
+        {question.section === "listening" && question.audioText ? (
+          <div className="mt-4 space-y-4">
+            <p className="text-sm text-gray-600">
+              Listen to the audio, then answer the question below. The Chinese
+              transcript is hidden during the exam.
+            </p>
+            <div className="flex flex-wrap items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3">
+              <span className="text-sm font-medium text-blue-900">Listening audio</span>
+              <SpeakChineseButton text={question.audioText} />
+            </div>
+            <p className="text-xl font-medium text-gray-900">{question.stem}</p>
+          </div>
+        ) : question.section === "reading" ? (
+          <PracticeStem stem={question.stem} />
+        ) : (
+          <p className="mt-4 whitespace-pre-line text-xl font-medium text-gray-900">
+            {question.stem}
+          </p>
+        )}
       </div>
 
       {question.section === "writing" ? (

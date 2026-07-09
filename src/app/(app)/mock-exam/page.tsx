@@ -1,4 +1,5 @@
 import MockExamSession from "@/components/mock-exam/MockExamSession";
+import DemoVocabularyNotice from "@/components/marketing/DemoVocabularyNotice";
 import UpgradeCTA from "@/components/paywall/UpgradeCTA";
 import { canTakeMockExam, type Plan } from "@/lib/entitlements";
 import { createClient } from "@/lib/supabase/server";
@@ -32,9 +33,10 @@ export default async function MockExamPage() {
       <div>
         <div className="mb-8">
           <h1 className="text-2xl font-semibold text-gray-900">HSK 3 Mock Exam</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Supabase is not configured. Set environment variables to take the exam.
-          </p>
+        <p className="mt-2 text-sm text-gray-600">
+          Supabase is not configured. Set environment variables to take the exam.
+        </p>
+        <DemoVocabularyNotice className="mt-4" />
         </div>
         <MockExamSession plan="free" />
       </div>
@@ -69,6 +71,7 @@ export default async function MockExamPage() {
           A scaled-down HSK 3 exam with listening, reading, and writing sections.
           {plan === "free" ? " Free accounts include one mock exam." : null}
         </p>
+        <DemoVocabularyNotice className="mt-4" />
       </div>
 
       {canTake ? (

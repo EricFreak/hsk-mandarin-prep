@@ -1,4 +1,5 @@
 import FlashcardReview from "@/components/flashcards/FlashcardReview";
+import DemoVocabularyNotice from "@/components/marketing/DemoVocabularyNotice";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -27,6 +28,7 @@ export default async function FlashcardsPage() {
           Review HSK vocabulary with spaced repetition. Flip the card, then rate
           how well you remembered it.
         </p>
+        <DemoVocabularyNotice className="mt-4" />
       </div>
       <FlashcardReview />
     </div>

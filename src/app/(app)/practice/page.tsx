@@ -1,4 +1,5 @@
 import PracticeSession from "@/components/practice/PracticeSession";
+import DemoVocabularyNotice from "@/components/marketing/DemoVocabularyNotice";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -27,6 +28,7 @@ export default async function PracticePage() {
           Answer adaptive HSK questions powered by AI. Free accounts get 20 questions
           per day.
         </p>
+        <DemoVocabularyNotice className="mt-4" />
       </div>
       <PracticeSession />
     </div>

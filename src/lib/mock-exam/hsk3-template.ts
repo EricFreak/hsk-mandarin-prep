@@ -1,3 +1,5 @@
+import { prepareMockExam } from "@/lib/mock-exam/prepare-exam";
+
 export type ExamSection = "listening" | "reading" | "writing";
 
 export type MockExamQuestion = {
@@ -5,16 +7,19 @@ export type MockExamQuestion = {
   section: ExamSection;
   skill: string;
   stem: string;
+  /** Chinese audio script for listening items (not shown as text during the exam). */
+  audioText?: string;
   choices?: string[];
   answerIndex?: number;
 };
 
-export const HSK3_MOCK_EXAM: MockExamQuestion[] = [
+const HSK3_MOCK_EXAM_BASE: MockExamQuestion[] = [
   {
     id: "l1",
     section: "listening",
     skill: "listening",
-    stem: "Audio: 你明天几点去学校？\nWhat time will you go to school tomorrow?",
+    audioText: "你明天几点去学校？",
+    stem: "What time will you go to school tomorrow?",
     choices: ["八点", "明天", "学校", "几点"],
     answerIndex: 0,
   },
@@ -22,7 +27,8 @@ export const HSK3_MOCK_EXAM: MockExamQuestion[] = [
     id: "l2",
     section: "listening",
     skill: "listening",
-    stem: "Audio: 这本书比那本书贵。\nWhich book is more expensive?",
+    audioText: "这本书比那本书贵。",
+    stem: "Which book is more expensive?",
     choices: ["这本书", "那本书", "一样贵", "很便宜"],
     answerIndex: 0,
   },
@@ -30,7 +36,8 @@ export const HSK3_MOCK_EXAM: MockExamQuestion[] = [
     id: "l3",
     section: "listening",
     skill: "listening",
-    stem: "Audio: 我打算周末去爬山。\nWhat does the speaker plan to do on the weekend?",
+    audioText: "我打算周末去爬山。",
+    stem: "What does the speaker plan to do on the weekend?",
     choices: ["去爬山", "去游泳", "看电影", "写作业"],
     answerIndex: 0,
   },
@@ -38,7 +45,8 @@ export const HSK3_MOCK_EXAM: MockExamQuestion[] = [
     id: "l4",
     section: "listening",
     skill: "listening",
-    stem: "Audio: 请把窗户打开，房间里太热了。\nWhy does the speaker want the window opened?",
+    audioText: "请把窗户打开，房间里太热了。",
+    stem: "Why does the speaker want the window opened?",
     choices: ["房间里太热了", "外面下雨了", "要睡觉了", "有人敲门"],
     answerIndex: 0,
   },
@@ -46,7 +54,8 @@ export const HSK3_MOCK_EXAM: MockExamQuestion[] = [
     id: "l5",
     section: "listening",
     skill: "listening",
-    stem: "Audio: 他刚到北京，还不太习惯这里的生活。\nHow long has he been in Beijing?",
+    audioText: "他刚到北京，还不太习惯这里的生活。",
+    stem: "How long has he been in Beijing?",
     choices: ["刚到", "十年了", "还没去", "每年都去"],
     answerIndex: 0,
   },
@@ -107,6 +116,8 @@ export const HSK3_MOCK_EXAM: MockExamQuestion[] = [
     stem: "用不少于 30 个汉字写一段话，介绍你最喜欢的运动，并说明为什么喜欢。（MVP: submit your answer; auto-scoring is Pro-only.）",
   },
 ];
+
+export const HSK3_MOCK_EXAM = prepareMockExam(HSK3_MOCK_EXAM_BASE);
 
 export const HSK3_MOCK_EXAM_MCQ_COUNT = HSK3_MOCK_EXAM.filter(
   (q) => q.answerIndex !== undefined,
