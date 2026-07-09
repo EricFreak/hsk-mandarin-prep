@@ -1,7 +1,8 @@
 "use client";
 
+import PracticeStem from "@/components/practice/PracticeStem";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type PracticeQuestion = {
   stem: string;
@@ -35,8 +36,11 @@ export default function PracticeSession() {
   const [submitted, setSubmitted] = useState(false);
   const [usedToday, setUsedToday] = useState(0);
   const [limit, setLimit] = useState<number | null>(20);
+  const questionSeedRef = useRef(0);
 
   const loadQuestion = useCallback(async (targetLevel: 1 | 2 | 3) => {
+    questionSeedRef.current += 1;
+    const seed = questionSeedRef.current;
     setLoading(true);
     setError(null);
     setLimitReached(false);
@@ -46,7 +50,9 @@ export default function PracticeSession() {
     setSubmitted(false);
 
     try {
-      const response = await fetch(`/api/practice/generate?level=${targetLevel}`);
+      const response = await fetch(
+        `/api/practice/generate?level=${targetLevel}&seed=${seed}`,
+      );
       const data = (await response.json()) as GenerateResponse;
 
       if (response.status === 402 && data.error === "limit_reached") {
@@ -207,7 +213,7 @@ export default function PracticeSession() {
         <p className="text-xs font-medium uppercase tracking-wide text-blue-700">
           {question.skill}
         </p>
-        <p className="mt-4 text-2xl font-medium text-gray-900">{question.stem}</p>
+        <PracticeStem stem={question.stem} />
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">

@@ -109,7 +109,9 @@ export async function GET(request: Request) {
     }
 
     const words = getWordsForLevel(level);
-    const question = await generatePracticeQuestion(level, words);
+    const seedParam = searchParams.get("seed");
+    const seed = seedParam ? Number.parseInt(seedParam, 10) : Date.now();
+    const question = await generatePracticeQuestion(level, words, Number.isFinite(seed) ? seed : Date.now());
     const questionId = crypto.randomUUID();
 
     return NextResponse.json({

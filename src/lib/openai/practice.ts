@@ -33,18 +33,22 @@ function deterministicIndex(seed: number, max: number): number {
   return Math.abs(seed) % max;
 }
 
-function buildFallbackQuestion(level: 1 | 2 | 3, words: HskWord[]): PracticeQuestion {
+function buildFallbackQuestion(
+  level: 1 | 2 | 3,
+  words: HskWord[],
+  seed = 0,
+): PracticeQuestion {
   if (words.length < 4) {
     throw new Error("At least four words are required to generate a practice question");
   }
 
-  const answerIdx = deterministicIndex(level * 17, words.length);
+  const answerIdx = deterministicIndex(level * 17 + seed, words.length);
   const answer = words[answerIdx];
   const pool = words.filter((word) => word.id !== answer.id);
   const distractors = [0, 1, 2].map((offset) => pool[(answerIdx + offset) % pool.length]);
 
   const choices = [answer.english, ...distractors.map((word) => word.english)];
-  const rotateBy = deterministicIndex(level * 3, choices.length);
+  const rotateBy = deterministicIndex(level * 3 + seed, choices.length);
   const rotated = [...choices.slice(rotateBy), ...choices.slice(0, rotateBy)];
   const answerIndex = rotated.indexOf(answer.english);
 
@@ -80,10 +84,11 @@ Requirements:
 export async function generatePracticeQuestion(
   level: 1 | 2 | 3,
   words: HskWord[],
+  seed = 0,
 ): Promise<PracticeQuestion> {
   const client = getOpenAIClient();
   if (!client) {
-    return buildFallbackQuestion(level, words);
+    return buildFallbackQuestion(level, words, seed);
   }
 
   try {
@@ -106,12 +111,12 @@ export async function generatePracticeQuestion(
 
     const content = response.choices[0]?.message?.content;
     if (!content) {
-      return buildFallbackQuestion(level, words);
+      return buildFallbackQuestion(level, words, seed);
     }
 
     const parsed = parsePracticeQuestion(JSON.parse(content));
     return parsed;
   } catch {
-    return buildFallbackQuestion(level, words);
+    return buildFallbackQuestion(level, words, seed);
   }
 }
