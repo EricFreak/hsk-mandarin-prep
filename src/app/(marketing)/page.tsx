@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import HeroVisual from "@/components/marketing/HeroVisual";
 import PricingTable from "@/components/marketing/PricingTable";
@@ -31,13 +32,22 @@ export default function LandingPage() {
   return (
     <>
       <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute -left-16 top-8 font-display text-[12rem] font-semibold leading-none text-seal/[0.06] sm:text-[16rem]">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <Image
+            src="/brand/hero-bg.png"
+            alt=""
+            fill
+            priority
+            className="object-cover object-[70%_center] opacity-40 sm:object-right"
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-paper via-paper/95 to-paper/55 sm:via-paper/85 sm:to-transparent" />
+        </div>
+        <div className="pointer-events-none absolute -left-16 top-8 z-[1] font-display text-[12rem] font-semibold leading-none text-seal/[0.06] sm:text-[16rem]">
           考
         </div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-jade/10 via-paper to-paper" />
-        <div className="absolute bottom-0 right-0 h-64 w-64 bg-gradient-to-tl from-jade/5 to-transparent sm:h-96 sm:w-96" />
 
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:py-20">
+        <div className="relative z-[2] mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:py-20">
           <div>
             <p className="section-eyebrow">HSK 3.0 · GF0025-2021</p>
             <h1 className="mt-4 font-display text-4xl font-semibold leading-tight tracking-tight text-ink sm:text-5xl">
