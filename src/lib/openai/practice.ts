@@ -1,3 +1,4 @@
+import { formatPinyinSpaced } from "@/lib/pinyin";
 import type { HskWord } from "@/lib/syllabus";
 import OpenAI from "openai";
 import { z } from "zod";
@@ -48,10 +49,10 @@ function buildFallbackQuestion(level: 1 | 2 | 3, words: HskWord[]): PracticeQues
   const answerIndex = rotated.indexOf(answer.english);
 
   return {
-    stem: `Choose the best English meaning for: ${answer.hanzi} (${answer.pinyin})`,
+    stem: `Choose the best English meaning for: ${answer.hanzi} (${formatPinyinSpaced(answer.pinyin)})`,
     choices: rotated,
     answerIndex,
-    explanation: `${answer.hanzi} (${answer.pinyin}) means "${answer.english}".`,
+    explanation: `${answer.hanzi} (${formatPinyinSpaced(answer.pinyin)}) means "${answer.english}".`,
     skill: "vocabulary",
   };
 }
@@ -59,7 +60,7 @@ function buildFallbackQuestion(level: 1 | 2 | 3, words: HskWord[]): PracticeQues
 function buildPrompt(level: 1 | 2 | 3, words: HskWord[]): string {
   const wordList = words
     .slice(0, 40)
-    .map((word) => `${word.hanzi} (${word.pinyin}): ${word.english}`)
+    .map((word) => `${word.hanzi} (${formatPinyinSpaced(word.pinyin)}): ${word.english}`)
     .join("\n");
 
   return `You are an HSK ${level} Mandarin tutor. Generate ONE cloze-style multiple-choice question using ONLY vocabulary from this list:

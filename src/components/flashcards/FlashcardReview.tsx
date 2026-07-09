@@ -1,5 +1,6 @@
 "use client";
 
+import { formatPinyinSpaced } from "@/lib/pinyin";
 import { useCallback, useEffect, useState } from "react";
 
 type ReviewWord = {
@@ -155,7 +156,7 @@ export default function FlashcardReview() {
         ) : (
           <div className="space-y-3">
             <p className="text-4xl font-medium text-gray-900">{word.hanzi}</p>
-            <p className="text-xl text-blue-700">{word.pinyin}</p>
+            <p className="text-xl text-blue-700">{formatPinyinSpaced(word.pinyin)}</p>
             <p className="text-lg text-gray-700">{word.english}</p>
           </div>
         )}
