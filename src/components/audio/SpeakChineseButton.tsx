@@ -31,7 +31,7 @@ export default function SpeakChineseButton({
     window.speechSynthesis.speak(utterance);
   }, [supported, text]);
 
-  if (!supported || !text.trim()) {
+  if (!text.trim()) {
     return null;
   }
 
@@ -39,10 +39,18 @@ export default function SpeakChineseButton({
     <button
       type="button"
       onClick={speak}
-      aria-label={`Play pronunciation for ${text}`}
-      title="Play pronunciation"
-      className={`ml-2 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-blue-200 bg-blue-50 text-blue-700 transition hover:bg-blue-100 disabled:opacity-60 ${className}`}
-      disabled={speaking}
+      aria-label={
+        supported
+          ? `Play pronunciation for ${text}`
+          : "Pronunciation not available in this browser"
+      }
+      title={
+        supported
+          ? "Play pronunciation"
+          : "Pronunciation not available in this browser"
+      }
+      className={`ml-2 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-jade/30 bg-jade/10 text-jade transition hover:bg-jade/20 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      disabled={speaking || !supported}
     >
       <span aria-hidden="true" className="text-sm">
         {speaking ? "…" : "🔊"}

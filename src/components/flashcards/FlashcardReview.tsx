@@ -26,11 +26,11 @@ type ReviewResponse = {
 };
 
 const GRADES = [
-  { quality: 1, label: "Forgot" },
-  { quality: 2, label: "Hard" },
-  { quality: 3, label: "Hesitant" },
-  { quality: 4, label: "Good" },
-  { quality: 5, label: "Easy" },
+  { quality: 1, label: "Forgot", className: "bg-seal hover:bg-seal-dark" },
+  { quality: 2, label: "Hard", className: "bg-seal/80 hover:bg-seal" },
+  { quality: 3, label: "Hesitant", className: "bg-ink-muted hover:bg-ink" },
+  { quality: 4, label: "Good", className: "bg-jade hover:bg-jade-light" },
+  { quality: 5, label: "Easy", className: "bg-jade-light hover:bg-jade" },
 ] as const;
 
 export default function FlashcardReview() {
@@ -104,20 +104,20 @@ export default function FlashcardReview() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[320px] items-center justify-center rounded-lg border border-gray-200 bg-white p-8">
-        <p className="text-sm text-gray-500">Loading your next card...</p>
+      <div className="flex min-h-[320px] items-center justify-center surface-card p-8">
+        <p className="text-sm text-ink-muted">Loading your next card...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
-        <p className="text-sm text-red-700">{error}</p>
+      <div className="rounded-xl border border-seal/20 bg-seal/5 p-6 text-center">
+        <p className="text-sm text-seal">{error}</p>
         <button
           type="button"
           onClick={() => void loadCard()}
-          className="mt-4 rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+          className="mt-4 btn-primary"
         >
           Try again
         </button>
@@ -127,16 +127,16 @@ export default function FlashcardReview() {
 
   if (!card || !word) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-        <h2 className="text-lg font-semibold text-gray-900">All caught up</h2>
-        <p className="mt-2 text-sm text-gray-600">
+      <div className="surface-card p-8 text-center">
+        <h2 className="font-display text-lg font-semibold text-ink">All caught up</h2>
+        <p className="mt-2 text-sm text-ink-muted">
           No flashcards are due right now. Check back later for your next review
           session.
         </p>
         <button
           type="button"
           onClick={() => void loadCard()}
-          className="mt-6 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="mt-6 btn-secondary"
         >
           Refresh
         </button>
@@ -152,32 +152,32 @@ export default function FlashcardReview() {
         className="w-full rounded-2xl border border-mist bg-white p-10 text-center shadow-card transition hover:border-jade/30 hover:shadow-lift"
       >
         {!flipped ? (
-          <p className="text-5xl font-medium text-gray-900">{word.hanzi}</p>
+          <p className="text-5xl font-medium text-ink">{word.hanzi}</p>
         ) : (
           <div className="space-y-3">
-            <p className="text-4xl font-medium text-gray-900">{word.hanzi}</p>
+            <p className="text-4xl font-medium text-ink">{word.hanzi}</p>
             <p className="text-xl text-jade">{formatPinyinSpaced(word.pinyin)}</p>
-            <p className="text-lg text-gray-700">{word.english}</p>
+            <p className="text-lg text-ink-muted">{word.english}</p>
           </div>
         )}
-        <p className="mt-6 text-sm text-gray-500">
+        <p className="mt-6 text-sm text-ink-muted">
           {flipped ? "Tap to hide answer" : "Tap to reveal answer"}
         </p>
       </button>
 
       {flipped ? (
         <div className="space-y-3">
-          <p className="text-center text-xs text-gray-500">
+          <p className="text-center text-xs text-ink-muted">
             How well did you remember this word before flipping?
           </p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-          {GRADES.map(({ quality, label }) => (
+          {GRADES.map(({ quality, label, className }) => (
             <button
               key={quality}
               type="button"
               disabled={submitting}
               onClick={() => void handleGrade(quality)}
-              className="rounded-lg bg-ink px-3 py-3 text-sm font-medium text-white hover:bg-ink/90 disabled:cursor-not-allowed disabled:opacity-60"
+              className={`rounded-lg px-3 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
             >
               {label}
             </button>

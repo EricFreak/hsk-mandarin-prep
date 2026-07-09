@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type Tier = {
   name: string;
   price: string;
@@ -5,7 +7,7 @@ type Tier = {
   badge?: string;
   features: string[];
   highlighted?: boolean;
-  cta?: string;
+  cta?: { label: string; href: string };
 };
 
 const TIERS: Tier[] = [
@@ -19,10 +21,11 @@ const TIERS: Tier[] = [
       "20 practice questions per day",
       "SRS flashcards (beta demo deck)",
     ],
+    cta: { label: "Start free mock exam", href: "/mock-exam" },
   },
   {
     name: "Pro",
-    price: "$9.9",
+    price: "$9.99",
     period: "/month",
     features: [
       "Unlimited mock exams",
@@ -32,7 +35,7 @@ const TIERS: Tier[] = [
       "Mistake review bank (coming soon)",
     ],
     highlighted: true,
-    cta: "Start 7-day free trial",
+    cta: { label: "View Pro plans", href: "/pricing" },
   },
   {
     name: "HSK 3 Course Pack",
@@ -78,6 +81,9 @@ export default function PricingTable() {
               <span className="text-sm text-ink-muted">{tier.period}</span>
             ) : null}
           </div>
+          {tier.highlighted ? (
+            <p className="mt-1 text-xs text-ink-muted">or $69/year (save ~42%)</p>
+          ) : null}
           <ul className="mt-6 flex-1 space-y-3">
             {tier.features.map((feature) => (
               <li
@@ -103,7 +109,14 @@ export default function PricingTable() {
             ))}
           </ul>
           {tier.cta ? (
-            <p className="mt-6 text-center text-sm font-semibold text-seal">{tier.cta}</p>
+            <Link
+              href={tier.cta.href}
+              className={`mt-6 block text-center text-sm font-semibold ${
+                tier.highlighted ? "btn-primary py-2.5" : "text-link"
+              }`}
+            >
+              {tier.cta.label}
+            </Link>
           ) : null}
         </div>
       ))}

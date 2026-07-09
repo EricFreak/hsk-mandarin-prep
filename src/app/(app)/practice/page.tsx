@@ -24,7 +24,7 @@ export default async function PracticePage() {
     <div>
       <div className="mb-8">
         <h1 className="font-display text-2xl font-semibold text-ink">AI Practice</h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-ink-muted">
           Answer adaptive HSK questions powered by AI. Free accounts get 20 questions
           per day.
         </p>

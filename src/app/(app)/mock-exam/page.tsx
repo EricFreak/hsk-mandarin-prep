@@ -32,8 +32,8 @@ export default async function MockExamPage() {
     return (
       <div>
         <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-gray-900">HSK 3 Mock Exam</h1>
-        <p className="mt-2 text-sm text-gray-600">
+          <h1 className="font-display text-2xl font-semibold text-ink">HSK 3 Mock Exam</h1>
+        <p className="mt-2 text-sm text-ink-muted">
           Supabase is not configured. Set environment variables to take the exam.
         </p>
         <DemoVocabularyNotice className="mt-4" />
@@ -66,8 +66,8 @@ export default async function MockExamPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">HSK 3 Mock Exam</h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <h1 className="font-display text-2xl font-semibold text-ink">HSK 3 Mock Exam</h1>
+        <p className="mt-2 text-sm text-ink-muted">
           A scaled-down HSK 3 exam with listening, reading, and writing sections.
           {plan === "free" ? " Free accounts include one mock exam." : null}
         </p>

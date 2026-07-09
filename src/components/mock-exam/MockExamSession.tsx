@@ -193,21 +193,21 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
   if (result) {
     return (
       <div className="space-y-6">
-        <div className="rounded-xl border border-green-200 bg-green-50 p-8 text-center">
-          <h2 className="text-2xl font-semibold text-gray-900">Exam complete</h2>
-          <p className="mt-2 text-4xl font-bold text-green-700">{result.score}%</p>
-          <p className="mt-2 text-sm text-gray-600">
+        <div className="rounded-xl border border-jade/20 bg-jade/5 p-8 text-center">
+          <h2 className="font-display text-2xl font-semibold text-ink">Exam complete</h2>
+          <p className="mt-2 font-display text-4xl font-semibold text-jade">{result.score}%</p>
+          <p className="mt-2 text-sm text-ink-muted">
             {result.correctCount}/{result.totalMcq ?? HSK3_MOCK_EXAM_MCQ_COUNT} multiple-choice
             questions correct
           </p>
         </div>
 
         {result.weaknesses && result.weaknesses.length > 0 ? (
-          <div className="rounded-lg border border-gray-200 bg-white p-6">
-            <h3 className="text-sm font-semibold text-gray-900">Areas to improve</h3>
+          <div className="surface-card p-6">
+            <h3 className="text-sm font-semibold text-ink">Areas to improve</h3>
             <ul className="mt-3 space-y-2">
               {result.weaknesses.map((entry) => (
-                <li key={entry.skill} className="text-sm text-gray-700">
+                <li key={entry.skill} className="text-sm text-ink-muted">
                   <span className="font-medium capitalize">{entry.skill}</span> —{" "}
                   {entry.wrongCount} incorrect
                 </li>
@@ -215,37 +215,37 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
             </ul>
           </div>
         ) : (
-          <div className="rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-600">
+          <div className="surface-card p-6 text-sm text-ink-muted">
             Great work — no major skill gaps detected on this attempt.
           </div>
         )}
 
         {WRITING_QUESTION && writingAnswer ? (
-          <div className="rounded-lg border border-gray-200 bg-white p-6">
-            <h3 className="text-sm font-semibold text-gray-900">AI writing feedback</h3>
-            <p className="mt-1 text-xs text-gray-500">
+          <div className="surface-card p-6">
+            <h3 className="text-sm font-semibold text-ink">AI writing feedback</h3>
+            <p className="mt-1 text-xs text-ink-muted">
               Pro feature — personalized score and suggestions for your writing response.
             </p>
 
             {canScoreWriting ? (
               <div className="mt-4 space-y-4">
                 {writingScoreLoading ? (
-                  <p className="text-sm text-gray-600">Analyzing your writing...</p>
+                  <p className="text-sm text-ink-muted">Analyzing your writing...</p>
                 ) : writingScoreError ? (
                   <p className="text-sm text-red-600">{writingScoreError}</p>
                 ) : writingScore ? (
                   <>
-                    <p className="text-3xl font-bold text-blue-700">
+                    <p className="text-3xl font-bold text-jade">
                       {writingScore.score}
-                      <span className="text-base font-medium text-gray-500"> / 100</span>
+                      <span className="text-base font-medium text-ink-muted"> / 100</span>
                     </p>
 
                     {writingScore.grammarNotes.length > 0 ? (
                       <div>
-                        <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        <h4 className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
                           Grammar
                         </h4>
-                        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-700">
+                        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-ink-muted">
                           {writingScore.grammarNotes.map((note) => (
                             <li key={note}>{note}</li>
                           ))}
@@ -255,10 +255,10 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
 
                     {writingScore.vocabularyNotes.length > 0 ? (
                       <div>
-                        <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        <h4 className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
                           Vocabulary
                         </h4>
-                        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-700">
+                        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-ink-muted">
                           {writingScore.vocabularyNotes.map((note) => (
                             <li key={note}>{note}</li>
                           ))}
@@ -268,10 +268,10 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
 
                     {writingScore.suggestions.length > 0 ? (
                       <div>
-                        <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        <h4 className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
                           Suggestions
                         </h4>
-                        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-700">
+                        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-ink-muted">
                           {writingScore.suggestions.map((note) => (
                             <li key={note}>{note}</li>
                           ))}
@@ -284,23 +284,23 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
             ) : (
               <div className="relative mt-4">
                 <div className="pointer-events-none select-none space-y-4 blur-sm">
-                  <p className="text-3xl font-bold text-blue-700">
-                    82<span className="text-base font-medium text-gray-500"> / 100</span>
+                  <p className="text-3xl font-bold text-jade">
+                    82<span className="text-base font-medium text-ink-muted"> / 100</span>
                   </p>
                   <div>
-                    <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    <h4 className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
                       Grammar
                     </h4>
-                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-700">
+                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-ink-muted">
                       <li>Good use of 因为…所以… to explain your reason.</li>
                       <li>Watch particle placement for more natural flow.</li>
                     </ul>
                   </div>
                   <div>
-                    <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    <h4 className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
                       Suggestions
                     </h4>
-                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-700">
+                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-ink-muted">
                       <li>Add a specific example of when you do this sport.</li>
                       <li>Expand your answer with more HSK 3 vocabulary.</li>
                     </ul>
@@ -327,7 +327,7 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
           </Link>
           <Link
             href="/practice"
-            className="rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="btn-secondary"
           >
             Practice weak areas
           </Link>
@@ -338,41 +338,46 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between text-sm text-gray-500">
+      <div className="flex items-center justify-between text-sm text-ink-muted">
         <span>
           Question {step + 1} of {HSK3_MOCK_EXAM.length}
         </span>
         <span className="capitalize">{question.section}</span>
       </div>
 
-      <div className="h-2 overflow-hidden rounded-full bg-gray-200">
+      <div className="h-2 overflow-hidden rounded-full bg-mist">
         <div
           className="h-full rounded-full bg-jade transition-all"
           style={{ width: `${((step + 1) / HSK3_MOCK_EXAM.length) * 100}%` }}
+          role="progressbar"
+          aria-valuenow={step + 1}
+          aria-valuemin={1}
+          aria-valuemax={HSK3_MOCK_EXAM.length}
+          aria-label="Exam progress"
         />
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
-        <p className="text-xs font-medium uppercase tracking-wide text-blue-700">
+      <div className="surface-card p-8">
+        <p className="text-xs font-medium uppercase tracking-wide text-jade">
           {question.skill}
         </p>
 
         {question.section === "listening" && question.audioText ? (
           <div className="mt-4 space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-ink-muted">
               Listen to the audio, then answer the question below. The Chinese
               transcript is hidden during the exam.
             </p>
-            <div className="flex flex-wrap items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3">
-              <span className="text-sm font-medium text-blue-900">Listening audio</span>
+            <div className="flex flex-wrap items-center gap-2 rounded-lg border border-jade/20 bg-jade/5 px-4 py-3">
+              <span className="text-sm font-medium text-ink">Listening audio</span>
               <SpeakChineseButton text={question.audioText} />
             </div>
-            <p className="text-xl font-medium text-gray-900">{question.stem}</p>
+            <p className="text-xl font-medium text-ink">{question.stem}</p>
           </div>
         ) : question.section === "reading" ? (
           <PracticeStem stem={question.stem} />
         ) : (
-          <p className="mt-4 whitespace-pre-line text-xl font-medium text-gray-900">
+          <p className="mt-4 whitespace-pre-line text-xl font-medium text-ink">
             {question.stem}
           </p>
         )}
@@ -386,7 +391,7 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
           }
           rows={6}
           placeholder="Write your answer in Chinese..."
-          className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="input-field"
         />
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
@@ -398,7 +403,7 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
               className={`rounded-lg border px-4 py-3 text-left text-sm font-medium transition ${
                 currentAnswer.selectedIndex === index
                   ? "border-jade bg-jade/10 text-jade"
-                  : "border-gray-200 bg-white text-gray-800 hover:border-blue-300"
+                  : "border-mist bg-white text-ink hover:border-jade/30"
               }`}
             >
               {choice}
@@ -416,7 +421,7 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
           type="button"
           disabled={step === 0 || submitting}
           onClick={handleBack}
-          className="rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+          className="btn-secondary disabled:cursor-not-allowed disabled:opacity-60"
         >
           Back
         </button>

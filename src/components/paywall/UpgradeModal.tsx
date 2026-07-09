@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { PRO_BENEFITS, type PriceType } from "@/lib/stripe";
 
 type UpgradeModalProps = {
@@ -18,11 +18,13 @@ export default function UpgradeModal({
   const [priceType, setPriceType] = useState<PriceType>(defaultPriceType);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (open) {
       setPriceType(defaultPriceType);
       setError(null);
+      panelRef.current?.focus();
     }
   }, [open, defaultPriceType]);
 
@@ -85,30 +87,32 @@ export default function UpgradeModal({
     >
       <button
         type="button"
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-ink/50"
         aria-label="Close upgrade modal"
         onClick={onClose}
       />
-      <div className="relative z-10 w-full max-w-md rounded-xl border border-gray-200 bg-white p-6 shadow-xl">
+      <div
+        ref={panelRef}
+        tabIndex={-1}
+        className="relative z-10 w-full max-w-md rounded-2xl border border-mist bg-white p-6 shadow-lift outline-none"
+      >
         <button
           type="button"
-          className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+          className="absolute right-4 top-4 text-ink-muted hover:text-ink"
           aria-label="Close"
           onClick={onClose}
         >
           ×
         </button>
 
-        <p className="text-sm font-medium uppercase tracking-wide text-blue-600">
-          HSK Mandarin Prep Pro
-        </p>
+        <p className="section-eyebrow">HSK Mandarin Prep Pro</p>
         <h2
           id="upgrade-modal-title"
-          className="mt-2 text-xl font-semibold text-gray-900"
+          className="mt-2 font-display text-xl font-semibold text-ink"
         >
           Unlock unlimited prep
         </h2>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-ink-muted">
           Upgrade to Pro for unlimited practice, all mock exams, and AI writing
           feedback.
         </p>
@@ -117,10 +121,10 @@ export default function UpgradeModal({
           {PRO_BENEFITS.map((benefit) => (
             <li
               key={benefit}
-              className="flex items-start gap-2 text-sm text-gray-700"
+              className="flex items-start gap-2 text-sm text-ink-muted"
             >
               <svg
-                className="mt-0.5 h-4 w-4 shrink-0 text-green-500"
+                className="mt-0.5 h-4 w-4 shrink-0 text-jade"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={2}
@@ -138,13 +142,13 @@ export default function UpgradeModal({
           ))}
         </ul>
 
-        <div className="mt-6 flex rounded-lg border border-gray-200 p-1">
+        <div className="mt-6 flex rounded-xl border border-mist p-1">
           <button
             type="button"
-            className={`flex-1 rounded-md px-3 py-2 text-sm font-medium ${
+            className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition ${
               priceType === "monthly"
-                ? "bg-blue-600 text-white"
-                : "text-gray-600 hover:text-gray-900"
+                ? "bg-seal text-white"
+                : "text-ink-muted hover:text-ink"
             }`}
             onClick={() => setPriceType("monthly")}
           >
@@ -152,10 +156,10 @@ export default function UpgradeModal({
           </button>
           <button
             type="button"
-            className={`flex-1 rounded-md px-3 py-2 text-sm font-medium ${
+            className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition ${
               priceType === "yearly"
-                ? "bg-blue-600 text-white"
-                : "text-gray-600 hover:text-gray-900"
+                ? "bg-seal text-white"
+                : "text-ink-muted hover:text-ink"
             }`}
             onClick={() => setPriceType("yearly")}
           >
@@ -164,22 +168,22 @@ export default function UpgradeModal({
         </div>
 
         {error ? (
-          <p className="mt-4 text-sm text-red-600" role="alert">
+          <p className="mt-4 text-sm text-seal" role="alert">
             {error}
           </p>
         ) : null}
 
         <button
           type="button"
-          className="mt-4 w-full rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-4 w-full btn-primary disabled:cursor-not-allowed disabled:opacity-60"
           disabled={loading}
           onClick={() => void handleUpgrade()}
         >
           {loading ? "Redirecting…" : "Upgrade to Pro"}
         </button>
 
-        <p className="mt-4 text-center text-sm text-gray-500">
-          <Link href="/pricing" className="text-blue-600 hover:text-blue-700">
+        <p className="mt-4 text-center text-sm text-ink-muted">
+          <Link href="/pricing" className="text-link">
             View full pricing
           </Link>
         </p>

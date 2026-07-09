@@ -11,7 +11,7 @@ export default function PracticeStem({ stem }: PracticeStemProps) {
   const segments = splitStemByScript(stem);
 
   return (
-    <p className="mt-4 text-2xl font-medium leading-relaxed text-gray-900">
+    <p className="mt-4 text-2xl font-medium leading-relaxed text-ink">
       {segments.map((segment, index) =>
         segment.type === "hanzi" ? (
           <span key={`${segment.text}-${index}`} className="inline-flex items-center">

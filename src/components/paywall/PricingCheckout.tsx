@@ -46,108 +46,109 @@ export default function PricingCheckout() {
   }
 
   return (
-    <div className="mx-auto max-w-lg">
-      <div className="flex rounded-lg border border-gray-200 bg-white p-1 shadow-sm">
-        <button
-          type="button"
-          className={`flex-1 rounded-md px-4 py-2.5 text-sm font-medium ${
-            priceType === "monthly"
-              ? "bg-blue-600 text-white"
-              : "text-gray-600 hover:text-gray-900"
-          }`}
-          onClick={() => setPriceType("monthly")}
-        >
-          Monthly
-        </button>
-        <button
-          type="button"
-          className={`flex-1 rounded-md px-4 py-2.5 text-sm font-medium ${
-            priceType === "yearly"
-              ? "bg-blue-600 text-white"
-              : "text-gray-600 hover:text-gray-900"
-          }`}
-          onClick={() => setPriceType("yearly")}
-        >
-          Yearly
-        </button>
-      </div>
-
-      <div className="mt-8 rounded-xl border border-blue-600 bg-white p-8 shadow-sm ring-2 ring-blue-600">
-        <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
-          Pro
-        </p>
-        <div className="mt-2 flex items-baseline gap-2">
-          <span className="text-4xl font-bold text-gray-900">
-            {priceType === "monthly" ? "$9.99" : "$69"}
-          </span>
-          <span className="text-sm text-gray-500">
-            {priceType === "monthly" ? "/month" : "/year"}
-          </span>
+    <div className="mx-auto grid max-w-4xl gap-8 lg:grid-cols-2">
+      <div className="order-2 lg:order-1">
+        <div className="flex rounded-xl border border-mist bg-white p-1 shadow-card">
+          <button
+            type="button"
+            className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition ${
+              priceType === "monthly"
+                ? "bg-seal text-white"
+                : "text-ink-muted hover:text-ink"
+            }`}
+            onClick={() => setPriceType("monthly")}
+          >
+            Monthly
+          </button>
+          <button
+            type="button"
+            className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition ${
+              priceType === "yearly"
+                ? "bg-seal text-white"
+                : "text-ink-muted hover:text-ink"
+            }`}
+            onClick={() => setPriceType("yearly")}
+          >
+            Yearly
+          </button>
         </div>
-        {priceType === "yearly" ? (
-          <p className="mt-2 text-sm text-green-700">
-            Save about 42% vs monthly billing
-          </p>
-        ) : null}
 
-        <ul className="mt-6 space-y-3">
-          {PRO_BENEFITS.map((benefit) => (
-            <li
-              key={benefit}
-              className="flex items-start gap-2 text-sm text-gray-700"
-            >
-              <svg
-                className="mt-0.5 h-4 w-4 shrink-0 text-green-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                aria-hidden="true"
+        <div className="mt-6 rounded-2xl border border-seal bg-white p-8 shadow-lift ring-2 ring-seal/20">
+          <p className="text-xs font-semibold uppercase tracking-wide text-seal">
+            Most popular
+          </p>
+          <h2 className="mt-1 font-display text-2xl font-semibold text-ink">Pro</h2>
+          <div className="mt-3 flex items-baseline gap-2">
+            <span className="font-display text-4xl font-semibold text-ink">
+              {priceType === "monthly" ? "$9.99" : "$69"}
+            </span>
+            <span className="text-sm text-ink-muted">
+              {priceType === "monthly" ? "/month" : "/year"}
+            </span>
+          </div>
+          {priceType === "yearly" ? (
+            <p className="mt-2 text-sm text-jade">Save about 42% vs monthly billing</p>
+          ) : null}
+
+          <ul className="mt-6 space-y-3">
+            {PRO_BENEFITS.map((benefit) => (
+              <li
+                key={benefit}
+                className="flex items-start gap-2 text-sm text-ink-muted"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-              {benefit}
-            </li>
-          ))}
-        </ul>
+                <svg
+                  className="mt-0.5 h-4 w-4 shrink-0 text-jade"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                {benefit}
+              </li>
+            ))}
+          </ul>
 
-        {error ? (
-          <p className="mt-4 text-sm text-red-600" role="alert">
-            {error}
-          </p>
-        ) : null}
+          {error ? (
+            <p className="mt-4 text-sm text-seal" role="alert">
+              {error}
+            </p>
+          ) : null}
 
-        <button
-          type="button"
-          className="mt-6 w-full rounded-md bg-blue-600 px-6 py-3 text-base font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={loading}
-          onClick={() => void handleCheckout()}
-        >
-          {loading ? "Redirecting…" : "Upgrade to Pro"}
-        </button>
+          <button
+            type="button"
+            className="mt-6 w-full btn-primary py-3 text-base disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={loading}
+            onClick={() => void handleCheckout()}
+          >
+            {loading ? "Redirecting…" : "Upgrade to Pro"}
+          </button>
+        </div>
       </div>
 
-      <div className="mt-8 rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900">Free</h3>
-        <div className="mt-2 flex items-baseline gap-2">
-          <span className="text-4xl font-bold text-gray-900">$0</span>
+      <div className="order-1 lg:order-2">
+        <div className="surface-card p-8">
+          <h3 className="font-display text-xl font-semibold text-ink">Free</h3>
+          <div className="mt-2 flex items-baseline gap-2">
+            <span className="font-display text-4xl font-semibold text-ink">$0</span>
+            <span className="text-sm text-ink-muted">Forever</span>
+          </div>
+          <ul className="mt-6 space-y-3 text-sm text-ink-muted">
+            <li>SRS flashcards (HSK 1–3 demo deck)</li>
+            <li>20 practice questions per day</li>
+            <li>1 free mock exam with score</li>
+            <li>Weakness summary report</li>
+          </ul>
+          <Link href="/mock-exam" className="mt-6 inline-flex w-full btn-secondary py-3 text-base">
+            Start free mock exam
+          </Link>
         </div>
-        <ul className="mt-6 space-y-3 text-sm text-gray-600">
-          <li>SRS flashcards (HSK 1–3)</li>
-          <li>20 practice questions per day</li>
-          <li>1 free mock exam with score</li>
-          <li>Weakness summary report</li>
-        </ul>
-        <Link
-          href="/mock-exam"
-          className="mt-6 inline-flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-6 py-3 text-base font-medium text-gray-900 hover:bg-gray-50"
-        >
-          Start free
-        </Link>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import BrandLogo from "@/components/marketing/BrandLogo";
 import { createClient } from "@/lib/supabase/client";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -65,20 +66,23 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-paper px-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-paper px-4 py-12">
+      <div className="mb-8">
+        <BrandLogo />
+      </div>
       <div className="surface-card w-full max-w-md p-8">
         <p className="section-eyebrow">Welcome back</p>
         <h1 className="mt-2 font-display text-2xl font-semibold text-ink">Sign in</h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-ink-muted">
           Use password sign-in for beta testing (avoids email rate limits). Magic
           links are still available.
         </p>
 
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 flex flex-wrap gap-2">
           <button
             type="button"
             onClick={() => setMode("password")}
-            className={`rounded-md px-3 py-1.5 text-sm ${
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
               mode === "password"
                 ? "bg-ink text-white"
                 : "bg-paper-dark text-ink-muted hover:bg-mist"
@@ -89,7 +93,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => setMode("magic_link")}
-            className={`rounded-md px-3 py-1.5 text-sm ${
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
               mode === "magic_link"
                 ? "bg-ink text-white"
                 : "bg-paper-dark text-ink-muted hover:bg-mist"
@@ -102,7 +106,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setIsSignUp((v) => !v)}
-              className="rounded-md bg-gray-100 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-200"
+              className="rounded-lg bg-paper-dark px-3 py-1.5 text-sm font-medium text-ink-muted hover:bg-mist"
             >
               {isSignUp ? "Switch to Sign in" : "Switch to Sign up"}
             </button>
@@ -111,41 +115,37 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-ink">
               Email
             </label>
             <input
               id="email"
               type="email"
               required
+              autoComplete="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               placeholder="you@example.com"
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="input-field"
             />
           </div>
 
           {mode === "password" ? (
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-ink">
                 Password
               </label>
               <input
                 id="password"
                 type="password"
                 required
+                autoComplete={isSignUp ? "new-password" : "current-password"}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="••••••••"
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="input-field"
               />
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-ink-muted">
                 Tip: For beta testing, you can also create a user in Supabase{" "}
                 <span className="font-medium">Authentication → Users</span> and
                 sign in here.
@@ -169,9 +169,9 @@ export default function LoginPage() {
         </form>
 
         {message ? (
-          <p className="mt-4 text-sm text-green-700">{message}</p>
+          <p className="mt-4 text-sm text-jade">{message}</p>
         ) : null}
-        {error ? <p className="mt-4 text-sm text-red-600">{error}</p> : null}
+        {error ? <p className="mt-4 text-sm text-seal">{error}</p> : null}
       </div>
     </div>
   );

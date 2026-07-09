@@ -30,29 +30,29 @@ export default function Hsk2Vs3Page() {
   return (
     <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
       <header>
-        <p className="text-sm font-medium text-blue-600">Guide</p>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        <p className="section-eyebrow">Guide</p>
+        <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
           HSK 2.0 vs 3.0: Which Exam Should You Take in 2026?
         </h1>
-        <p className="mt-4 text-lg text-gray-600">
+        <p className="mt-4 text-lg text-ink-muted">
           China&apos;s official Chinese proficiency test was overhauled in 2021.
           Here&apos;s what changed and how to choose the right version for your
           goals.
         </p>
       </header>
 
-      <div className="prose prose-gray mt-10 max-w-none">
-        <h2 className="text-xl font-semibold text-gray-900">
+      <div className="mt-10 max-w-none">
+        <h2 className="font-display text-xl font-semibold text-ink">
           What is the HSK?
         </h2>
-        <p className="mt-3 text-gray-600">
+        <p className="mt-3 text-ink-muted">
           The HSK (Hànyǔ Shuǐpíng Kǎoshì) is China&apos;s standardized test of
           Mandarin Chinese proficiency, administered by Hanban through{" "}
           <a
             href="https://www.chinesetest.cn/hsk"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-700"
+            className="text-link"
           >
             chinesetest.cn
           </a>
@@ -60,10 +60,10 @@ export default function Hsk2Vs3Page() {
           Chinese ability.
         </p>
 
-        <h2 className="mt-10 text-xl font-semibold text-gray-900">
+        <h2 className="mt-10 text-xl font-semibold text-ink">
           Key differences at a glance
         </h2>
-        <ul className="mt-3 list-disc space-y-2 pl-5 text-gray-600">
+        <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-muted">
           <li>
             <strong>HSK 2.0</strong> (pre-2021): 6 levels, max ~5,000 words at
             HSK 6.
@@ -82,82 +82,82 @@ export default function Hsk2Vs3Page() {
           </li>
         </ul>
 
-        <h2 className="mt-10 text-xl font-semibold text-gray-900">
+        <h2 className="mt-10 text-xl font-semibold text-ink">
           HSK 2.0 level structure
         </h2>
-        <p className="mt-3 text-gray-600">
+        <p className="mt-3 text-ink-muted">
           The original HSK had six levels. Vocabulary counts below are cumulative
           (total words known at each level).
         </p>
         <div className="mt-4 overflow-x-auto">
           <table className="w-full min-w-[400px] border-collapse text-sm">
             <thead>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <th className="px-4 py-3 text-left font-semibold text-gray-900">
+              <tr className="border-b border-mist bg-paper-dark">
+                <th className="px-4 py-3 text-left font-semibold text-ink">
                   Level
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-900">
+                <th className="px-4 py-3 text-left font-semibold text-ink">
                   Cumulative vocabulary
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-900">
+                <th className="px-4 py-3 text-left font-semibold text-ink">
                   Description
                 </th>
               </tr>
             </thead>
             <tbody>
               {HSK20_LEVELS.map((row) => (
-                <tr key={row.level} className="border-b border-gray-100">
-                  <td className="px-4 py-3 text-gray-900">{row.level}</td>
-                  <td className="px-4 py-3 text-gray-600">
+                <tr key={row.level} className="border-b border-mist">
+                  <td className="px-4 py-3 text-ink">{row.level}</td>
+                  <td className="px-4 py-3 text-ink-muted">
                     {row.vocab.toLocaleString()} words
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{row.description}</td>
+                  <td className="px-4 py-3 text-ink-muted">{row.description}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        <h2 className="mt-10 text-xl font-semibold text-gray-900">
+        <h2 className="mt-10 text-xl font-semibold text-ink">
           HSK 3.0 level structure
         </h2>
-        <p className="mt-3 text-gray-600">
+        <p className="mt-3 text-ink-muted">
           The new standard, published in 2021 as GF0025-2021, expands to nine
           levels across three tiers. Counts are cumulative.
         </p>
         <div className="mt-4 overflow-x-auto">
           <table className="w-full min-w-[500px] border-collapse text-sm">
             <thead>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <th className="px-4 py-3 text-left font-semibold text-gray-900">
+              <tr className="border-b border-mist bg-paper-dark">
+                <th className="px-4 py-3 text-left font-semibold text-ink">
                   Level
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-900">
+                <th className="px-4 py-3 text-left font-semibold text-ink">
                   Tier
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-900">
+                <th className="px-4 py-3 text-left font-semibold text-ink">
                   Vocabulary
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-900">
+                <th className="px-4 py-3 text-left font-semibold text-ink">
                   Syllables
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-900">
+                <th className="px-4 py-3 text-left font-semibold text-ink">
                   Characters
                 </th>
               </tr>
             </thead>
             <tbody>
               {HSK30_LEVELS.map((row) => (
-                <tr key={row.level} className="border-b border-gray-100">
-                  <td className="px-4 py-3 text-gray-900">{row.level}</td>
-                  <td className="px-4 py-3 text-gray-600">{row.tier}</td>
-                  <td className="px-4 py-3 text-gray-600">
+                <tr key={row.level} className="border-b border-mist">
+                  <td className="px-4 py-3 text-ink">{row.level}</td>
+                  <td className="px-4 py-3 text-ink-muted">{row.tier}</td>
+                  <td className="px-4 py-3 text-ink-muted">
                     {row.vocab.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 text-ink-muted">
                     {row.syllables.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 text-ink-muted">
                     {row.characters.toLocaleString()}
                   </td>
                 </tr>
@@ -166,59 +166,59 @@ export default function Hsk2Vs3Page() {
           </table>
         </div>
 
-        <h2 className="mt-10 text-xl font-semibold text-gray-900">
+        <h2 className="mt-10 text-xl font-semibold text-ink">
           Level mapping: rough equivalents
         </h2>
-        <p className="mt-3 text-gray-600">
+        <p className="mt-3 text-ink-muted">
           There is no official 1:1 mapping, but these approximations help if
           you&apos;re transitioning study materials:
         </p>
         <div className="mt-4 overflow-x-auto">
           <table className="w-full min-w-[300px] border-collapse text-sm">
             <thead>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <th className="px-4 py-3 text-left font-semibold text-gray-900">
+              <tr className="border-b border-mist bg-paper-dark">
+                <th className="px-4 py-3 text-left font-semibold text-ink">
                   HSK 2.0
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-900">
+                <th className="px-4 py-3 text-left font-semibold text-ink">
                   Rough HSK 3.0 equivalent
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b border-gray-100">
-                <td className="px-4 py-3 text-gray-900">HSK 1–2</td>
-                <td className="px-4 py-3 text-gray-600">Level 1</td>
+              <tr className="border-b border-mist">
+                <td className="px-4 py-3 text-ink">HSK 1–2</td>
+                <td className="px-4 py-3 text-ink-muted">Level 1</td>
               </tr>
-              <tr className="border-b border-gray-100">
-                <td className="px-4 py-3 text-gray-900">HSK 3</td>
-                <td className="px-4 py-3 text-gray-600">Level 2</td>
+              <tr className="border-b border-mist">
+                <td className="px-4 py-3 text-ink">HSK 3</td>
+                <td className="px-4 py-3 text-ink-muted">Level 2</td>
               </tr>
-              <tr className="border-b border-gray-100">
-                <td className="px-4 py-3 text-gray-900">HSK 4</td>
-                <td className="px-4 py-3 text-gray-600">Level 4</td>
+              <tr className="border-b border-mist">
+                <td className="px-4 py-3 text-ink">HSK 4</td>
+                <td className="px-4 py-3 text-ink-muted">Level 4</td>
               </tr>
-              <tr className="border-b border-gray-100">
-                <td className="px-4 py-3 text-gray-900">HSK 5</td>
-                <td className="px-4 py-3 text-gray-600">Level 5–6</td>
+              <tr className="border-b border-mist">
+                <td className="px-4 py-3 text-ink">HSK 5</td>
+                <td className="px-4 py-3 text-ink-muted">Level 5–6</td>
               </tr>
-              <tr className="border-b border-gray-100">
-                <td className="px-4 py-3 text-gray-900">HSK 6</td>
-                <td className="px-4 py-3 text-gray-600">Level 7–9</td>
+              <tr className="border-b border-mist">
+                <td className="px-4 py-3 text-ink">HSK 6</td>
+                <td className="px-4 py-3 text-ink-muted">Level 7–9</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <h2 className="mt-10 text-xl font-semibold text-gray-900">
+        <h2 className="mt-10 text-xl font-semibold text-ink">
           Which exam should you take in 2026?
         </h2>
-        <p className="mt-3 text-gray-600">
+        <p className="mt-3 text-ink-muted">
           As of 2026, China is gradually rolling out HSK 3.0 exams, but HSK 2.0
           tests are still offered in many test centers worldwide during the
           transition period. Here&apos;s our recommendation:
         </p>
-        <ul className="mt-4 list-disc space-y-2 pl-5 text-gray-600">
+        <ul className="mt-4 list-disc space-y-2 pl-5 text-ink-muted">
           <li>
             <strong>New learners:</strong> Start with HSK 3.0 materials. The
             new syllabus is the long-term standard, and prep apps using outdated
@@ -241,7 +241,7 @@ export default function Hsk2Vs3Page() {
               href="https://www.chinesetest.cn/hsk"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-700"
+              className="text-link"
             >
               chinesetest.cn
             </a>{" "}
@@ -249,10 +249,10 @@ export default function Hsk2Vs3Page() {
           </li>
         </ul>
 
-        <h2 className="mt-10 text-xl font-semibold text-gray-900">
+        <h2 className="mt-10 text-xl font-semibold text-ink">
           Prepare with HSK 3.0-aligned tools
         </h2>
-        <p className="mt-3 text-gray-600">
+        <p className="mt-3 text-ink-muted">
           Most commercial apps still use HSK 2.0 vocabulary lists. HSK Mandarin
           Prep is built on the official GF0025-2021 syllabus with AI-generated
           practice and a free HSK 3 mock exam.
@@ -260,7 +260,7 @@ export default function Hsk2Vs3Page() {
         <div className="mt-6">
           <Link
             href="/mock-exam"
-            className="inline-flex items-center rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+            className="btn-primary px-5 py-2.5 text-sm"
           >
             Take free HSK 3 mock exam
           </Link>

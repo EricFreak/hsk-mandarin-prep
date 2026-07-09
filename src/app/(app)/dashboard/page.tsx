@@ -58,8 +58,8 @@ export default async function DashboardPage() {
   if (!hasSupabaseEnv()) {
     return (
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <h1 className="font-display text-2xl font-semibold text-ink">Dashboard</h1>
+        <p className="mt-2 text-sm text-ink-muted">
           Supabase is not configured. Connect your database to see progress.
         </p>
       </div>
@@ -137,43 +137,40 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <h1 className="font-display text-2xl font-semibold text-ink">Dashboard</h1>
+        <p className="mt-2 text-sm text-ink-muted">
           Track your HSK prep progress, mock exam results, and skill weaknesses.
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <p className="text-sm font-medium text-gray-500">Your plan</p>
-          <p className="mt-2 text-2xl font-semibold text-gray-900">
+        <div className="surface-card p-6">
+          <p className="text-sm font-medium text-ink-muted">Your plan</p>
+          <p className="mt-2 font-display text-2xl font-semibold text-ink">
             {planLabel(plan)}
           </p>
           {plan === "free" ? (
-            <Link
-              href="/pricing"
-              className="mt-3 inline-block text-sm font-medium text-blue-600 hover:text-blue-700"
-            >
+            <Link href="/pricing" className="mt-3 inline-block text-sm text-link">
               Upgrade to Pro
             </Link>
           ) : null}
         </div>
 
-        <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <p className="text-sm font-medium text-gray-500">Latest mock exam</p>
+        <div className="surface-card p-6">
+          <p className="text-sm font-medium text-ink-muted">Latest mock exam</p>
           {exam ? (
             <>
-              <p className="mt-2 text-2xl font-semibold text-gray-900">
+              <p className="mt-2 font-display text-2xl font-semibold text-ink">
                 {exam.score}%
               </p>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-ink-muted">
                 HSK 3 — {formatDate(exam.created_at)}
               </p>
             </>
           ) : (
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-ink-muted">
               No mock exam yet.{" "}
-              <Link href="/mock-exam" className="font-medium text-blue-600 hover:text-blue-700">
+              <Link href="/mock-exam" className="text-link">
                 Take your first exam
               </Link>
             </p>
@@ -181,18 +178,18 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="rounded-lg border border-gray-200 bg-white p-6">
+      <div className="surface-card p-6">
         <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold text-gray-900">Weakness summary</h2>
+          <h2 className="font-display text-lg font-semibold text-ink">Weakness summary</h2>
           {!showDetail && hiddenCount > 0 ? (
-            <span className="text-xs font-medium uppercase tracking-wide text-amber-700">
+            <span className="text-xs font-semibold uppercase tracking-wide text-seal">
               Pro feature
             </span>
           ) : null}
         </div>
 
         {fullBreakdown.length === 0 ? (
-          <p className="mt-4 text-sm text-gray-600">
+          <p className="mt-4 text-sm text-ink-muted">
             {exam
               ? "No weaknesses detected in your latest mock exam — great job. (You answered everything correctly.)"
               : practiceResults.length > 0
@@ -205,12 +202,12 @@ export default async function DashboardPage() {
               {visibleBreakdown.map((entry) => (
                 <li
                   key={entry.skill}
-                  className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 px-4 py-3"
+                  className="flex items-center justify-between rounded-lg border border-mist bg-paper-dark px-4 py-3"
                 >
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-ink">
                     {capitalizeSkill(entry.skill)}
                   </span>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-ink-muted">
                     {entry.wrongCount} incorrect
                   </span>
                 </li>
@@ -223,12 +220,12 @@ export default async function DashboardPage() {
                   {fullBreakdown.slice(1).map((entry) => (
                     <div
                       key={entry.skill}
-                      className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 px-4 py-3"
+                      className="flex items-center justify-between rounded-lg border border-mist bg-paper-dark px-4 py-3"
                     >
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium text-ink">
                         {capitalizeSkill(entry.skill)}
                       </span>
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-ink-muted">
                         {entry.wrongCount} incorrect
                       </span>
                     </div>
@@ -248,16 +245,10 @@ export default async function DashboardPage() {
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <Link
-          href="/practice"
-          className="rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
-        >
+        <Link href="/practice" className="btn-primary">
           Start practice
         </Link>
-        <Link
-          href="/mock-exam"
-          className="rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
+        <Link href="/mock-exam" className="btn-secondary">
           Take mock exam
         </Link>
       </div>

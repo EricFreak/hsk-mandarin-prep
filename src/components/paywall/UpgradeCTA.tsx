@@ -19,10 +19,10 @@ export default function UpgradeCTA({
   return (
     <>
       <div
-        className={`rounded-lg border border-amber-200 bg-amber-50 p-6 text-center ${className}`}
+        className={`rounded-xl border border-seal/20 bg-seal/5 p-6 text-center ${className}`}
       >
-        <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-        <p className="mt-2 text-sm text-gray-600">{description}</p>
+        <h2 className="font-display text-lg font-semibold text-ink">{title}</h2>
+        <p className="mt-2 text-sm text-ink-muted">{description}</p>
         <button
           type="button"
           className="mt-4 inline-block btn-primary"

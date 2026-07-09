@@ -24,7 +24,7 @@ export default async function FlashcardsPage() {
     <div>
       <div className="mb-8">
         <h1 className="font-display text-2xl font-semibold text-ink">Flashcards</h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-ink-muted">
           Review HSK vocabulary with spaced repetition. Flip the card, then rate
           how well you remembered it.
         </p>

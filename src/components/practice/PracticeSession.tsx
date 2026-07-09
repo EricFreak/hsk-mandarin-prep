@@ -136,9 +136,9 @@ export default function PracticeSession() {
 
   if (limitReached) {
     return (
-      <div className="rounded-lg border border-amber-200 bg-amber-50 p-8 text-center">
-        <h2 className="text-lg font-semibold text-gray-900">Daily limit reached</h2>
-        <p className="mt-2 text-sm text-gray-600">
+      <div className="alert-limit">
+        <h2 className="font-display text-lg font-semibold text-ink">Daily limit reached</h2>
+        <p className="mt-2 text-sm text-ink-muted">
           Free accounts include 20 AI practice questions per day. Upgrade to Pro for
           unlimited practice.
         </p>
@@ -154,20 +154,20 @@ export default function PracticeSession() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[320px] items-center justify-center rounded-lg border border-gray-200 bg-white p-8">
-        <p className="text-sm text-gray-500">Generating your next question...</p>
+      <div className="flex min-h-[320px] items-center justify-center surface-card p-8">
+        <p className="text-sm text-ink-muted">Generating your next question...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
-        <p className="text-sm text-red-700">{error}</p>
+      <div className="rounded-xl border border-seal/20 bg-seal/5 p-6 text-center">
+        <p className="text-sm text-seal">{error}</p>
         <button
           type="button"
           onClick={() => void loadQuestion(level)}
-          className="mt-4 rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+          className="mt-4 btn-primary"
         >
           Try again
         </button>
@@ -185,7 +185,7 @@ export default function PracticeSession() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-700">HSK level</span>
+          <span className="text-sm font-medium text-ink">HSK level</span>
           {LEVELS.map((value) => (
             <button
               key={value}
@@ -203,14 +203,14 @@ export default function PracticeSession() {
           ))}
         </div>
         {limit !== null ? (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-ink-muted">
             {usedToday}/{limit} questions today
           </p>
         ) : null}
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
-        <p className="text-xs font-medium uppercase tracking-wide text-blue-700">
+      <div className="surface-card p-8">
+        <p className="text-xs font-medium uppercase tracking-wide text-jade">
           {question.skill}
         </p>
         <PracticeStem stem={question.stem} />
@@ -223,16 +223,16 @@ export default function PracticeSession() {
 
           if (submitted) {
             if (index === question.answerIndex) {
-              choiceClass += " border-green-500 bg-green-50 text-green-900";
+              choiceClass += " border-jade bg-jade/10 text-jade";
             } else if (index === selectedIndex) {
-              choiceClass += " border-red-500 bg-red-50 text-red-900";
+              choiceClass += " border-seal bg-seal/10 text-seal";
             } else {
-              choiceClass += " border-gray-200 bg-white text-gray-700";
+              choiceClass += " border-mist bg-white text-ink-muted";
             }
           } else if (selectedIndex === index) {
             choiceClass += " border-jade bg-jade/10 text-jade";
           } else {
-            choiceClass += " border-gray-200 bg-white text-gray-800 hover:border-blue-300";
+            choiceClass += " border-mist bg-white text-ink hover:border-jade/30";
           }
 
           return (
@@ -253,8 +253,8 @@ export default function PracticeSession() {
         <div
           className={`rounded-lg border p-4 ${
             isCorrect
-              ? "border-green-200 bg-green-50 text-green-900"
-              : "border-red-200 bg-red-50 text-red-900"
+              ? "border-jade/30 bg-jade/10 text-ink"
+              : "border-seal/30 bg-seal/10 text-ink"
           }`}
         >
           <p className="font-medium">{isCorrect ? "Correct!" : "Not quite."}</p>
@@ -263,7 +263,7 @@ export default function PracticeSession() {
             type="button"
             disabled={limitReached}
             onClick={() => void loadQuestion(level)}
-            className="mt-4 rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-4 btn-primary"
           >
             Next question
           </button>
