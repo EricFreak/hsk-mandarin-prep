@@ -6,6 +6,5 @@ set
   plan = 'pro',
   founder_cohort = true
 where email in (
-  'founder1@example.com',
-  'founder2@example.com'
+  '657696471@qq.com'
 );
