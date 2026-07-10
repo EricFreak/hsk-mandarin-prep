@@ -69,8 +69,17 @@ async function main() {
   }
   if (env.OPENAI_API_KEY) pass("ENV-OPENAI", "set (AI quality)");
   else warn("ENV-OPENAI", "missing — fallback questions only");
-  if (env.STRIPE_SECRET_KEY) pass("ENV-STRIPE", "set");
-  else warn("ENV-STRIPE", "missing — checkout disabled");
+  const hasCreem =
+    env.CREEM_API_KEY &&
+    env.CREEM_PRODUCT_PRO_MONTHLY &&
+    env.CREEM_PRODUCT_PRO_YEARLY;
+  const hasStripe =
+    env.STRIPE_SECRET_KEY &&
+    env.NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY &&
+    env.NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY;
+  if (hasCreem) pass("ENV-CREEM", "set (MoR checkout)");
+  else if (hasStripe) pass("ENV-STRIPE", "set (Stripe checkout)");
+  else warn("ENV-PAYMENTS", "missing — checkout disabled");
 
   const url = env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = env.SUPABASE_SERVICE_ROLE_KEY;

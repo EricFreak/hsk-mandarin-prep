@@ -1,21 +1,21 @@
 import { test, expect } from "@playwright/test";
-import { isStripeConfigured } from "../helpers/supabase";
+import { isCheckoutConfigured } from "../helpers/supabase";
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
-test.describe("PAY — Stripe (anonymous)", () => {
-  test("API-022: checkout requires auth when Stripe configured", async ({
+test.describe("PAY — Checkout (anonymous)", () => {
+  test("API-022: checkout requires auth when payments configured", async ({
     request,
   }) => {
-    if (!isStripeConfigured()) {
-      const res = await request.post("/api/stripe/checkout", {
+    if (!isCheckoutConfigured()) {
+      const res = await request.post("/api/checkout", {
         data: { priceType: "monthly" },
       });
       expect(res.status()).toBe(503);
       return;
     }
 
-    const res = await request.post("/api/stripe/checkout", {
+    const res = await request.post("/api/checkout", {
       data: { priceType: "monthly" },
     });
     expect(res.status()).toBe(401);
@@ -25,8 +25,8 @@ test.describe("PAY — Stripe (anonymous)", () => {
     await page.goto("/pricing");
     await page.getByRole("button", { name: /upgrade to pro/i }).click();
 
-    if (!isStripeConfigured()) {
-      await expect(page.getByText(/stripe is not configured/i)).toBeVisible();
+    if (!isCheckoutConfigured()) {
+      await expect(page.getByText(/payments are not configured/i)).toBeVisible();
       await expect(page).toHaveURL(/\/pricing/);
       return;
     }

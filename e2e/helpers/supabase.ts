@@ -36,6 +36,15 @@ export function projectRefFromUrl(url: string): string {
   return new URL(url).hostname.split(".")[0] ?? "localhost";
 }
 
+export function isCreemConfigured(): boolean {
+  const env = getEnv();
+  return Boolean(
+    env.CREEM_API_KEY &&
+      env.CREEM_PRODUCT_PRO_MONTHLY &&
+      env.CREEM_PRODUCT_PRO_YEARLY,
+  );
+}
+
 export function isStripeConfigured(): boolean {
   const env = getEnv();
   return Boolean(
@@ -43,6 +52,21 @@ export function isStripeConfigured(): boolean {
       env.NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY &&
       env.NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY,
   );
+}
+
+export function isCheckoutConfigured(): boolean {
+  const env = getEnv();
+  const provider = env.PAYMENT_PROVIDER?.trim().toLowerCase();
+
+  if (provider === "creem") {
+    return isCreemConfigured();
+  }
+
+  if (provider === "stripe") {
+    return isStripeConfigured();
+  }
+
+  return isCreemConfigured() || isStripeConfigured();
 }
 
 export async function resetUserProgress(

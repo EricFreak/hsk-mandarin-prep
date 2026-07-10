@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { PRO_BENEFITS, type PriceType } from "@/lib/stripe";
+import { PRO_BENEFITS, type PriceType } from "@/lib/payments";
 
 export default function PricingCheckout() {
   const [priceType, setPriceType] = useState<PriceType>("monthly");
@@ -14,7 +14,7 @@ export default function PricingCheckout() {
     setError(null);
 
     try {
-      const response = await fetch("/api/stripe/checkout", {
+      const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ priceType }),

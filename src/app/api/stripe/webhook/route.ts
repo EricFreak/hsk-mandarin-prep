@@ -1,56 +1,13 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  resolveUserIdFromMetadata,
+  setPlanByCustomerId,
+  setUserPlan,
+} from "@/lib/payments/subscription-sync";
 import { getStripe } from "@/lib/stripe";
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 
 export const dynamic = "force-dynamic";
-
-async function setUserPlan(
-  userId: string,
-  plan: "free" | "pro",
-  stripeCustomerId?: string | null,
-) {
-  const supabase = createAdminClient();
-  if (!supabase) {
-    throw new Error("Supabase admin client is not configured");
-  }
-
-  const update: { plan: "free" | "pro"; stripe_customer_id?: string } = {
-    plan,
-  };
-
-  if (stripeCustomerId) {
-    update.stripe_customer_id = stripeCustomerId;
-  }
-
-  const { error } = await supabase
-    .from("profiles")
-    .update(update)
-    .eq("id", userId);
-
-  if (error) {
-    throw error;
-  }
-}
-
-async function setPlanByCustomerId(
-  customerId: string,
-  plan: "free" | "pro",
-) {
-  const supabase = createAdminClient();
-  if (!supabase) {
-    throw new Error("Supabase admin client is not configured");
-  }
-
-  const { error } = await supabase
-    .from("profiles")
-    .update({ plan })
-    .eq("stripe_customer_id", customerId);
-
-  if (error) {
-    throw error;
-  }
-}
 
 function resolveUserId(session: Stripe.Checkout.Session): string | null {
   if (session.metadata?.userId) {
@@ -112,10 +69,12 @@ export async function POST(request: Request) {
             ? subscription.customer
             : subscription.customer?.id;
 
-        if (customerId) {
+        const userId = resolveUserIdFromMetadata(subscription.metadata);
+
+        if (userId) {
+          await setUserPlan(userId, "free");
+        } else if (customerId) {
           await setPlanByCustomerId(customerId, "free");
-        } else if (subscription.metadata?.userId) {
-          await setUserPlan(subscription.metadata.userId, "free");
         }
         break;
       }

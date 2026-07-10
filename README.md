@@ -86,11 +86,17 @@ Copy `.env.example` to `.env.local` and fill in every value before running local
 | --- | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL (Settings → API) |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anonymous/public key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase service role key — used by Stripe webhooks to update `profiles.plan` server-side |
-| `STRIPE_SECRET_KEY` | Yes | Stripe secret key (`sk_test_…` or `sk_live_…`). Checkout returns 503 if missing |
-| `STRIPE_WEBHOOK_SECRET` | Yes | Stripe webhook signing secret (`whsec_…`) |
-| `NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY` | Yes | Stripe Price ID for the Pro monthly subscription ($9.99/mo) |
-| `NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY` | Yes | Stripe Price ID for the Pro yearly subscription ($69/yr) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase service role key — used by payment webhooks to update `profiles.plan` server-side |
+| `PAYMENT_PROVIDER` | Recommended | `creem` (default when Creem keys set) or `stripe` |
+| `CREEM_API_KEY` | MoR | Creem API key — **recommended for mainland individuals** |
+| `CREEM_WEBHOOK_SECRET` | MoR | Creem webhook signing secret |
+| `CREEM_PRODUCT_PRO_MONTHLY` | MoR | Creem product ID for Pro monthly ($9.99/mo) |
+| `CREEM_PRODUCT_PRO_YEARLY` | MoR | Creem product ID for Pro yearly ($69/yr) |
+| `CREEM_TEST_MODE` | MoR | `true` for sandbox (`test-api.creem.io`), `false` in production |
+| `STRIPE_SECRET_KEY` | Optional | Stripe secret key — only if you have an overseas Stripe account |
+| `STRIPE_WEBHOOK_SECRET` | Optional | Stripe webhook signing secret |
+| `NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY` | Optional | Stripe Price ID for Pro monthly |
+| `NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY` | Optional | Stripe Price ID for Pro yearly |
 | `OPENAI_API_KEY` | Yes | OpenAI API key for practice generation and writing scoring |
 | `NEXT_PUBLIC_APP_URL` | Yes | Public app URL. Use `http://localhost:3000` locally; set to your production domain on Vercel |
 
@@ -120,7 +126,20 @@ In the Supabase dashboard:
 
 The login page (`/login`) sends a magic link via `signInWithOtp`. After the user clicks the link, `/auth/callback` exchanges the code for a session and upserts a `profiles` row with `plan = 'free'`.
 
-## Stripe setup
+## Payments setup
+
+**Mainland China / no overseas bank:** use **Creem** (Merchant of Record). Full guide: [`docs/launch/04-creem-setup.md`](docs/launch/04-creem-setup.md).
+
+1. Create monthly + yearly subscription products in [Creem](https://creem.io)
+2. Set `CREEM_*` env vars and `PAYMENT_PROVIDER=creem`
+3. Register webhook → `https://<domain>/api/webhooks/creem`
+4. Test: free user → Upgrade → pay → `profiles.plan = pro`
+
+Checkout API: `POST /api/checkout` with `{ "priceType": "monthly"|"yearly" }`.
+
+**Overseas Stripe account:** set `PAYMENT_PROVIDER=stripe` and use the Stripe section below.
+
+## Stripe setup (optional)
 
 ### 1. Create products and prices
 

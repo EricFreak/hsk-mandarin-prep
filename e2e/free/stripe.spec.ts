@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import {
   createAdminClient,
   getEnv,
-  isStripeConfigured,
+  isCheckoutConfigured,
   seedMockExamAttempt,
 } from "../helpers/supabase";
 
@@ -26,15 +26,15 @@ test.describe("PAY — Free user upgrade flow", () => {
     await expect(page.getByRole("dialog")).toBeVisible();
     await expect(page.getByText(/unlock unlimited prep/i)).toBeVisible();
 
-    if (!isStripeConfigured()) {
+    if (!isCheckoutConfigured()) {
       await page.getByRole("button", { name: /upgrade to pro/i }).last().click();
-      await expect(page.getByText(/stripe is not configured/i)).toBeVisible();
+      await expect(page.getByText(/payments are not configured/i)).toBeVisible();
       return;
     }
 
     const checkoutResponse = page.waitForResponse(
       (res) =>
-        res.url().includes("/api/stripe/checkout") &&
+        res.url().includes("/api/checkout") &&
         res.request().method() === "POST",
     );
 
@@ -42,6 +42,6 @@ test.describe("PAY — Free user upgrade flow", () => {
     const response = await checkoutResponse;
     expect(response.status()).toBe(200);
     const body = (await response.json()) as { url?: string };
-    expect(body.url).toMatch(/^https:\/\/checkout\.stripe\.com\//);
+    expect(body.url).toMatch(/^https:\/\//);
   });
 });

@@ -31,7 +31,8 @@ check NEXT_PUBLIC_APP_URL
 
 echo ""
 echo "=== Optional (Phase 2+) ==="
-[ -n "${STRIPE_SECRET_KEY:-}" ] && echo "OK: STRIPE_SECRET_KEY" || echo "SKIP: STRIPE_SECRET_KEY (not needed for beta)"
+[ -n "${CREEM_API_KEY:-}" ] && echo "OK: CREEM_API_KEY" || echo "SKIP: CREEM_API_KEY (MoR — see docs/launch/04-creem-setup.md)"
+[ -n "${STRIPE_SECRET_KEY:-}" ] && echo "OK: STRIPE_SECRET_KEY" || echo "SKIP: STRIPE_SECRET_KEY (optional Stripe fallback)"
 [ -n "${OPENAI_API_KEY:-}" ] && echo "OK: OPENAI_API_KEY" || echo "SKIP: OPENAI_API_KEY (fallback questions work)"
 
 if [ "$missing" -eq 1 ]; then

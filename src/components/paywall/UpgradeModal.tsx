@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { PRO_BENEFITS, type PriceType } from "@/lib/stripe";
+import { PRO_BENEFITS, type PriceType } from "@/lib/payments";
 
 type UpgradeModalProps = {
   open: boolean;
@@ -48,7 +48,7 @@ export default function UpgradeModal({
     setError(null);
 
     try {
-      const response = await fetch("/api/stripe/checkout", {
+      const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ priceType }),
