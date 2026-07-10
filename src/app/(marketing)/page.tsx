@@ -1,31 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import HeroVisual from "@/components/marketing/HeroVisual";
+import HeroBrandVisual from "@/components/marketing/HeroBrandVisual";
+import HowItWorksShowcase from "@/components/marketing/HowItWorksShowcase";
 import PricingTable from "@/components/marketing/PricingTable";
-import ProductShowcase from "@/components/marketing/ProductShowcase";
 
 const TRUST_BADGES = [
   "Official HSK 3.0 aligned",
   "AI evaluation",
   "Your data is private",
-];
-
-const STEPS = [
-  {
-    step: "1",
-    title: "Take a mock exam",
-    description: "Full-length exams under real conditions.",
-  },
-  {
-    step: "2",
-    title: "Get AI grading & analysis",
-    description: "Instant scores and personalized weakness reports.",
-  },
-  {
-    step: "3",
-    title: "Practice smarter",
-    description: "Target weak areas with AI-recommended practice.",
-  },
 ];
 
 export default function LandingPage() {
@@ -58,8 +40,8 @@ export default function LandingPage() {
               Smarter practice.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
-              <Link href="/mock-exam" className="btn-primary px-6 py-3 text-base">
-                Take free mock exam
+              <Link href="/login?next=%2Fmock-exam" className="btn-primary px-6 py-3 text-base">
+                Sign up for free mock exam
               </Link>
               <a href="#how-it-works" className="btn-secondary px-6 py-3 text-base">
                 See how it works
@@ -76,35 +58,11 @@ export default function LandingPage() {
               ))}
             </ul>
           </div>
-          <HeroVisual />
+          <HeroBrandVisual />
         </div>
       </section>
 
-      <section id="how-it-works" className="border-y border-mist bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="font-display text-3xl font-semibold text-ink">How it works</h2>
-            <div className="mx-auto mt-4 h-px w-24 bg-brush-rule" />
-          </div>
-          <ol className="mt-12 grid gap-8 md:grid-cols-3">
-            {STEPS.map((item) => (
-              <li key={item.step} className="surface-card p-6 text-center md:text-left">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-seal/10 font-display text-lg font-semibold text-seal">
-                  {item.step}
-                </span>
-                <h3 className="mt-4 font-display text-xl font-semibold text-ink">
-                  {item.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-                  {item.description}
-                </p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <ProductShowcase />
+      <HowItWorksShowcase />
 
       <section id="pricing" className="border-t border-mist bg-paper">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
@@ -129,8 +87,8 @@ export default function LandingPage() {
             One free HSK 3 mock exam. Instant score and weakness summary — no credit
             card.
           </p>
-          <Link href="/mock-exam" className="btn-primary mt-8 px-8 py-3 text-base">
-            Start free mock exam
+          <Link href="/login?next=%2Fmock-exam" className="btn-primary mt-8 px-8 py-3 text-base">
+            Sign up for free mock exam
           </Link>
         </div>
       </section>

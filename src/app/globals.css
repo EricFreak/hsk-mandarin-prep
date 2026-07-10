@@ -72,3 +72,12 @@ body {
 .page-enter {
   animation: page-enter 0.22s ease-out;
 }
+
+@keyframes showcase-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}

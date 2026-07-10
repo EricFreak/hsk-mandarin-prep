@@ -21,7 +21,7 @@ const TIERS: Tier[] = [
       "20 practice questions per day",
       "SRS flashcards (beta demo deck)",
     ],
-    cta: { label: "Start free mock exam", href: "/mock-exam" },
+    cta: { label: "Sign up for free mock exam", href: "/login?next=%2Fmock-exam" },
   },
   {
     name: "Pro",
