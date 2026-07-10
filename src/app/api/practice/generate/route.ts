@@ -144,7 +144,13 @@ export async function GET(request: Request) {
     const words = getWordsForLevel(level);
     const seedParam = searchParams.get("seed");
     const seed = seedParam ? Number.parseInt(seedParam, 10) : Date.now();
-    const question = await generatePracticeQuestion(level, words, Number.isFinite(seed) ? seed : Date.now());
+    const focusSkill = searchParams.get("skill") ?? undefined;
+    const question = await generatePracticeQuestion(
+      level,
+      words,
+      Number.isFinite(seed) ? seed : Date.now(),
+      focusSkill ?? undefined,
+    );
     const model = process.env.OPENAI_API_KEY ? "gpt-4o-mini" : null;
 
     const { data: inserted, error: insertError } = await supabase

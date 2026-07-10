@@ -56,11 +56,18 @@ export default function PracticeSession() {
 
     try {
       const replayQuestionId = searchParams.get("questionId");
-      const response = await fetch(
-        replayQuestionId
-          ? `/api/practice/generate?questionId=${encodeURIComponent(replayQuestionId)}`
-          : `/api/practice/generate?level=${targetLevel}&seed=${seed}`,
-      );
+      const focusSkill = searchParams.get("skill");
+      const params = new URLSearchParams();
+      if (replayQuestionId) {
+        params.set("questionId", replayQuestionId);
+      } else {
+        params.set("level", String(targetLevel));
+        params.set("seed", String(seed));
+        if (focusSkill) {
+          params.set("skill", focusSkill);
+        }
+      }
+      const response = await fetch(`/api/practice/generate?${params.toString()}`);
       const data = (await response.json()) as GenerateResponse;
 
       if (response.status === 402 && data.error === "limit_reached") {
@@ -141,6 +148,15 @@ export default function PracticeSession() {
       if (data.limitReached) {
         setLimitReached(true);
       }
+
+      const planTaskId = searchParams.get("planTaskId");
+      if (planTaskId && correct) {
+        void fetch(`/api/coach/plan/tasks/${planTaskId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "done" }),
+        });
+      }
     } catch {
       setError("Failed to submit answer");
     } finally {
@@ -216,9 +232,19 @@ export default function PracticeSession() {
 
   const isCorrect = selectedIndex === question.answerIndex;
 
+  const focusSkill = searchParams.get("skill");
+  const planTaskId = searchParams.get("planTaskId");
+
   return (
     <div className="relative space-y-6">
       <AsyncOverlay active={loading} label="Generating next question…" />
+      {focusSkill ? (
+        <div className="rounded-lg border border-jade/30 bg-jade/5 px-4 py-3 text-sm text-ink-muted">
+          Today&apos;s focus:{" "}
+          <span className="font-semibold capitalize text-jade">{focusSkill}</span>
+          {planTaskId ? " (from your coach plan)" : ""}
+        </div>
+      ) : null}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-ink">HSK level</span>

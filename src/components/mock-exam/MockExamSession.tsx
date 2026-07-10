@@ -27,6 +27,7 @@ type SubmitResponse = {
   correctCount?: number;
   totalMcq?: number;
   weaknesses?: WeaknessEntry[];
+  coachPending?: boolean;
   error?: string;
   upgrade?: boolean;
 };
@@ -45,6 +46,7 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
   const [writingScore, setWritingScore] = useState<WritingScoreResult | null>(null);
   const [writingScoreLoading, setWritingScoreLoading] = useState(false);
   const [writingScoreError, setWritingScoreError] = useState<string | null>(null);
+  const [coachStatus, setCoachStatus] = useState<"idle" | "running" | "ready" | "error">("idle");
 
   const canScoreWriting = canUseAiWritingScore(plan);
   const writingAnswer = WRITING_QUESTION
@@ -110,6 +112,28 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
       }
 
       setResult(data);
+
+      if (data.coachPending && data.attemptId) {
+        setCoachStatus("running");
+        void fetch("/api/coach/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            trigger: "mock_exam_completed",
+            sourceAttemptId: data.attemptId,
+          }),
+        })
+          .then(async (response) => {
+            if (response.ok) {
+              setCoachStatus("ready");
+              return;
+            }
+            setCoachStatus("error");
+          })
+          .catch(() => {
+            setCoachStatus("error");
+          });
+      }
     } catch {
       setError("Failed to submit mock exam");
     } finally {
@@ -322,6 +346,25 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
                   />
                 </div>
               </div>
+            )}
+          </div>
+        ) : null}
+
+        {coachStatus !== "idle" ? (
+          <div className="surface-card p-6">
+            <h3 className="text-sm font-semibold text-ink">AI coach report</h3>
+            {coachStatus === "running" ? (
+              <p className="mt-2 text-sm text-ink-muted">
+                Generating your personalized summary and study plan…
+              </p>
+            ) : coachStatus === "ready" ? (
+              <p className="mt-2 text-sm text-ink-muted">
+                Your coach report is ready on the dashboard.
+              </p>
+            ) : (
+              <p className="mt-2 text-sm text-ink-muted">
+                Report generation is delayed. Open your dashboard to retry shortly.
+              </p>
             )}
           </div>
         ) : null}

@@ -61,15 +61,20 @@ function buildFallbackQuestion(
   };
 }
 
-function buildPrompt(level: 1 | 2 | 3, words: HskWord[]): string {
+function buildPrompt(level: 1 | 2 | 3, words: HskWord[], focusSkill?: string): string {
   const wordList = words
     .slice(0, 40)
     .map((word) => `${word.hanzi} (${formatPinyinSpaced(word.pinyin)}): ${word.english}`)
     .join("\n");
 
+  const focusLine = focusSkill
+    ? `\nFocus this question on the "${focusSkill}" skill area from the learner's study plan.`
+    : "";
+
   return `You are an HSK ${level} Mandarin tutor. Generate ONE cloze-style multiple-choice question using ONLY vocabulary from this list:
 
 ${wordList}
+${focusLine}
 
 Requirements:
 - Return valid JSON with keys: stem, choices, answerIndex, explanation, skill
@@ -85,10 +90,12 @@ export async function generatePracticeQuestion(
   level: 1 | 2 | 3,
   words: HskWord[],
   seed = 0,
+  focusSkill?: string,
 ): Promise<PracticeQuestion> {
   const client = getOpenAIClient();
   if (!client) {
-    return buildFallbackQuestion(level, words, seed);
+    const fallback = buildFallbackQuestion(level, words, seed);
+    return focusSkill ? { ...fallback, skill: focusSkill } : fallback;
   }
 
   try {
@@ -104,19 +111,21 @@ export async function generatePracticeQuestion(
         },
         {
           role: "user",
-          content: buildPrompt(level, words),
+          content: buildPrompt(level, words, focusSkill),
         },
       ],
     });
 
     const content = response.choices[0]?.message?.content;
     if (!content) {
-      return buildFallbackQuestion(level, words, seed);
+      const fallback = buildFallbackQuestion(level, words, seed);
+      return focusSkill ? { ...fallback, skill: focusSkill } : fallback;
     }
 
     const parsed = parsePracticeQuestion(JSON.parse(content));
-    return parsed;
+    return focusSkill ? { ...parsed, skill: focusSkill } : parsed;
   } catch {
-    return buildFallbackQuestion(level, words, seed);
+    const fallback = buildFallbackQuestion(level, words, seed);
+    return focusSkill ? { ...fallback, skill: focusSkill } : fallback;
   }
 }

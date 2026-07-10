@@ -15,20 +15,34 @@ const STEPS = [
   {
     id: "report",
     step: "2",
-    title: "Get AI grading & analysis",
+    title: "Get your score & skill breakdown",
     description:
-      "Instant score plus a weakness report that shows which skills need work.",
+      "Instant score plus structured weakness metrics from your mock exam.",
+  },
+  {
+    id: "summary",
+    step: "3",
+    title: "Read your AI summary",
+    description:
+      "A natural-language coach report explains what your score means and what to fix first.",
+  },
+  {
+    id: "plan",
+    step: "4",
+    title: "Follow your study plan",
+    description:
+      "Get a personalized 7-day plan with daily tasks linked to practice and review.",
   },
   {
     id: "practice",
-    step: "3",
+    step: "5",
     title: "Practice smarter",
     description:
       "AI-generated questions target your weak areas instead of random drills.",
   },
   {
     id: "track",
-    step: "4",
+    step: "6",
     title: "Track progress",
     description:
       "Your dashboard updates after every session so you always know where you stand.",
@@ -168,12 +182,65 @@ function ReportPreview({ active }: { active: boolean }) {
   );
 }
 
+function SummaryPreview({ active }: { active: boolean }) {
+  return (
+    <PreviewChrome title="AI Coach Summary" badge="Preview">
+      <p
+        className={`text-sm leading-relaxed text-ink-muted transition-opacity duration-500 ${
+          active ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        Your mock score of <span className="font-semibold text-ink">72%</span> shows solid
+        vocabulary, but <span className="font-semibold text-seal">listening</span> is your
+        main gap. Focus on time expressions and transport phrases this week.
+      </p>
+      <div
+        className={`mt-4 rounded-lg border border-mist bg-paper-dark px-3 py-3 transition-all duration-500 ${
+          active ? "opacity-100" : "opacity-0"
+        }`}
+        style={{ transitionDelay: active ? "300ms" : "0ms" }}
+      >
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+          Readiness estimate
+        </p>
+        <p className="mt-1 font-display text-2xl font-semibold text-jade">68%</p>
+      </div>
+    </PreviewChrome>
+  );
+}
+
+function PlanPreview({ active }: { active: boolean }) {
+  const tasks = [
+    "Day 1 — Listening practice (15 questions)",
+    "Day 2 — Review mistake bank",
+    "Day 3 — Vocabulary flashcards",
+  ];
+
+  return (
+    <PreviewChrome title="Weekly Study Plan" badge="Preview">
+      <ul className="space-y-2">
+        {tasks.map((task, index) => (
+          <li
+            key={task}
+            className={`rounded-lg border border-mist bg-paper-dark px-3 py-2 text-xs text-ink transition-all duration-500 ${
+              active ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"
+            }`}
+            style={{ transitionDelay: active ? `${index * 150}ms` : "0ms" }}
+          >
+            {task}
+          </li>
+        ))}
+      </ul>
+    </PreviewChrome>
+  );
+}
+
 function PracticePreview({ active }: { active: boolean }) {
   return (
     <PreviewChrome title="AI Practice" badge="Preview">
       <p className="text-xs text-ink-muted">
         Targeting:{" "}
-        <span className="font-semibold text-seal">Listening</span> (from your report)
+        <span className="font-semibold text-seal">Listening</span> (from your plan)
       </p>
       <p
         className={`mt-3 text-sm font-medium text-ink transition-all duration-500 ${
@@ -256,6 +323,10 @@ function StepPreview({ stepId, active }: { stepId: StepId; active: boolean }) {
       return <MockExamPreview active={active} />;
     case "report":
       return <ReportPreview active={active} />;
+    case "summary":
+      return <SummaryPreview active={active} />;
+    case "plan":
+      return <PlanPreview active={active} />;
     case "practice":
       return <PracticePreview active={active} />;
     case "track":

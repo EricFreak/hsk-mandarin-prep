@@ -222,6 +222,7 @@ export async function POST(request: Request) {
       correctCount,
       totalMcq: HSK3_MOCK_EXAM_MCQ_COUNT,
       weaknesses,
+      coachPending: Boolean(inserted?.id),
     });
   } catch (err) {
     console.error("Mock exam submit failed:", err);

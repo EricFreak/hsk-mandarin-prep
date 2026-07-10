@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import CoachPanel from "@/components/dashboard/CoachPanel";
 import UpgradeCTA from "@/components/paywall/UpgradeCTA";
 import { planLabel } from "@/lib/entitlements";
 import type { DashboardPayload } from "@/lib/dashboard-data";
@@ -78,9 +79,11 @@ export default function DashboardView() {
       <div>
         <h1 className="font-display text-2xl font-semibold text-ink">Dashboard</h1>
         <p className="mt-2 text-sm text-ink-muted">
-          Track your HSK prep progress, mock exam results, and skill weaknesses.
+          Your AI coach, mock exam results, and skill progress in one place.
         </p>
       </div>
+
+      <CoachPanel />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="surface-card p-6 transition-opacity duration-200">
