@@ -98,14 +98,17 @@ export async function createStorageState(
       user: authData.session.user,
     });
 
+    const { hostname, protocol } = new URL(baseURL);
+    const cookieDomain = hostname === "127.0.0.1" ? "localhost" : hostname;
+
     await context.addCookies([
       {
         name: `sb-${ref}-auth-token`,
         value: sessionJson,
-        domain: "localhost",
+        domain: cookieDomain,
         path: "/",
         httpOnly: false,
-        secure: false,
+        secure: protocol === "https:",
         sameSite: "Lax",
       },
     ]);
