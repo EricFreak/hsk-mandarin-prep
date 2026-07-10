@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const STEP_MS = 5200;
+const STEP_MS = 6500;
 
 const STEPS = [
   {
     id: "mock",
     step: "1",
     title: "Take a mock exam",
+    short: "Mock exam",
     description:
       "Full HSK 3 format — listening, reading, and writing under realistic conditions.",
   },
@@ -16,6 +17,7 @@ const STEPS = [
     id: "report",
     step: "2",
     title: "Get your score & skill breakdown",
+    short: "Score & skills",
     description:
       "Instant score plus structured weakness metrics from your mock exam.",
   },
@@ -23,6 +25,7 @@ const STEPS = [
     id: "summary",
     step: "3",
     title: "Read your AI summary",
+    short: "AI summary",
     description:
       "A natural-language coach report explains what your score means and what to fix first.",
   },
@@ -30,6 +33,7 @@ const STEPS = [
     id: "plan",
     step: "4",
     title: "Follow your study plan",
+    short: "Study plan",
     description:
       "Get a personalized 7-day plan with daily tasks linked to practice and review.",
   },
@@ -37,6 +41,7 @@ const STEPS = [
     id: "practice",
     step: "5",
     title: "Practice smarter",
+    short: "Practice",
     description:
       "AI-generated questions target your weak areas instead of random drills.",
   },
@@ -44,6 +49,7 @@ const STEPS = [
     id: "track",
     step: "6",
     title: "Track progress",
+    short: "Dashboard",
     description:
       "Your dashboard updates after every session so you always know where you stand.",
   },
@@ -61,60 +67,138 @@ function PreviewChrome({
   children: React.ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-mist bg-white shadow-card">
-      <div className="flex items-center justify-between gap-2 border-b border-mist bg-paper-dark/60 px-3 py-2">
-        <div className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-seal/40" />
-          <span className="h-2 w-2 rounded-full bg-jade/40" />
-          <span className="h-2 w-2 rounded-full bg-mist" />
-          <span className="ml-2 truncate text-xs font-medium text-ink-muted">{title}</span>
+    <div className="overflow-hidden rounded-2xl border border-mist bg-white shadow-card">
+      <div className="flex items-center justify-between gap-2 border-b border-mist bg-paper-dark/60 px-4 py-2.5">
+        <div className="flex min-w-0 items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-seal/40" />
+          <span className="h-2.5 w-2.5 rounded-full bg-jade/40" />
+          <span className="h-2.5 w-2.5 rounded-full bg-mist" />
+          <span className="ml-2 truncate text-sm font-medium text-ink-muted">{title}</span>
         </div>
-        <span className="shrink-0 rounded-full bg-jade/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-jade">
+        <span className="shrink-0 rounded-full bg-jade/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-jade">
           {badge}
         </span>
       </div>
-      <div className="p-5 sm:p-6">{children}</div>
+      <div className="p-5 sm:p-8">{children}</div>
+    </div>
+  );
+}
+
+function FadeIn({
+  active,
+  delay = 0,
+  className = "",
+  children,
+}: {
+  active: boolean;
+  delay?: number;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={`transition-all duration-500 ${
+        active ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+      } ${className}`}
+      style={{ transitionDelay: active ? `${delay}ms` : "0ms" }}
+    >
+      {children}
     </div>
   );
 }
 
 function MockExamPreview({ active }: { active: boolean }) {
   return (
-    <PreviewChrome title="HSK 3 Mock Exam" badge="Preview">
-      <p className="text-xs font-semibold uppercase tracking-wide text-jade">Listening</p>
-      <p
-        className={`mt-2 text-sm font-medium text-ink transition-all duration-500 ${
-          active ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
-        }`}
-      >
-        你明天几点去学校？
-      </p>
-      <div className="mt-4 space-y-2">
-        {["八点", "明天", "学校", "几点"].map((choice, index) => (
-          <div
-            key={choice}
-            className={`rounded-lg border px-3 py-2 text-xs transition-all duration-500 ${
-              active && index === 0
-                ? "border-jade bg-jade/10 font-medium text-jade"
-                : "border-mist text-ink-muted"
-            }`}
-            style={{ transitionDelay: active ? `${200 + index * 80}ms` : "0ms" }}
-          >
-            {String.fromCharCode(65 + index)}. {choice}
+    <PreviewChrome title="HSK 3 Mock Exam · Live session" badge="Preview">
+      <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            {["Listening", "Reading", "Writing"].map((section, index) => (
+              <span
+                key={section}
+                className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                  index === 0
+                    ? "bg-jade text-white"
+                    : "border border-mist bg-paper-dark text-ink-muted"
+                }`}
+              >
+                {section}
+              </span>
+            ))}
+            <span className="ml-auto rounded-lg border border-seal/20 bg-seal/5 px-3 py-1 text-xs font-semibold text-seal">
+              24:18 left
+            </span>
           </div>
-        ))}
+
+          <FadeIn active={active} delay={100} className="mt-6">
+            <p className="text-xs font-semibold uppercase tracking-wide text-jade">
+              Listening · Question 3 of 8
+            </p>
+            <p className="mt-2 text-xs text-ink-muted">
+              Audio prompt (example): 你明天几点去学校？
+            </p>
+            <p className="mt-4 font-display text-xl font-semibold text-ink sm:text-2xl">
+              你明天几点去学校？
+            </p>
+          </FadeIn>
+
+          <div className="mt-5 grid gap-2 sm:grid-cols-2">
+            {["八点", "明天", "学校", "几点"].map((choice, index) => (
+              <div
+                key={choice}
+                className={`rounded-xl border px-4 py-3 text-sm transition-all duration-500 ${
+                  active && index === 0
+                    ? "border-jade bg-jade/10 font-medium text-jade shadow-sm"
+                    : "border-mist text-ink-muted"
+                }`}
+                style={{ transitionDelay: active ? `${200 + index * 80}ms` : "0ms" }}
+              >
+                <span className="mr-2 font-semibold text-ink-muted">
+                  {String.fromCharCode(65 + index)}.
+                </span>
+                {choice}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <FadeIn
+          active={active}
+          delay={400}
+          className="rounded-xl border border-mist bg-paper-dark p-4"
+        >
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
+            Exam progress
+          </p>
+          <div className="mt-4 space-y-3">
+            {[
+              { label: "Listening", done: 3, total: 8 },
+              { label: "Reading", done: 0, total: 8 },
+              { label: "Writing", done: 0, total: 1 },
+            ].map((row) => (
+              <div key={row.label}>
+                <div className="mb-1 flex justify-between text-xs">
+                  <span className="font-medium text-ink">{row.label}</span>
+                  <span className="text-ink-muted">
+                    {row.done}/{row.total}
+                  </span>
+                </div>
+                <div className="h-1.5 overflow-hidden rounded-full bg-white">
+                  <div
+                    className="h-full rounded-full bg-jade transition-all duration-1000"
+                    style={{
+                      width: active ? `${(row.done / row.total) * 100}%` : "0%",
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="mt-5 text-xs leading-relaxed text-ink-muted">
+            Same timing and section order as the official HSK 3.0 exam format.
+          </p>
+        </FadeIn>
       </div>
-      <div
-        className={`mt-4 h-1.5 overflow-hidden rounded-full bg-paper-dark transition-opacity duration-500 ${
-          active ? "opacity-100" : "opacity-40"
-        }`}
-      >
-        <div
-          className="h-full rounded-full bg-seal transition-all duration-1000 ease-out"
-          style={{ width: active ? "35%" : "0%" }}
-        />
-      </div>
-      <p className="mt-2 text-center text-[10px] text-ink-muted">Question 3 of 8</p>
     </PreviewChrome>
   );
 }
@@ -122,60 +206,76 @@ function MockExamPreview({ active }: { active: boolean }) {
 function ReportPreview({ active }: { active: boolean }) {
   const score = active ? 72 : 0;
   const dash = (score / 100) * 264;
+  const skills = [
+    { label: "Listening", value: 58, tag: "Focus area", color: "bg-seal", text: "text-seal" },
+    { label: "Reading", value: 78, tag: "Solid", color: "bg-jade", text: "text-jade" },
+    { label: "Vocabulary", value: 85, tag: "Strong", color: "bg-jade", text: "text-jade" },
+    { label: "Grammar", value: 70, tag: "OK", color: "bg-jade/70", text: "text-jade" },
+  ];
 
   return (
     <PreviewChrome title="Mock Exam Result" badge="Preview">
-      <div className="relative mx-auto flex h-32 w-32 items-center justify-center">
-        <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="42" fill="none" stroke="#E8E4DF" strokeWidth="8" />
-          <circle
-            cx="50"
-            cy="50"
-            r="42"
-            fill="none"
-            stroke="#2D6A6A"
-            strokeWidth="8"
-            strokeDasharray={`${dash} 264`}
-            strokeLinecap="round"
-            className="transition-all duration-1000 ease-out"
-          />
-        </svg>
-        <p className="font-display text-3xl font-semibold text-ink">{score}%</p>
-      </div>
-      <p
-        className={`mt-2 text-center text-sm text-ink-muted transition-opacity duration-500 ${
-          active ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        <span className="font-semibold text-ink">58</span>/80 MCQ correct
-      </p>
-      <div className="mt-5 border-t border-mist pt-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-          Weakness report
-        </p>
-        <div className="mt-3 space-y-3">
-          {[
-            { label: "Listening", value: 60, tag: "Focus area", color: "bg-seal" },
-            { label: "Vocabulary", value: 85, tag: "Strong", color: "bg-jade" },
-          ].map((item, index) => (
-            <div key={item.label}>
-              <div className="mb-1 flex justify-between text-xs">
-                <span className="font-medium text-ink">{item.label}</span>
-                <span className={index === 0 ? "font-semibold text-seal" : "font-semibold text-jade"}>
-                  {item.tag}
-                </span>
-              </div>
-              <div className="h-2 overflow-hidden rounded-full bg-paper-dark">
-                <div
-                  className={`h-full rounded-full ${item.color} transition-all duration-1000 ease-out`}
-                  style={{
-                    width: active ? `${item.value}%` : "0%",
-                    transitionDelay: active ? `${300 + index * 200}ms` : "0ms",
-                  }}
-                />
-              </div>
+      <div className="grid gap-8 lg:grid-cols-[220px_1fr]">
+        <div className="text-center">
+          <div className="relative mx-auto flex h-40 w-40 items-center justify-center">
+            <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="#E8E4DF" strokeWidth="8" />
+              <circle
+                cx="50"
+                cy="50"
+                r="42"
+                fill="none"
+                stroke="#2D6A6A"
+                strokeWidth="8"
+                strokeDasharray={`${dash} 264`}
+                strokeLinecap="round"
+                className="transition-all duration-1000 ease-out"
+              />
+            </svg>
+            <div>
+              <p className="font-display text-4xl font-semibold text-ink">{score}%</p>
+              <p className="text-xs text-ink-muted">HSK 3</p>
             </div>
-          ))}
+          </div>
+          <FadeIn active={active} delay={200} className="mt-3">
+            <p className="text-sm text-ink-muted">
+              <span className="font-semibold text-ink">58</span>/80 MCQ correct
+            </p>
+            <p className="mt-1 text-xs text-ink-muted">Writing submitted · AI score pending</p>
+          </FadeIn>
+        </div>
+
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
+            Skill breakdown
+          </p>
+          <div className="mt-4 space-y-4">
+            {skills.map((item, index) => (
+              <div key={item.label}>
+                <div className="mb-1.5 flex justify-between text-sm">
+                  <span className="font-medium text-ink">{item.label}</span>
+                  <span className={`text-xs font-semibold ${item.text}`}>{item.tag}</span>
+                </div>
+                <div className="h-2.5 overflow-hidden rounded-full bg-paper-dark">
+                  <div
+                    className={`h-full rounded-full ${item.color} transition-all duration-1000 ease-out`}
+                    style={{
+                      width: active ? `${item.value}%` : "0%",
+                      transitionDelay: active ? `${250 + index * 150}ms` : "0ms",
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+          <FadeIn
+            active={active}
+            delay={700}
+            className="mt-5 rounded-xl border border-seal/20 bg-seal/5 px-4 py-3 text-sm text-ink-muted"
+          >
+            Top gap: <span className="font-semibold text-seal">Listening</span> — time
+            expressions and transport phrases need work before your next attempt.
+          </FadeIn>
         </div>
       </div>
     </PreviewChrome>
@@ -184,134 +284,405 @@ function ReportPreview({ active }: { active: boolean }) {
 
 function SummaryPreview({ active }: { active: boolean }) {
   return (
-    <PreviewChrome title="AI Coach Summary" badge="Preview">
-      <p
-        className={`text-sm leading-relaxed text-ink-muted transition-opacity duration-500 ${
-          active ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        Your mock score of <span className="font-semibold text-ink">72%</span> shows solid
-        vocabulary, but <span className="font-semibold text-seal">listening</span> is your
-        main gap. Focus on time expressions and transport phrases this week.
-      </p>
-      <div
-        className={`mt-4 rounded-lg border border-mist bg-paper-dark px-3 py-3 transition-all duration-500 ${
-          active ? "opacity-100" : "opacity-0"
-        }`}
-        style={{ transitionDelay: active ? "300ms" : "0ms" }}
-      >
-        <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
-          Readiness estimate
-        </p>
-        <p className="mt-1 font-display text-2xl font-semibold text-jade">68%</p>
+    <PreviewChrome title="AI Learning Coach · Assessment report" badge="Preview">
+      <div className="grid gap-6 lg:grid-cols-[1fr_260px]">
+        <div>
+          <FadeIn active={active} className="flex flex-wrap items-center gap-3">
+            <span className="rounded-full bg-jade/10 px-3 py-1 text-xs font-semibold text-jade">
+              Generated by DeepSeek coach
+            </span>
+            <span className="text-xs text-ink-muted">After HSK 3 mock · Example learner</span>
+          </FadeIn>
+
+          <FadeIn active={active} delay={120} className="mt-5">
+            <h3 className="font-display text-2xl font-semibold text-ink">
+              You&apos;re close — listening is the bottleneck
+            </h3>
+            <div className="mt-4 space-y-3 text-sm leading-relaxed text-ink-muted">
+              <p>
+                Your mock score of <span className="font-semibold text-ink">72%</span> shows
+                solid vocabulary and reading foundations. You answered most cloze and short
+                reading items correctly, which means your HSK 3 word bank is working.
+              </p>
+              <p>
+                The main gap is{" "}
+                <span className="font-semibold text-seal">listening comprehension</span>,
+                especially time expressions (几点、明天、周末) and transport phrases (车票、
+                地铁、机场). Two of your three listening misses clustered around schedule and
+                travel contexts.
+              </p>
+              <p>
+                If you spend the next week on targeted listening drills plus a short daily
+                review of mistake-bank items, a mid-70s to low-80s score is a realistic next
+                target.
+              </p>
+            </div>
+          </FadeIn>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <FadeIn
+              active={active}
+              delay={350}
+              className="rounded-xl border border-jade/25 bg-jade/5 p-4"
+            >
+              <p className="text-xs font-semibold uppercase tracking-wide text-jade">Strengths</p>
+              <ul className="mt-3 space-y-2 text-sm text-ink-muted">
+                <li>
+                  <span className="font-medium text-ink">Vocabulary</span> — 85% accuracy on
+                  cloze items
+                </li>
+                <li>
+                  <span className="font-medium text-ink">Reading</span> — strong short-passage
+                  comprehension
+                </li>
+              </ul>
+            </FadeIn>
+            <FadeIn
+              active={active}
+              delay={450}
+              className="rounded-xl border border-seal/25 bg-seal/5 p-4"
+            >
+              <p className="text-xs font-semibold uppercase tracking-wide text-seal">
+                Priority gaps
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-ink-muted">
+                <li>
+                  <span className="font-medium text-seal">Listening · High</span> — 3 incorrect
+                  on time / travel audio
+                </li>
+                <li>
+                  <span className="font-medium text-ink">Grammar · Medium</span> — particle
+                  placement in writing
+                </li>
+              </ul>
+            </FadeIn>
+          </div>
+        </div>
+
+        <FadeIn
+          active={active}
+          delay={250}
+          className="flex flex-col justify-between rounded-xl border border-mist bg-paper-dark p-5"
+        >
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
+              Exam readiness
+            </p>
+            <p className="mt-2 font-display text-5xl font-semibold text-jade">68%</p>
+            <p className="mt-2 text-xs leading-relaxed text-ink-muted">
+              Estimated chance of a comfortable HSK 3 pass if you follow this week&apos;s plan.
+            </p>
+          </div>
+          <div className="mt-6 border-t border-mist pt-4">
+            <p className="text-xs font-semibold text-ink">Coach recommendation</p>
+            <p className="mt-2 text-xs leading-relaxed text-ink-muted">
+              Start with 15 listening questions today, then review your mistake bank tomorrow.
+            </p>
+          </div>
+        </FadeIn>
       </div>
     </PreviewChrome>
   );
 }
 
 function PlanPreview({ active }: { active: boolean }) {
-  const tasks = [
-    "Day 1 — Listening practice (15 questions)",
-    "Day 2 — Review mistake bank",
-    "Day 3 — Vocabulary flashcards",
+  const days = [
+    {
+      day: "Mon",
+      title: "Listening drills",
+      detail: "15 questions · time & travel",
+      type: "Practice",
+      today: true,
+    },
+    {
+      day: "Tue",
+      title: "Mistake bank review",
+      detail: "10 incorrect items from mock",
+      type: "Review",
+      today: false,
+    },
+    {
+      day: "Wed",
+      title: "Vocabulary flashcards",
+      detail: "20 SRS cards due",
+      type: "Flashcards",
+      today: false,
+    },
+    {
+      day: "Thu",
+      title: "Listening patterns",
+      detail: "15 questions · schedules",
+      type: "Practice",
+      today: false,
+    },
+    {
+      day: "Fri",
+      title: "Grammar reinforcement",
+      detail: "Particle placement drills",
+      type: "Practice",
+      today: false,
+    },
+    {
+      day: "Sat",
+      title: "Mini mock · Listening",
+      detail: "One focused section",
+      type: "Mock",
+      today: false,
+    },
+    {
+      day: "Sun",
+      title: "Rest & light review",
+      detail: "Optional flashcards only",
+      type: "Rest",
+      today: false,
+    },
   ];
 
   return (
-    <PreviewChrome title="Weekly Study Plan" badge="Preview">
-      <ul className="space-y-2">
-        {tasks.map((task, index) => (
-          <li
-            key={task}
-            className={`rounded-lg border border-mist bg-paper-dark px-3 py-2 text-xs text-ink transition-all duration-500 ${
-              active ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"
-            }`}
-            style={{ transitionDelay: active ? `${index * 150}ms` : "0ms" }}
+    <PreviewChrome title="Weekly Study Plan · From your AI coach" badge="Preview">
+      <FadeIn active={active} className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-jade">
+            Focus this week
+          </p>
+          <h3 className="mt-1 font-display text-xl font-semibold text-ink">
+            Listening first, then grammar polish
+          </h3>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {["Listening", "Grammar", "Vocabulary"].map((skill, index) => (
+            <span
+              key={skill}
+              className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                index === 0
+                  ? "bg-seal/10 text-seal"
+                  : "border border-mist bg-paper-dark text-ink-muted"
+              }`}
+            >
+              {skill}
+            </span>
+          ))}
+        </div>
+      </FadeIn>
+
+      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+        {days.map((day, index) => (
+          <div
+            key={day.day}
+            className={`rounded-xl border p-3 transition-all duration-500 ${
+              day.today
+                ? "border-jade/40 bg-jade/5 shadow-sm"
+                : "border-mist bg-paper-dark/60"
+            } ${active ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"}`}
+            style={{ transitionDelay: active ? `${index * 70}ms` : "0ms" }}
           >
-            {task}
-          </li>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs font-semibold text-ink-muted">{day.day}</p>
+              {day.today ? (
+                <span className="rounded-full bg-jade px-2 py-0.5 text-[10px] font-semibold text-white">
+                  Today
+                </span>
+              ) : null}
+            </div>
+            <p className="mt-2 text-sm font-semibold text-ink">{day.title}</p>
+            <p className="mt-1 text-[11px] leading-relaxed text-ink-muted">{day.detail}</p>
+            <p className="mt-3 text-[10px] font-semibold uppercase tracking-wide text-jade">
+              {day.type}
+            </p>
+          </div>
         ))}
-      </ul>
+      </div>
+
+      <FadeIn
+        active={active}
+        delay={550}
+        className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-jade/30 bg-jade/5 px-4 py-3"
+      >
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-jade">
+            Today&apos;s focus
+          </p>
+          <p className="mt-1 text-sm font-medium text-ink">
+            Listening drills — 15 questions on time & travel phrases
+          </p>
+        </div>
+        <span className="rounded-lg bg-jade px-4 py-2 text-sm font-semibold text-white">
+          Start today&apos;s task
+        </span>
+      </FadeIn>
     </PreviewChrome>
   );
 }
 
 function PracticePreview({ active }: { active: boolean }) {
   return (
-    <PreviewChrome title="AI Practice" badge="Preview">
-      <p className="text-xs text-ink-muted">
-        Targeting:{" "}
-        <span className="font-semibold text-seal">Listening</span> (from your plan)
-      </p>
-      <p
-        className={`mt-3 text-sm font-medium text-ink transition-all duration-500 ${
-          active ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        他想买一张去上海的____。
-      </p>
-      <div className="mt-4 grid gap-2 sm:grid-cols-2">
-        {["车票", "水果", "电脑", "书包"].map((choice, index) => (
-          <div
-            key={choice}
-            className={`rounded-lg border px-3 py-2 text-xs transition-all duration-500 ${
-              active && index === 0
-                ? "border-jade bg-jade/10 text-jade"
-                : "border-mist text-ink-muted"
-            }`}
-            style={{ transitionDelay: active ? `${150 + index * 60}ms` : "0ms" }}
+    <PreviewChrome title="AI Practice · Plan-driven session" badge="Preview">
+      <div className="grid gap-6 lg:grid-cols-[1fr_240px]">
+        <div>
+          <FadeIn
+            active={active}
+            className="rounded-xl border border-jade/30 bg-jade/5 px-4 py-3 text-sm text-ink-muted"
           >
-            {choice}
+            Today&apos;s focus:{" "}
+            <span className="font-semibold text-jade">Listening</span> (from your coach plan)
+            <span className="mx-2 text-mist">·</span>
+            Task: time & travel phrases
+          </FadeIn>
+
+          <FadeIn active={active} delay={150} className="mt-6">
+            <p className="text-xs font-semibold uppercase tracking-wide text-jade">
+              Listening cloze
+            </p>
+            <p className="mt-3 font-display text-xl font-semibold text-ink sm:text-2xl">
+              他想买一张去上海的____。
+            </p>
+            <p className="mt-2 text-xs text-ink-muted">
+              Choose the word that fits the travel context.
+            </p>
+          </FadeIn>
+
+          <div className="mt-5 grid gap-2 sm:grid-cols-2">
+            {["车票", "水果", "电脑", "书包"].map((choice, index) => (
+              <div
+                key={choice}
+                className={`rounded-xl border px-4 py-3 text-sm transition-all duration-500 ${
+                  active && index === 0
+                    ? "border-jade bg-jade/10 font-medium text-jade"
+                    : "border-mist text-ink-muted"
+                }`}
+                style={{ transitionDelay: active ? `${200 + index * 70}ms` : "0ms" }}
+              >
+                {choice}
+              </div>
+            ))}
           </div>
-        ))}
+
+          <FadeIn
+            active={active}
+            delay={650}
+            className="mt-5 rounded-xl border border-jade/20 bg-jade/5 px-4 py-3"
+          >
+            <p className="text-sm font-semibold text-jade">✓ Correct — 车票</p>
+            <p className="mt-1 text-xs leading-relaxed text-ink-muted">
+              车票 means ticket. In travel sentences with 去 + city, 车票 / 机票 / 火车票 are
+              the natural fits — not everyday objects like 水果 or 书包.
+            </p>
+          </FadeIn>
+        </div>
+
+        <FadeIn
+          active={active}
+          delay={300}
+          className="rounded-xl border border-mist bg-paper-dark p-4"
+        >
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
+            Session
+          </p>
+          <div className="mt-4 space-y-4">
+            <div>
+              <p className="text-xs text-ink-muted">Plan progress</p>
+              <p className="mt-1 font-display text-2xl font-semibold text-ink">6 / 15</p>
+            </div>
+            <div>
+              <p className="text-xs text-ink-muted">Accuracy today</p>
+              <p className="mt-1 font-display text-2xl font-semibold text-jade">83%</p>
+            </div>
+            <div className="h-1.5 overflow-hidden rounded-full bg-white">
+              <div
+                className="h-full rounded-full bg-jade transition-all duration-1000"
+                style={{ width: active ? "40%" : "0%" }}
+              />
+            </div>
+            <p className="text-xs leading-relaxed text-ink-muted">
+              Completing this task marks Day 1 done on your coach plan.
+            </p>
+          </div>
+        </FadeIn>
       </div>
-      <p
-        className={`mt-4 rounded-lg bg-jade/5 px-3 py-2 text-xs text-jade transition-all duration-700 ${
-          active ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
-        }`}
-        style={{ transitionDelay: active ? "600ms" : "0ms" }}
-      >
-        ✓ Correct — 车票 fits the travel context.
-      </p>
     </PreviewChrome>
   );
 }
 
 function DashboardPreview({ active }: { active: boolean }) {
   const stats = [
-    { label: "Latest mock", value: "72%", sub: "HSK 3" },
-    { label: "7-day practice", value: "48", sub: "questions" },
+    { label: "Latest mock", value: "72%", sub: "HSK 3 · 2 days ago" },
+    { label: "7-day practice", value: "48", sub: "questions answered" },
     { label: "Accuracy", value: "81%", sub: "last 7 days" },
+    { label: "Plan done", value: "2/7", sub: "days this week" },
   ];
 
   return (
-    <PreviewChrome title="Dashboard" badge="Preview">
-      <div className="grid gap-3 sm:grid-cols-3">
-        {stats.map((stat, index) => (
-          <div
-            key={stat.label}
-            className={`rounded-lg border border-mist bg-paper-dark px-3 py-3 transition-all duration-500 ${
-              active ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
-            }`}
-            style={{ transitionDelay: active ? `${index * 120}ms` : "0ms" }}
-          >
-            <p className="text-[10px] font-medium text-ink-muted">{stat.label}</p>
-            <p className="mt-1 font-display text-xl font-semibold text-ink">{stat.value}</p>
-            <p className="text-[10px] text-ink-muted">{stat.sub}</p>
+    <PreviewChrome title="Dashboard · Coach home" badge="Preview">
+      <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+        <div>
+          <FadeIn active={active}>
+            <p className="text-xs font-semibold uppercase tracking-wide text-jade">
+              AI Summary
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+              Listening remains your top gap, but accuracy on plan-driven drills is up this
+              week. Keep the travel-phrase focus through Thursday.
+            </p>
+          </FadeIn>
+
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {stats.map((stat, index) => (
+              <div
+                key={stat.label}
+                className={`rounded-xl border border-mist bg-paper-dark px-4 py-3 transition-all duration-500 ${
+                  active ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+                }`}
+                style={{ transitionDelay: active ? `${120 + index * 80}ms` : "0ms" }}
+              >
+                <p className="text-[11px] font-medium text-ink-muted">{stat.label}</p>
+                <p className="mt-1 font-display text-2xl font-semibold text-ink">{stat.value}</p>
+                <p className="text-[11px] text-ink-muted">{stat.sub}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <div
-        className={`mt-4 rounded-lg border border-mist bg-paper-dark px-3 py-3 transition-all duration-500 ${
-          active ? "opacity-100" : "opacity-0"
-        }`}
-        style={{ transitionDelay: active ? "400ms" : "0ms" }}
-      >
-        <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
-          Weakness summary
-        </p>
-        <p className="mt-2 text-xs text-ink">
-          Listening — <span className="text-seal">3 incorrect</span>
-        </p>
+        </div>
+
+        <FadeIn
+          active={active}
+          delay={250}
+          className="rounded-xl border border-mist bg-paper-dark p-5"
+        >
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
+            This week&apos;s plan
+          </p>
+          <ul className="mt-4 space-y-3">
+            {[
+              { title: "Listening drills", status: "Done", done: true },
+              { title: "Mistake bank review", status: "Done", done: true },
+              { title: "Vocabulary flashcards", status: "Today", done: false },
+              { title: "Listening patterns", status: "Thu", done: false },
+            ].map((task) => (
+              <li
+                key={task.title}
+                className="flex items-center justify-between gap-3 rounded-lg border border-mist bg-white px-3 py-2.5"
+              >
+                <span
+                  className={`text-sm ${
+                    task.done ? "text-ink-muted line-through" : "font-medium text-ink"
+                  }`}
+                >
+                  {task.title}
+                </span>
+                <span
+                  className={`text-[11px] font-semibold ${
+                    task.done ? "text-jade" : "text-seal"
+                  }`}
+                >
+                  {task.status}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-4 rounded-lg border border-jade/20 bg-jade/5 px-3 py-2 text-xs text-ink-muted">
+            Progress since last report: Listening accuracy{" "}
+            <span className="font-semibold text-jade">+9%</span>
+          </div>
+        </FadeIn>
       </div>
     </PreviewChrome>
   );
@@ -381,13 +752,16 @@ export default function HowItWorksShowcase() {
         </div>
 
         <div
-          className="mt-12 grid items-start gap-10 lg:grid-cols-2 lg:gap-14"
+          className="mt-12"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
           onFocusCapture={() => setPaused(true)}
           onBlurCapture={() => setPaused(false)}
         >
-          <ol className="space-y-3" aria-label="How it works steps">
+          <ol
+            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+            aria-label="How it works steps"
+          >
             {STEPS.map((step, index) => {
               const isActive = index === activeIndex;
               return (
@@ -395,45 +769,47 @@ export default function HowItWorksShowcase() {
                   <button
                     type="button"
                     onClick={() => goTo(index)}
-                    className={`w-full rounded-xl border p-4 text-left transition-all duration-300 ${
+                    className={`flex h-full w-full flex-col rounded-xl border p-3.5 text-left transition-all duration-300 ${
                       isActive
                         ? "border-jade/40 bg-jade/5 shadow-card"
                         : "border-mist bg-white hover:border-jade/20 hover:bg-paper-dark/50"
                     }`}
                     aria-current={isActive ? "step" : undefined}
                   >
-                    <div className="flex items-start gap-3">
-                      <span
-                        className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-display text-sm font-semibold transition-colors ${
-                          isActive ? "bg-jade text-white" : "bg-seal/10 text-seal"
-                        }`}
-                      >
-                        {step.step}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <h3 className="font-display text-lg font-semibold text-ink">
-                          {step.title}
-                        </h3>
-                        <p className="mt-1 text-sm leading-relaxed text-ink-muted">
-                          {step.description}
-                        </p>
-                        {isActive && !reducedMotion ? (
-                          <div className="mt-3 h-1 overflow-hidden rounded-full bg-mist">
-                            <div
-                              key={`${step.id}-${activeIndex}`}
-                              className="h-full rounded-full bg-jade motion-safe:animate-[showcase-progress_5.2s_linear_forwards]"
-                            />
-                          </div>
-                        ) : null}
+                    <span
+                      className={`inline-flex h-8 w-8 items-center justify-center rounded-full font-display text-sm font-semibold transition-colors ${
+                        isActive ? "bg-jade text-white" : "bg-seal/10 text-seal"
+                      }`}
+                    >
+                      {step.step}
+                    </span>
+                    <h3 className="mt-3 font-display text-sm font-semibold leading-snug text-ink sm:text-base">
+                      {step.short}
+                    </h3>
+                    <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-ink-muted">
+                      {step.description}
+                    </p>
+                    {isActive && !reducedMotion ? (
+                      <div className="mt-auto pt-3">
+                        <div className="h-1 overflow-hidden rounded-full bg-mist">
+                          <div
+                            key={`${step.id}-${activeIndex}`}
+                            className="h-full rounded-full bg-jade motion-safe:animate-[showcase-progress_6.5s_linear_forwards]"
+                          />
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="mt-auto pt-3">
+                        <div className="h-1 rounded-full bg-transparent" />
+                      </div>
+                    )}
                   </button>
                 </li>
               );
             })}
           </ol>
 
-          <div className="relative lg:sticky lg:top-24">
+          <div className="relative mt-8 min-h-[420px]">
             {STEPS.map((step, index) => (
               <div
                 key={step.id}
@@ -444,22 +820,23 @@ export default function HowItWorksShowcase() {
                 }`}
                 aria-hidden={index !== activeIndex}
               >
-                <StepPreview
-                  stepId={step.id}
-                  active={index === activeIndex}
-                />
+                <StepPreview stepId={step.id} active={index === activeIndex} />
               </div>
             ))}
           </div>
-        </div>
 
-        <p className="mt-8 text-center text-xs text-ink-muted">
-          {paused
-            ? "Paused — move cursor away to resume"
-            : reducedMotion
-              ? "Select a step to explore each preview"
-              : `Showing step ${activeStep.step} of ${STEPS.length}`}
-        </p>
+          <p className="mt-4 text-center text-sm text-ink-muted">
+            <span className="font-medium text-ink">
+              Step {activeStep.step}: {activeStep.title}
+            </span>
+            <span className="mx-2 text-mist">·</span>
+            {paused
+              ? "Paused — move cursor away to resume"
+              : reducedMotion
+                ? "Select a step to explore each preview"
+                : "Auto-playing the full loop"}
+          </p>
+        </div>
       </div>
     </section>
   );
