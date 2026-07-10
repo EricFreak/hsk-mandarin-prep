@@ -13,10 +13,10 @@ test.describe("DASH — Dashboard", () => {
 
   test("DASH-008: navigation CTAs", async ({ page }) => {
     await page.goto("/dashboard");
-    await page.getByRole("link", { name: /start practice/i }).click();
+    await page.getByRole("link", { name: /start practice/i }).last().click();
     await expect(page).toHaveURL(/\/practice/);
     await page.goto("/dashboard");
-    await page.getByRole("link", { name: /take mock exam/i }).click();
+    await page.getByRole("link", { name: /take mock exam/i }).last().click();
     await expect(page).toHaveURL(/\/mock-exam/);
   });
 });

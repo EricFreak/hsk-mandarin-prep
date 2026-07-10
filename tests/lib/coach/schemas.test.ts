@@ -46,4 +46,20 @@ describe("coach schemas", () => {
     expect(parsed.focusSkills).toEqual(["listening", "grammar"]);
     expect(parsed.tasks).toHaveLength(3);
   });
+
+  it("normalizes string gaps from LLM output", () => {
+    const parsed = parseReportResponse({
+      readinessScore: 70,
+      summaryMarkdown: "Good progress.",
+      strengths: ["vocabulary"],
+      gaps: [
+        "listening",
+        { skill: "grammar", severity: "moderate", evidence: "2 wrong" },
+      ],
+    });
+
+    expect(parsed.strengths[0].skill).toBe("vocabulary");
+    expect(parsed.gaps[0].skill).toBe("listening");
+    expect(parsed.gaps[1].severity).toBe("medium");
+  });
 });
