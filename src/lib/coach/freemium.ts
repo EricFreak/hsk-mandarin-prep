@@ -27,8 +27,9 @@ export function applyFreemiumReport(
 
 export function applyFreemiumTasks(
   tasks: CoachPlanTaskRow[],
-  _plan: Plan,
+  plan: Plan,
 ): CoachPlanTaskRow[] {
+  void plan;
   return tasks;
 }
 
