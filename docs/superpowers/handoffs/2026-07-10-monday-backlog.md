@@ -16,30 +16,18 @@ Status snapshot after Friday evening brand work. Branch: `feature/mvp-implementa
 
 ## Monday backlog (priority order)
 
-### 1. Commit & push Friday brand work (if not done)
+### 1. Commit & push Friday brand work — DONE 2026-07-13
 
-Local changes may still be uncommitted:
+Commit `ee3bca5` on `feature/mvp-implementation`.
 
-- `public/brand/hero-visual.png`
-- `HeroBrandVisual.tsx`, marketing `page.tsx`
-- `tailwind.config.ts`, `globals.css` (jade primary CTA)
-- `BrandLogo`, `PricingTable`, paywall jade highlights
-- `public/brand/README.md`, `layout.tsx` metadata
-
-```bash
-cd .worktrees/mvp-implementation
-git status
-# commit + push when ready
-```
-
-### 2. Brand assets still mismatched (Lovart)
+### 2. Brand assets still mismatched (Lovart) — IN PROGRESS
 
 | Asset | Why | Prompt location |
 |-------|-----|-----------------|
-| **App logo** | Header still uses `logo-seal.png` (old seal); hero is AI orb | See chat: “Lovart 提示词 1 — App Logo” |
-| **Favicon** | `src/app/icon.png` still seal-era | Same logo mark, 512→32 |
-| **OG / share image** (optional) | Social previews won’t match AI Coach | See chat: “Lovart 提示词 2” |
-| **Hero 2×** (optional) | Current `hero-visual.png` is 1024×764 | See chat: “Lovart 提示词 3” |
+| **App logo** | Header still uses `logo-seal.png` (old seal); hero is AI orb | See below / prior chat “Lovart 提示词 1” |
+| **Favicon** | `src/app/icon.png` still seal-era | Same logo mark |
+| **OG / share image** (optional) | Social previews won’t match AI Coach | Prior chat “Lovart 提示词 2” |
+| **Hero 2×** (optional) | Current `hero-visual.png` is 1024×764 | Prior chat “Lovart 提示词 3” |
 
 After logo export:
 
@@ -53,13 +41,12 @@ After logo export:
 - [ ] Manual prod loop: mock exam → wait for AI report on Dashboard → start today’s plan task
 - [ ] Optional: `TUTORING_WECHAT_ID` for coach tutoring CTA
 - [ ] Creem KYC / live payments when ready (`docs/launch/04-creem-setup.md`)
-- [ ] Fix stale Stripe E2E expectations (Creem configured → tests still expect 503)
+- [x] Fix stale Stripe E2E expectations (auth-first 401; no hardcoded “payments not configured” copy)
 
 ### 4. Nice-to-have
 
 - [ ] Showcase steps: optionally share real coach UI components later (preview vs live)
 - [ ] Phase F/G: post-tutoring reassess, report comparison
-- [ ] Push any remaining local commits before Monday deploy check
 
 ---
 

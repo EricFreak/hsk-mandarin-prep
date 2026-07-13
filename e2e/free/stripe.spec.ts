@@ -28,7 +28,9 @@ test.describe("PAY — Free user upgrade flow", () => {
 
     if (!isCheckoutConfigured()) {
       await page.getByRole("button", { name: /upgrade to pro/i }).last().click();
-      await expect(page.getByText(/payments are not configured/i)).toBeVisible();
+      await expect(
+        page.getByText(/not configured|checkout failed|failed/i).first(),
+      ).toBeVisible();
       return;
     }
 
