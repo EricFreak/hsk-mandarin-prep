@@ -22,19 +22,21 @@ function CheckIcon() {
 function BillingToggle({
   priceType,
   onChange,
+  className = "",
 }: {
   priceType: PriceType;
   onChange: (type: PriceType) => void;
+  className?: string;
 }) {
   return (
     <div
-      className="inline-flex rounded-xl border border-mist bg-white p-1 shadow-card"
+      className={`flex rounded-lg border border-mist bg-paper-dark p-0.5 ${className}`}
       role="group"
-      aria-label="Billing period"
+      aria-label="Pro billing period"
     >
       <button
         type="button"
-        className={`rounded-lg px-5 py-2.5 text-sm font-medium transition ${
+        className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition ${
           priceType === "monthly" ? "bg-jade text-white" : "text-ink-muted hover:text-ink"
         }`}
         onClick={() => onChange("monthly")}
@@ -43,7 +45,7 @@ function BillingToggle({
       </button>
       <button
         type="button"
-        className={`rounded-lg px-5 py-2.5 text-sm font-medium transition ${
+        className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition ${
           priceType === "yearly" ? "bg-jade text-white" : "text-ink-muted hover:text-ink"
         }`}
         onClick={() => onChange("yearly")}
@@ -124,16 +126,11 @@ export default function PricingPlans({
 
   return (
     <div className="mx-auto max-w-4xl">
-      <div className="flex justify-center">
-        <BillingToggle priceType={priceType} onChange={setPriceType} />
-      </div>
-
-      <div className="mt-8 grid items-stretch gap-6 lg:grid-cols-2">
+      <div className="grid items-start gap-6 lg:grid-cols-2">
         <div className="flex flex-col rounded-2xl border border-mist bg-white p-6 shadow-card sm:p-8">
-          <div className="h-5" aria-hidden="true" />
           <h3 className="font-display text-xl font-semibold text-ink">Free</h3>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="font-display text-4xl font-semibold text-ink">$0</span>
+            <span className="font-display text-4xl font-semibold tabular-nums text-ink">$0</span>
             <span className="text-sm text-ink-muted">Forever</span>
           </div>
           <FeatureList features={FREE_TIER_BENEFITS} />
@@ -150,15 +147,34 @@ export default function PricingPlans({
             Most popular
           </span>
           <h3 className="mt-1 font-display text-xl font-semibold text-ink">Pro</h3>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="font-display text-4xl font-semibold text-ink">{proPrice}</span>
-            <span className="text-sm text-ink-muted">{proPeriod}</span>
+
+          <div className="mt-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-muted">
+              Pro billing
+            </p>
+            <BillingToggle
+              className="mt-1.5 w-full"
+              priceType={priceType}
+              onChange={setPriceType}
+            />
           </div>
-          {priceType === "yearly" ? (
-            <p className="mt-1 text-sm text-jade">Save about 42% vs monthly billing</p>
-          ) : (
-            <p className="mt-1 text-xs text-ink-muted">or $69/year (save ~42%)</p>
-          )}
+
+          <div className="mt-4 min-h-[5.25rem]">
+            <div className="flex items-baseline gap-2">
+              <span className="inline-block min-w-[5.5rem] font-display text-4xl font-semibold tabular-nums text-ink">
+                {proPrice}
+              </span>
+              <span className="text-sm text-ink-muted">{proPeriod}</span>
+            </div>
+            <p className="mt-1 min-h-[1.25rem] text-sm leading-snug">
+              {priceType === "yearly" ? (
+                <span className="text-jade">Save about 42% vs monthly billing</span>
+              ) : (
+                <span className="text-ink-muted">or $69/year (save ~42%)</span>
+              )}
+            </p>
+          </div>
+
           <FeatureList features={PRO_BENEFITS} />
           {error ? (
             <p className="mt-4 text-sm text-seal" role="alert">
