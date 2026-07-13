@@ -69,6 +69,15 @@ function FeatureList({ features }: { features: readonly string[] }) {
   );
 }
 
+function CardCtaFooter({ children }: { children: React.ReactNode }) {
+  return <div className="mt-auto border-t border-mist/80 pt-6">{children}</div>;
+}
+
+const pricingCtaClass = {
+  free: "flex w-full items-center justify-center rounded-xl border border-mist/90 bg-paper-dark px-4 py-3 text-sm font-semibold text-ink shadow-sm transition hover:border-jade/40 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jade",
+  pro: "flex w-full items-center justify-center rounded-xl bg-jade px-4 py-3 text-sm font-semibold text-white shadow-sm shadow-jade/20 transition hover:bg-jade-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jade disabled:cursor-not-allowed disabled:opacity-60",
+} as const;
+
 type PricingPlansProps = {
   /** marketing: Pro CTA links to /pricing; checkout: Pro button starts payment */
   mode?: "marketing" | "checkout";
@@ -134,12 +143,11 @@ export default function PricingPlans({
             <span className="text-sm text-ink-muted">Forever</span>
           </div>
           <FeatureList features={FREE_TIER_BENEFITS} />
-          <Link
-            href="/login?next=%2Fmock-exam"
-            className="mt-auto block w-full btn-secondary py-3 pt-6 text-center text-base font-semibold"
-          >
-            Start free mock exam
-          </Link>
+          <CardCtaFooter>
+            <Link href="/login?next=%2Fmock-exam" className={pricingCtaClass.free}>
+              Start free mock exam
+            </Link>
+          </CardCtaFooter>
         </div>
 
         <div className="flex h-full flex-col rounded-2xl border border-jade bg-white p-6 shadow-lift ring-2 ring-jade/20 sm:p-8">
@@ -177,23 +185,22 @@ export default function PricingPlans({
               {error}
             </p>
           ) : null}
-          {mode === "checkout" ? (
-            <button
-              type="button"
-              className="mt-auto w-full btn-primary py-3 pt-6 text-base disabled:cursor-not-allowed disabled:opacity-60"
-              disabled={loading}
-              onClick={() => void handleCheckout()}
-            >
-              {loading ? "Redirecting…" : "Upgrade to Pro"}
-            </button>
-          ) : (
-            <Link
-              href={pricingHref}
-              className="mt-auto block w-full btn-primary py-3 pt-6 text-center text-base font-semibold"
-            >
-              View Pro plans
-            </Link>
-          )}
+          <CardCtaFooter>
+            {mode === "checkout" ? (
+              <button
+                type="button"
+                className={pricingCtaClass.pro}
+                disabled={loading}
+                onClick={() => void handleCheckout()}
+              >
+                {loading ? "Redirecting…" : "Upgrade to Pro"}
+              </button>
+            ) : (
+              <Link href={pricingHref} className={pricingCtaClass.pro}>
+                Upgrade to Pro
+              </Link>
+            )}
+          </CardCtaFooter>
         </div>
       </div>
     </div>
