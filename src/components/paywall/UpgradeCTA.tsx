@@ -19,7 +19,7 @@ export default function UpgradeCTA({
   return (
     <>
       <div
-        className={`rounded-xl border border-seal/20 bg-seal/5 p-6 text-center ${className}`}
+        className={`rounded-xl border border-jade/20 bg-jade/5 p-6 text-center ${className}`}
       >
         <h2 className="font-display text-lg font-semibold text-ink">{title}</h2>
         <p className="mt-2 text-sm text-ink-muted">{description}</p>

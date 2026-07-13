@@ -1,20 +1,21 @@
-/** Hero right column — brand atmosphere only, no user data or product UI. */
+import Image from "next/image";
+
+/** Hero right column — AI Coach brand visual (atmosphere only, no live user data). */
 export default function HeroBrandVisual() {
   return (
     <div
-      className="relative mx-auto flex aspect-[4/3] w-full max-w-md items-center justify-center lg:max-w-none"
+      className="relative mx-auto aspect-[4/3] w-full max-w-lg overflow-hidden rounded-3xl border border-mist/80 shadow-lift lg:max-w-none"
       aria-hidden
     >
-      <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-jade/15 via-paper to-seal/10 shadow-lift" />
-      <div className="absolute inset-6 rounded-2xl border border-white/60 bg-white/40 backdrop-blur-sm" />
-      <div className="relative text-center">
-        <p className="font-display text-8xl font-semibold leading-none text-seal/20 sm:text-9xl">
-          考
-        </p>
-        <p className="mt-4 text-sm font-medium tracking-wide text-ink-muted">
-          HSK 3.0 · AI prep
-        </p>
-      </div>
+      <Image
+        src="/brand/hero-visual.png"
+        alt=""
+        fill
+        priority
+        className="object-cover object-center"
+        sizes="(max-width: 1024px) 90vw, 560px"
+      />
+      <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/40" />
     </div>
   );
 }

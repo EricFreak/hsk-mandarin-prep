@@ -17,7 +17,7 @@ const TIERS: Tier[] = [
     period: "Forever",
     features: [
       "1 full mock exam",
-      "AI scoring & weakness summary",
+      "AI coach summary (truncated)",
       "20 practice questions per day",
       "SRS flashcards (beta demo deck)",
     ],
@@ -28,11 +28,11 @@ const TIERS: Tier[] = [
     price: "$9.99",
     period: "/month",
     features: [
+      "Full AI coach report & study plan",
       "Unlimited mock exams",
       "Unlimited AI practice",
       "AI writing feedback",
-      "Detailed weakness report",
-      "Mistake review bank (coming soon)",
+      "Mistake review bank",
     ],
     highlighted: true,
     cta: { label: "View Pro plans", href: "/pricing" },
@@ -58,7 +58,7 @@ export default function PricingTable() {
           key={tier.name}
           className={`relative flex flex-col rounded-2xl border p-6 ${
             tier.highlighted
-              ? "border-seal bg-white shadow-lift ring-2 ring-seal/20"
+              ? "border-jade bg-white shadow-lift ring-2 ring-jade/20"
               : "border-mist bg-white shadow-card"
           }`}
         >
@@ -68,7 +68,7 @@ export default function PricingTable() {
             </span>
           ) : null}
           {tier.highlighted ? (
-            <span className="mb-2 text-xs font-semibold uppercase tracking-wide text-seal">
+            <span className="mb-2 text-xs font-semibold uppercase tracking-wide text-jade">
               Most popular
             </span>
           ) : null}

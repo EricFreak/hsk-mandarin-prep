@@ -24,7 +24,7 @@ export default function BrandLogo({
         className={size === "sm" ? "h-8 w-8 shrink-0" : "h-9 w-9 shrink-0"}
         priority
       />
-      <span className="font-display text-lg font-semibold text-ink group-hover:text-seal">
+      <span className="font-display text-lg font-semibold text-ink group-hover:text-jade">
         {title}
       </span>
     </Link>

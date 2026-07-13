@@ -53,7 +53,7 @@ export default function PricingCheckout() {
             type="button"
             className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition ${
               priceType === "monthly"
-                ? "bg-seal text-white"
+                ? "bg-jade text-white"
                 : "text-ink-muted hover:text-ink"
             }`}
             onClick={() => setPriceType("monthly")}
@@ -64,7 +64,7 @@ export default function PricingCheckout() {
             type="button"
             className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition ${
               priceType === "yearly"
-                ? "bg-seal text-white"
+                ? "bg-jade text-white"
                 : "text-ink-muted hover:text-ink"
             }`}
             onClick={() => setPriceType("yearly")}
@@ -73,8 +73,8 @@ export default function PricingCheckout() {
           </button>
         </div>
 
-        <div className="mt-6 rounded-2xl border border-seal bg-white p-8 shadow-lift ring-2 ring-seal/20">
-          <p className="text-xs font-semibold uppercase tracking-wide text-seal">
+        <div className="mt-6 rounded-2xl border border-jade bg-white p-8 shadow-lift ring-2 ring-jade/20">
+          <p className="text-xs font-semibold uppercase tracking-wide text-jade">
             Most popular
           </p>
           <h2 className="mt-1 font-display text-2xl font-semibold text-ink">Pro</h2>

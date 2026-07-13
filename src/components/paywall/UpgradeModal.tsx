@@ -147,7 +147,7 @@ export default function UpgradeModal({
             type="button"
             className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition ${
               priceType === "monthly"
-                ? "bg-seal text-white"
+                ? "bg-jade text-white"
                 : "text-ink-muted hover:text-ink"
             }`}
             onClick={() => setPriceType("monthly")}
@@ -158,7 +158,7 @@ export default function UpgradeModal({
             type="button"
             className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition ${
               priceType === "yearly"
-                ? "bg-seal text-white"
+                ? "bg-jade text-white"
                 : "text-ink-muted hover:text-ink"
             }`}
             onClick={() => setPriceType("yearly")}

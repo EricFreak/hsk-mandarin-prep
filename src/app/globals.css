@@ -20,7 +20,7 @@ body {
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-lg bg-seal px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-seal-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seal;
+    @apply inline-flex items-center justify-center rounded-lg bg-jade px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-jade-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jade;
   }
 
   .btn-secondary {

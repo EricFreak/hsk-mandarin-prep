@@ -1,11 +1,26 @@
 # Brand assets (Lovart / custom)
 
+## Visual system (AI Coach–first)
+
+| Token | Hex | Role |
+|-------|-----|------|
+| Jade | `#2A6B6E` | Primary brand / CTA / AI signal |
+| Jade light | `#3D9A9A` | Hover / secondary AI glow |
+| Jade glow | `#5EB7B2` | Highlights / luminous accents |
+| Seal | `#C23B3B` | Alerts, errors, rare cultural accent only |
+| Paper | `#FAF8F5` | Page background |
+| Ink | `#1A1A2E` | Body text |
+
+**Hierarchy:** AI Coach (jade) first → HSK exam clarity second → Chinese cultural marks ≤15%.
+
+## Files
+
 | File | Used on | Recommended size |
 |------|---------|------------------|
-| `avatars/avatar-1.png` … `avatar-5.png` | Footer learner avatars (40px display, 128×128+ source) |
-| `logo-seal.png` | Header logo + favicon (`src/app/icon.png`) | 512×512+ square PNG |
-| `hero-bg.png` | Homepage hero — ink-wash mountain (right side) | 2400×1350+ (2× display); current 1024×580 OK for beta |
-| `hero-mockup.png` | Homepage hero — optional score card image | 1120×840 (2× for ~560px display) |
-| `lovart-landing-reference.png` | Design reference only (not shown on site) | 1920+ wide |
+| `hero-visual.png` | Homepage hero right column | 2400×1800 (4:3); current 1024×764 OK for beta |
+| `logo-seal.png` | Header logo + favicon — **replace with AI Coach mark** | 512×512+ square PNG |
+| `hero-bg.png` | Deprecated for hero (kept for reference) | — |
+| `avatars/avatar-1.png` … `avatar-5.png` | Footer learner avatars | 128×128+ |
+| `lovart-landing-reference.png` | Design reference only | 1920+ wide |
 
-**Export tips:** Lovart outputs raster PNG. Use code for text/UI; use images for decoration only. Next.js auto-serves WebP.
+**Export tips:** Lovart outputs raster PNG. Use code for interactive UI text; use images for brand atmosphere. Next.js auto-serves WebP.
