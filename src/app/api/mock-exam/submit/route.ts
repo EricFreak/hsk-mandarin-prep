@@ -3,10 +3,17 @@ import {
   type Plan,
 } from "@/lib/entitlements";
 import {
+  HSK3_PLACEMENT_EXAM,
+  HSK3_PLACEMENT_MCQ_COUNT,
+  HSK3_PLACEMENT_TEMPLATE_ID,
+  HSK3_PLACEMENT_TEMPLATE_VERSION,
+} from "@/data/placement/hsk3-placement";
+import {
   HSK3_MOCK_EXAM,
   HSK3_MOCK_EXAM_MCQ_COUNT,
   HSK3_MOCK_EXAM_TEMPLATE_ID,
   HSK3_MOCK_EXAM_TEMPLATE_VERSION,
+  type MockExamQuestion,
 } from "@/lib/mock-exam/hsk3-template";
 import { computeWeaknesses } from "@/lib/weakness";
 import { createClient } from "@/lib/supabase/server";
@@ -90,7 +97,36 @@ const submitSchema = z.object({
   answers: z.array(answerSchema).min(1),
   startedAt: z.string().datetime().optional(),
   durationSeconds: z.number().int().min(0).max(60 * 60 * 8).optional(),
+  templateId: z.string().optional(),
 });
+
+type ExamTemplate = {
+  questions: MockExamQuestion[];
+  templateId: string;
+  templateVersion: number;
+  mcqCount: number;
+  skipFreemiumLimit: boolean;
+};
+
+function resolveExamTemplate(templateId?: string): ExamTemplate {
+  if (templateId === HSK3_PLACEMENT_TEMPLATE_ID) {
+    return {
+      questions: HSK3_PLACEMENT_EXAM,
+      templateId: HSK3_PLACEMENT_TEMPLATE_ID,
+      templateVersion: HSK3_PLACEMENT_TEMPLATE_VERSION,
+      mcqCount: HSK3_PLACEMENT_MCQ_COUNT,
+      skipFreemiumLimit: true,
+    };
+  }
+
+  return {
+    questions: HSK3_MOCK_EXAM,
+    templateId: HSK3_MOCK_EXAM_TEMPLATE_ID,
+    templateVersion: HSK3_MOCK_EXAM_TEMPLATE_VERSION,
+    mcqCount: HSK3_MOCK_EXAM_MCQ_COUNT,
+    skipFreemiumLimit: false,
+  };
+}
 
 export async function POST(request: Request) {
   const auth = await getAuthenticatedUser();
@@ -111,19 +147,23 @@ export async function POST(request: Request) {
   }
 
   try {
+    const examTemplate = resolveExamTemplate(parsed.data.templateId);
+    const { questions, templateId, templateVersion, mcqCount, skipFreemiumLimit } =
+      examTemplate;
+
     const [plan, completedExams] = await Promise.all([
       getUserPlan(supabase, user.id),
       countCompletedMockExams(supabase, user.id),
     ]);
 
-    if (!canTakeMockExam(plan, completedExams)) {
+    if (!skipFreemiumLimit && !canTakeMockExam(plan, completedExams)) {
       return NextResponse.json(
         { error: "limit_reached", upgrade: true },
         { status: 402 },
       );
     }
 
-    const questionById = new Map(HSK3_MOCK_EXAM.map((q) => [q.id, q]));
+    const questionById = new Map(questions.map((q) => [q.id, q]));
     const attempts: { questionId: string; skill: string; correct: boolean }[] =
       [];
     let correctCount = 0;
@@ -163,7 +203,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const score = Math.round((correctCount / HSK3_MOCK_EXAM_MCQ_COUNT) * 100);
+    const score = Math.round((correctCount / mcqCount) * 100);
     const weaknesses = computeWeaknesses(attempts);
 
     const breakdown = {
@@ -171,7 +211,7 @@ export async function POST(request: Request) {
       attempts,
       weaknesses,
       correctCount,
-      totalMcq: HSK3_MOCK_EXAM_MCQ_COUNT,
+      totalMcq: mcqCount,
     };
 
     const completedAt = new Date().toISOString();
@@ -200,8 +240,8 @@ export async function POST(request: Request) {
       level: 3,
       score,
       breakdown,
-      template_id: HSK3_MOCK_EXAM_TEMPLATE_ID,
-      template_version: HSK3_MOCK_EXAM_TEMPLATE_VERSION,
+      template_id: templateId,
+      template_version: templateVersion,
       answers: answersForReview,
       started_at: startedAt,
       completed_at: completedAt,
@@ -220,7 +260,7 @@ export async function POST(request: Request) {
       attemptId: inserted?.id ?? null,
       score,
       correctCount,
-      totalMcq: HSK3_MOCK_EXAM_MCQ_COUNT,
+      totalMcq: mcqCount,
       weaknesses,
       coachPending: Boolean(inserted?.id),
     });

@@ -30,5 +30,15 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  const { data: profile } = await supabase
+    .from("learner_profiles")
+    .select("target_exam_date, journey_started_at")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!profile?.target_exam_date && !profile?.journey_started_at) {
+    redirect("/onboarding");
+  }
+
   return <DashboardView />;
 }

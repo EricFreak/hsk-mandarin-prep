@@ -9,12 +9,26 @@ import { canUseAiWritingScore, type Plan } from "@/lib/entitlements";
 import {
   HSK3_MOCK_EXAM,
   HSK3_MOCK_EXAM_MCQ_COUNT,
+  HSK3_MOCK_EXAM_TEMPLATE_ID,
+  HSK3_MOCK_EXAM_TEMPLATE_VERSION,
   type MockExamQuestion,
 } from "@/lib/mock-exam/hsk3-template";
 import type { WritingScoreResult } from "@/lib/openai/writing-score";
 import type { WeaknessEntry } from "@/lib/weakness";
 
-const WRITING_QUESTION = HSK3_MOCK_EXAM.find((q) => q.section === "writing");
+type ExamConfig = {
+  questions: MockExamQuestion[];
+  templateId: string;
+  templateVersion: number;
+  mcqCount: number;
+};
+
+const DEFAULT_EXAM: ExamConfig = {
+  questions: HSK3_MOCK_EXAM,
+  templateId: HSK3_MOCK_EXAM_TEMPLATE_ID,
+  templateVersion: HSK3_MOCK_EXAM_TEMPLATE_VERSION,
+  mcqCount: HSK3_MOCK_EXAM_MCQ_COUNT,
+};
 
 type AnswerState = {
   selectedIndex?: number;
@@ -34,9 +48,19 @@ type SubmitResponse = {
 
 type MockExamSessionProps = {
   plan?: Plan;
+  exam?: ExamConfig;
+  completePrimaryHref?: string;
+  completePrimaryLabel?: string;
+  hideReviewLink?: boolean;
 };
 
-export default function MockExamSession({ plan = "free" }: MockExamSessionProps) {
+export default function MockExamSession({
+  plan = "free",
+  exam = DEFAULT_EXAM,
+  completePrimaryHref = "/dashboard",
+  completePrimaryLabel = "View dashboard",
+  hideReviewLink = false,
+}: MockExamSessionProps) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, AnswerState>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -48,13 +72,16 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
   const [writingScoreError, setWritingScoreError] = useState<string | null>(null);
   const [coachStatus, setCoachStatus] = useState<"idle" | "running" | "ready" | "error">("idle");
 
+  const { questions, templateId, mcqCount } = exam;
+  const writingQuestion = questions.find((q) => q.section === "writing");
+
   const canScoreWriting = canUseAiWritingScore(plan);
-  const writingAnswer = WRITING_QUESTION
-    ? answers[WRITING_QUESTION.id]?.writingText?.trim()
+  const writingAnswer = writingQuestion
+    ? answers[writingQuestion.id]?.writingText?.trim()
     : undefined;
 
-  const question = HSK3_MOCK_EXAM[step];
-  const isLast = step === HSK3_MOCK_EXAM.length - 1;
+  const question = questions[step];
+  const isLast = step === questions.length - 1;
   const currentAnswer = answers[question.id] ?? {};
 
   function updateAnswer(questionId: string, update: AnswerState) {
@@ -84,13 +111,14 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
         Math.round((Date.now() - new Date(startedAt).getTime()) / 1000),
       );
       const payload = {
-        answers: HSK3_MOCK_EXAM.map((q) => ({
+        answers: questions.map((q) => ({
           questionId: q.id,
           selectedIndex: answers[q.id]?.selectedIndex,
           writingText: answers[q.id]?.writingText,
         })),
         startedAt,
         durationSeconds,
+        templateId,
       };
 
       const response = await fetch("/api/mock-exam/submit", {
@@ -155,7 +183,6 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
   }
 
   useEffect(() => {
-    const writingQuestion = WRITING_QUESTION;
     if (!result || !canScoreWriting || !writingQuestion || !writingAnswer) {
       return;
     }
@@ -211,7 +238,7 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
     return () => {
       cancelled = true;
     };
-  }, [result, canScoreWriting, writingAnswer]);
+  }, [result, canScoreWriting, writingAnswer, writingQuestion]);
 
   if (error === "limit_reached") {
     return (
@@ -229,7 +256,7 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
           <h2 className="font-display text-2xl font-semibold text-ink">Exam complete</h2>
           <p className="mt-2 font-display text-4xl font-semibold text-jade">{result.score}%</p>
           <p className="mt-2 text-sm text-ink-muted">
-            {result.correctCount}/{result.totalMcq ?? HSK3_MOCK_EXAM_MCQ_COUNT} multiple-choice
+            {result.correctCount}/{result.totalMcq ?? mcqCount} multiple-choice
             questions correct
           </p>
         </div>
@@ -252,7 +279,7 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
           </div>
         )}
 
-        {WRITING_QUESTION && writingAnswer ? (
+        {writingQuestion && writingAnswer ? (
           <div className="surface-card p-6">
             <h3 className="text-sm font-semibold text-ink">AI writing feedback</h3>
             <p className="mt-1 text-xs text-ink-muted">
@@ -370,16 +397,16 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
         ) : null}
 
         <div className="flex flex-wrap gap-3">
-          {result.attemptId ? (
+          {result.attemptId && !hideReviewLink ? (
             <Link href={`/mock-exam/attempts/${result.attemptId}`} className="btn-primary">
               Review exam
             </Link>
           ) : null}
           <Link
-            href="/dashboard"
-            className={result.attemptId ? "btn-secondary" : "btn-primary"}
+            href={completePrimaryHref}
+            className={result.attemptId && !hideReviewLink ? "btn-secondary" : "btn-primary"}
           >
-            View dashboard
+            {completePrimaryLabel}
           </Link>
           <Link
             href="/practice"
@@ -396,7 +423,7 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
     <div className="space-y-6">
       <div className="flex items-center justify-between text-sm text-ink-muted">
         <span>
-          Question {step + 1} of {HSK3_MOCK_EXAM.length}
+          Question {step + 1} of {questions.length}
         </span>
         <span className="capitalize">{question.section}</span>
       </div>
@@ -404,11 +431,11 @@ export default function MockExamSession({ plan = "free" }: MockExamSessionProps)
       <div className="h-2 overflow-hidden rounded-full bg-mist">
         <div
           className="h-full rounded-full bg-jade transition-all"
-          style={{ width: `${((step + 1) / HSK3_MOCK_EXAM.length) * 100}%` }}
+          style={{ width: `${((step + 1) / questions.length) * 100}%` }}
           role="progressbar"
           aria-valuenow={step + 1}
           aria-valuemin={1}
-          aria-valuemax={HSK3_MOCK_EXAM.length}
+          aria-valuemax={questions.length}
           aria-label="Exam progress"
         />
       </div>
