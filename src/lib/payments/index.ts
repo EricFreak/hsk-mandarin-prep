@@ -6,6 +6,7 @@ import {
 import type { PaymentProvider, PriceType } from "@/lib/payments/types";
 
 export {
+  FREE_TIER_BENEFITS,
   PRO_BENEFITS,
   getAppUrl,
   type PaymentProvider,

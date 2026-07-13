@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { PRO_BENEFITS, type PriceType } from "@/lib/payments";
+import { FREE_TIER_BENEFITS, PRO_BENEFITS, type PriceType } from "@/lib/payments";
 
 export default function PricingCheckout() {
   const [priceType, setPriceType] = useState<PriceType>("monthly");
@@ -140,10 +140,9 @@ export default function PricingCheckout() {
             <span className="text-sm text-ink-muted">Forever</span>
           </div>
           <ul className="mt-6 space-y-3 text-sm text-ink-muted">
-            <li>SRS flashcards (HSK 3.0 vocabulary)</li>
-            <li>20 practice questions per day</li>
-            <li>1 free mock exam with score</li>
-            <li>Weakness summary report</li>
+            {FREE_TIER_BENEFITS.map((benefit) => (
+              <li key={benefit}>{benefit}</li>
+            ))}
           </ul>
           <Link href="/mock-exam" className="mt-6 inline-flex w-full btn-secondary py-3 text-base">
             Start free mock exam

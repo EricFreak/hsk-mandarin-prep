@@ -57,7 +57,8 @@ export default function LandingPage() {
             Simple, transparent pricing
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-center text-sm text-ink-muted">
-            Start free. Upgrade when you need the full AI coach report and study plan.
+            Start free with full Week 1. Upgrade after Week 1 to continue your coach journey
+            to exam day.
           </p>
           <div className="mt-12">
             <PricingTable />
@@ -71,7 +72,8 @@ export default function LandingPage() {
             Ready for your AI coach?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-ink-muted">
-            One free HSK 3 mock exam unlocks your first AI summary — no credit card.
+            One free HSK 3 mock exam starts your coach journey — Week 1 included, no credit
+            card.
           </p>
           <Link href="/login?next=%2Fmock-exam" className="btn-primary mt-8 px-8 py-3 text-base">
             Start with free mock exam

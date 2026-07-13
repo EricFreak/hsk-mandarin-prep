@@ -4,7 +4,7 @@ import PricingCheckout from "@/components/paywall/PricingCheckout";
 export const metadata = {
   title: "Pricing — HSK Prep",
   description:
-    "Start free with HSK flashcards and one mock exam. Upgrade to Pro for unlimited AI practice and all mock exams.",
+    "Start free with full Week 1 on your HSK Level 3 coach journey. Upgrade to Pro after Week 1 to continue to exam day.",
 };
 
 export default function PricingPage() {
@@ -19,8 +19,8 @@ export default function PricingPage() {
             Simple, transparent pricing
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-ink-muted">
-            Start free. Upgrade to Pro when you need unlimited practice, all mock
-            exams, and AI writing feedback.
+            Start free with full Week 1. Upgrade after Week 1 to continue your coach journey
+            to exam day — full reports, unlimited mocks, and plan-driven practice.
           </p>
         </div>
 
