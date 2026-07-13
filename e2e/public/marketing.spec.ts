@@ -4,12 +4,13 @@ test.describe("MKT — Marketing & public pages", () => {
   test("MKT-001: home page loads", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.getByRole("link", { name: /HSK exam guide/i }).first()).toBeVisible();
     await expect(page.getByRole("link", { name: /pricing/i }).first()).toBeVisible();
   });
 
-  test("MKT-003: HSK 2 vs 3 comparison", async ({ page }) => {
+  test("MKT-003: HSK exam guide page", async ({ page }) => {
     await page.goto("/hsk-2-vs-3");
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(/HSK standards/i);
     await expect(page.getByRole("link", { name: /chinesetest/i }).first()).toBeVisible();
   });
 

@@ -5,7 +5,7 @@ import { useState } from "react";
 import BrandLogo from "@/components/marketing/BrandLogo";
 
 const NAV_LINKS = [
-  { href: "/hsk-2-vs-3", label: "HSK 2 vs 3" },
+  { href: "/hsk-2-vs-3", label: "HSK exam guide" },
   { href: "/pricing", label: "Pricing" },
 ] as const;
 

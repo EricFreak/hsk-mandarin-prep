@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "HSK 2.0 vs 3.0: Which Exam Should You Take in 2026?",
+  title: "HSK Exam Guide: 2.0 vs 3.0, Levels & Which Test to Take",
   description:
-    "Compare HSK 2.0 and HSK 3.0 level structures, vocabulary counts, and difficulty. Learn which Chinese proficiency test to prepare for in 2026.",
+    "Guide to HSK exam standards: compare HSK 2.0 and 3.0, level structures and vocabulary, and how to choose the right test for your goals.",
 };
 
 const HSK20_LEVELS = [
@@ -30,14 +30,13 @@ export default function Hsk2Vs3Page() {
   return (
     <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
       <header>
-        <p className="section-eyebrow">Guide</p>
+        <p className="section-eyebrow">HSK exam guide</p>
         <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-          HSK 2.0 vs 3.0: Which Exam Should You Take in 2026?
+          HSK standards, levels &amp; which exam to take
         </h1>
         <p className="mt-4 text-lg text-ink-muted">
-          China&apos;s official Chinese proficiency test was overhauled in 2021.
-          Here&apos;s what changed and how to choose the right version for your
-          goals.
+          Compare HSK 2.0 and 3.0, understand level structures and vocabulary
+          changes, and choose the right test for your goals.
         </p>
       </header>
 
@@ -211,12 +210,12 @@ export default function Hsk2Vs3Page() {
         </div>
 
         <h2 className="mt-10 text-xl font-semibold text-ink">
-          Which exam should you take in 2026?
+          Which exam should you take?
         </h2>
         <p className="mt-3 text-ink-muted">
-          As of 2026, China is gradually rolling out HSK 3.0 exams, but HSK 2.0
-          tests are still offered in many test centers worldwide during the
-          transition period. Here&apos;s our recommendation:
+          China is gradually rolling out HSK 3.0 exams, but HSK 2.0 tests are
+          still offered in many test centers worldwide during the transition
+          period. Here&apos;s our recommendation:
         </p>
         <ul className="mt-4 list-disc space-y-2 pl-5 text-ink-muted">
           <li>
