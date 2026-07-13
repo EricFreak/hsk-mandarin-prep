@@ -10,6 +10,7 @@ const STEPS = [
     step: "1",
     title: "Take a mock exam",
     short: "Mock exam",
+    tagline: "Full HSK 3 · listening, reading, writing.",
     description:
       "Full HSK 3 format — listening, reading, and writing under realistic conditions.",
   },
@@ -18,6 +19,7 @@ const STEPS = [
     step: "2",
     title: "Get your score & skill breakdown",
     short: "Score & skills",
+    tagline: "Instant score + skill breakdown.",
     description:
       "Instant score plus structured weakness metrics from your mock exam.",
   },
@@ -26,6 +28,7 @@ const STEPS = [
     step: "3",
     title: "Read your AI summary",
     short: "AI summary",
+    tagline: "Coach report — what to fix first.",
     description:
       "A natural-language coach report explains what your score means and what to fix first.",
   },
@@ -34,6 +37,7 @@ const STEPS = [
     step: "4",
     title: "See your journey roadmap",
     short: "Roadmap",
+    tagline: "Exam date → weekly themes until exam day.",
     description:
       "Enter your target exam date. The coach maps stages to your calendar — each week has a theme until exam day.",
   },
@@ -42,6 +46,7 @@ const STEPS = [
     step: "5",
     title: "Do this week's tasks",
     short: "This week",
+    tagline: "Dashboard → practice → mastery gate.",
     description:
       "On Dashboard, start the top-ranked task. Plan-driven practice targets your gaps — pass the bar to clear the week.",
   },
@@ -50,6 +55,7 @@ const STEPS = [
     step: "6",
     title: "Track and re-test",
     short: "Progress",
+    tagline: "Readiness trends → follow-up mock.",
     description:
       "See readiness trends on Dashboard. Take another mock to refresh your report and adjust the journey.",
   },
@@ -752,38 +758,45 @@ export default function HowItWorksShowcase() {
           onBlurCapture={() => setPaused(false)}
         >
           <ol
-            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
+            className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1 lg:grid lg:grid-cols-6 lg:overflow-visible lg:pb-0"
             aria-label="How it works steps"
           >
             {STEPS.map((step, index) => {
               const isActive = index === activeIndex;
+              const tooltipId = `how-it-works-tip-${step.id}`;
               return (
-                <li key={step.id}>
+                <li
+                  key={step.id}
+                  className="group relative min-w-[8.25rem] shrink-0 snap-start lg:min-w-0 lg:shrink"
+                >
                   <button
                     type="button"
                     onClick={() => goTo(index)}
-                    className={`flex h-full w-full flex-col rounded-xl border p-3.5 text-left transition-all duration-300 ${
+                    aria-describedby={tooltipId}
+                    className={`flex h-full w-full flex-col rounded-xl border px-2.5 py-2.5 text-left transition-all duration-300 sm:px-3 ${
                       isActive
                         ? "border-jade/40 bg-jade/5 shadow-card"
                         : "border-mist bg-white hover:border-jade/20 hover:bg-paper-dark/50"
                     }`}
                     aria-current={isActive ? "step" : undefined}
                   >
-                    <span
-                      className={`inline-flex h-8 w-8 items-center justify-center rounded-full font-display text-sm font-semibold transition-colors ${
-                        isActive ? "bg-jade text-white" : "bg-seal/10 text-seal"
-                      }`}
-                    >
-                      {step.step}
-                    </span>
-                    <h3 className="mt-3 font-display text-sm font-semibold leading-snug text-ink sm:text-base">
-                      {step.short}
-                    </h3>
-                    <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
-                      {step.description}
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-display text-xs font-semibold transition-colors ${
+                          isActive ? "bg-jade text-white" : "bg-seal/10 text-seal"
+                        }`}
+                      >
+                        {step.step}
+                      </span>
+                      <h3 className="min-w-0 font-display text-xs font-semibold leading-snug text-ink sm:text-sm">
+                        {step.short}
+                      </h3>
+                    </div>
+                    <p className="mt-1.5 line-clamp-2 text-[11px] leading-snug text-ink-muted">
+                      {step.tagline}
                     </p>
                     {isActive && !reducedMotion ? (
-                      <div className="mt-auto pt-3">
+                      <div className="mt-2">
                         <div className="h-1 overflow-hidden rounded-full bg-mist">
                           <div
                             key={`${step.id}-${activeIndex}`}
@@ -792,11 +805,16 @@ export default function HowItWorksShowcase() {
                         </div>
                       </div>
                     ) : (
-                      <div className="mt-auto pt-3">
-                        <div className="h-1 rounded-full bg-transparent" />
-                      </div>
+                      <div className="mt-2 h-1" aria-hidden="true" />
                     )}
                   </button>
+                  <div
+                    id={tooltipId}
+                    role="tooltip"
+                    className="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-48 -translate-x-1/2 translate-y-1 rounded-xl border border-mist bg-white px-3 py-2.5 text-xs leading-relaxed text-ink-muted opacity-0 shadow-card transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100 lg:block"
+                  >
+                    {step.description}
+                  </div>
                 </li>
               );
             })}
