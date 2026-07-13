@@ -32,26 +32,26 @@ const STEPS = [
   {
     id: "plan",
     step: "4",
-    title: "Get your journey to exam day",
-    short: "Journey plan",
+    title: "See your journey roadmap",
+    short: "Roadmap",
     description:
-      "Enter your target exam date. From your mock results, the coach builds a staged plan to exam day — weekly tasks are how you execute it.",
+      "Enter your target exam date. The coach maps stages to your calendar — each week has a theme until exam day.",
   },
   {
     id: "practice",
     step: "5",
-    title: "Practice smarter",
-    short: "Practice",
+    title: "Do this week's tasks",
+    short: "This week",
     description:
-      "AI-generated questions target your weak areas instead of random drills.",
+      "On Dashboard, start the top-ranked task. Plan-driven practice targets your gaps — pass the bar to clear the week.",
   },
   {
     id: "track",
     step: "6",
-    title: "Track progress",
-    short: "Dashboard",
+    title: "Track and re-test",
+    short: "Progress",
     description:
-      "Your dashboard updates after every session so you always know where you stand.",
+      "See readiness trends on Dashboard. Take another mock to refresh your report and adjust the journey.",
   },
 ] as const;
 
@@ -395,20 +395,15 @@ function PlanPreview({ active }: { active: boolean }) {
   ];
 
   const outlineWeeks = [
-    { week: 1, theme: "Vocabulary focus", stage: "Foundation", status: "Current" },
-    { week: 2, theme: "Grammar focus", stage: "Foundation", status: "Up next" },
-    { week: 3, theme: "Listening focus", stage: "Skills", status: "Later" },
-    { week: 4, theme: "Reading & writing", stage: "Skills", status: "Later" },
-  ];
-
-  const weekTasks = [
-    { title: "Listening drills", detail: "Top gap · 15 questions", rank: 1 },
-    { title: "Vocabulary review", detail: "Foundation quota", rank: 2 },
-    { title: "Grammar practice", detail: "Also training", rank: 3 },
+    { week: 1, theme: "Vocabulary focus", stage: "Foundation", status: "Available" },
+    { week: 2, theme: "Grammar focus", stage: "Foundation", status: "Locked" },
+    { week: 3, theme: "Listening focus", stage: "Skills", status: "Locked" },
+    { week: 4, theme: "Reading & writing", stage: "Skills", status: "Locked" },
+    { week: 5, theme: "Mock review", stage: "Sprint", status: "Locked" },
   ];
 
   return (
-    <PreviewChrome title="Journey Study Plan · Exam Sep 12, 2026" badge="Preview">
+    <PreviewChrome title="Journey Roadmap · Exam Sep 12, 2026" badge="Preview">
       <FadeIn active={active} className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-jade">
@@ -418,12 +413,12 @@ function PlanPreview({ active }: { active: boolean }) {
             September 12, 2026
           </h3>
           <p className="mt-1 text-sm text-ink-muted">
-            42 days · plan calibrated from your HSK 3 mock (72%)
+            42 days · calibrated from your HSK 3 mock (72%)
           </p>
         </div>
         <div className="rounded-xl border border-mist bg-paper-dark px-4 py-3 text-right">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-muted">
-            Current stage
+            You are here
           </p>
           <p className="mt-1 font-display text-lg font-semibold text-jade">Foundation</p>
         </div>
@@ -431,7 +426,7 @@ function PlanPreview({ active }: { active: boolean }) {
 
       <FadeIn active={active} delay={120} className="mt-6 rounded-xl border border-mist bg-paper-dark/60 px-4 py-3">
         <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-ink-muted">
-          Journey · Foundation · Week 1
+          Stage calendar
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {journeyStages.map((stage) => (
@@ -453,127 +448,116 @@ function PlanPreview({ active }: { active: boolean }) {
         </div>
       </FadeIn>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
-        <FadeIn active={active} delay={200}>
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-            Journey outline
-          </p>
-          <ul className="mt-3 space-y-2">
-            {outlineWeeks.map((row, index) => (
-              <li
-                key={row.week}
-                className={`flex items-start justify-between gap-3 rounded-xl border px-3 py-2.5 transition-all duration-500 ${
-                  index === 0
-                    ? "border-jade/40 bg-jade/5"
-                    : "border-mist bg-white"
-                } ${active ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}
-                style={{ transitionDelay: active ? `${220 + index * 60}ms` : "0ms" }}
-              >
-                <div>
-                  <p className="text-sm font-semibold text-ink">
-                    Week {row.week} · {row.theme}
-                  </p>
-                  <p className="mt-0.5 text-[11px] text-ink-muted">{row.stage}</p>
-                </div>
-                <span
-                  className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${
-                    index === 0
-                      ? "bg-jade text-white"
-                      : "bg-paper-dark text-ink-muted"
-                  }`}
-                >
-                  {row.status}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-3 text-[11px] leading-relaxed text-ink-muted">
-            Outline shows your full path. You unlock and execute one week at a time after
-            passing the prior week.
-          </p>
-        </FadeIn>
-
-        <FadeIn active={active} delay={280}>
-          <p className="text-xs font-semibold uppercase tracking-wide text-jade">
-            This week · execution
-          </p>
-          <p className="mt-1 text-sm text-ink-muted">
-            This week&apos;s problem: Listening · evidence from mock
-          </p>
-          <ul className="mt-4 space-y-2">
-            {weekTasks.map((task, index) => (
-              <li
-                key={task.title}
-                className={`rounded-xl border border-mist bg-white px-3 py-2.5 transition-all duration-500 ${
-                  active ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+      <FadeIn active={active} delay={200} className="mt-6">
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
+          Full journey outline — theme per week
+        </p>
+        <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+          {outlineWeeks.map((row, index) => (
+            <li
+              key={row.week}
+              className={`flex items-start justify-between gap-3 rounded-xl border px-3 py-2.5 transition-all duration-500 ${
+                index === 0 ? "border-jade/30 bg-jade/5" : "border-mist bg-white"
+              } ${active ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}
+              style={{ transitionDelay: active ? `${220 + index * 50}ms` : "0ms" }}
+            >
+              <div>
+                <p className="text-sm font-semibold text-ink">
+                  Week {row.week} · {row.theme}
+                </p>
+                <p className="mt-0.5 text-[11px] text-ink-muted">{row.stage}</p>
+              </div>
+              <span
+                className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${
+                  row.status === "Available"
+                    ? "bg-jade/15 text-jade"
+                    : "bg-paper-dark text-ink-muted"
                 }`}
-                style={{ transitionDelay: active ? `${320 + index * 70}ms` : "0ms" }}
               >
-                <div className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-jade/10 text-xs font-semibold text-jade">
-                    {task.rank}
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-ink">{task.title}</p>
-                    <p className="mt-0.5 text-[11px] text-ink-muted">{task.detail}</p>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </FadeIn>
-      </div>
+                {row.status}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </FadeIn>
 
       <FadeIn
         active={active}
-        delay={520}
-        className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-jade/30 bg-jade/5 px-4 py-3"
+        delay={480}
+        className="mt-6 rounded-xl border border-mist bg-paper-dark px-4 py-3"
       >
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-jade">
-            Coach logic
-          </p>
-          <p className="mt-1 text-sm font-medium text-ink">
-            Exam date sets the calendar · mock gaps set the weights · this week is what you
-            do now
-          </p>
-        </div>
-        <span className="rounded-lg bg-jade px-4 py-2 text-sm font-semibold text-white">
-          Start week 1
-        </span>
+        <p className="text-xs font-semibold uppercase tracking-wide text-jade">Map only</p>
+        <p className="mt-1 text-sm leading-relaxed text-ink-muted">
+          The roadmap shows <span className="font-medium text-ink">when</span> and{" "}
+          <span className="font-medium text-ink">what themes</span> — not the drills themselves.
+          Exam date sets the calendar; mock gaps set the weights. You train on Dashboard in the
+          next step.
+        </p>
       </FadeIn>
     </PreviewChrome>
   );
 }
 
 function PracticePreview({ active }: { active: boolean }) {
-  return (
-    <PreviewChrome title="AI Practice · Plan-driven session" badge="Preview">
-      <div className="grid gap-6 lg:grid-cols-[1fr_240px]">
-        <div>
-          <FadeIn
-            active={active}
-            className="rounded-xl border border-jade/30 bg-jade/5 px-4 py-3 text-sm text-ink-muted"
-          >
-            Today&apos;s focus:{" "}
-            <span className="font-semibold text-jade">Listening</span> (from your coach plan)
-            <span className="mx-2 text-mist">·</span>
-            Task: time & travel phrases
-          </FadeIn>
+  const weekTasks = [
+    { title: "Listening drills", rank: 1, active: true },
+    { title: "Vocabulary review", rank: 2, active: false },
+    { title: "Grammar practice", rank: 3, active: false },
+  ];
 
-          <FadeIn active={active} delay={150} className="mt-6">
+  return (
+    <PreviewChrome title="Dashboard → Practice · Week 1 task" badge="Preview">
+      <FadeIn active={active} className="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-ink-muted">
+        <span className="rounded-full bg-jade/15 px-2.5 py-1 text-jade">1 · Dashboard</span>
+        <span aria-hidden="true">→</span>
+        <span className="rounded-full bg-jade/15 px-2.5 py-1 text-jade">2 · Practice</span>
+        <span aria-hidden="true">→</span>
+        <span className="rounded-full border border-mist px-2.5 py-1">3 · Mastery gate</span>
+      </FadeIn>
+
+      <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,240px)_1fr]">
+        <FadeIn active={active} delay={100} className="rounded-xl border border-jade/40 bg-jade/5 p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-jade">
+            Dashboard · This week
+          </p>
+          <p className="mt-2 text-sm font-semibold text-ink">Problem: Listening</p>
+          <p className="mt-1 text-[11px] text-ink-muted">Suggested order — start at the top</p>
+          <ul className="mt-3 space-y-2">
+            {weekTasks.map((task) => (
+              <li
+                key={task.title}
+                className={`rounded-lg border px-2.5 py-2 text-xs ${
+                  task.active
+                    ? "border-jade bg-white font-semibold text-ink shadow-sm"
+                    : "border-mist/80 bg-white/60 text-ink-muted"
+                }`}
+              >
+                <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-jade/10 text-[10px] font-semibold text-jade">
+                  {task.rank}
+                </span>
+                {task.title}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-[10px] leading-relaxed text-ink-muted">
+            Tap task #1 → opens plan-driven practice
+          </p>
+        </FadeIn>
+
+        <div>
+          <FadeIn active={active} delay={180}>
             <p className="text-xs font-semibold uppercase tracking-wide text-jade">
-              Listening cloze
+              Plan task · Listening
             </p>
             <p className="mt-3 font-display text-xl font-semibold text-ink sm:text-2xl">
               他想买一张去上海的____。
             </p>
             <p className="mt-2 text-xs text-ink-muted">
-              Choose the word that fits the travel context.
+              AI question tagged to your top gap — not a random drill.
             </p>
           </FadeIn>
 
-          <div className="mt-5 grid gap-2 sm:grid-cols-2">
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
             {["车票", "水果", "电脑", "书包"].map((choice, index) => (
               <div
                 key={choice}
@@ -582,7 +566,7 @@ function PracticePreview({ active }: { active: boolean }) {
                     ? "border-jade bg-jade/10 font-medium text-jade"
                     : "border-mist text-ink-muted"
                 }`}
-                style={{ transitionDelay: active ? `${200 + index * 70}ms` : "0ms" }}
+                style={{ transitionDelay: active ? `${240 + index * 60}ms` : "0ms" }}
               >
                 {choice}
               </div>
@@ -591,45 +575,25 @@ function PracticePreview({ active }: { active: boolean }) {
 
           <FadeIn
             active={active}
-            delay={650}
-            className="mt-5 rounded-xl border border-jade/20 bg-jade/5 px-4 py-3"
+            delay={520}
+            className="mt-5 rounded-xl border border-jade/30 bg-jade/5 px-4 py-3"
           >
-            <p className="text-sm font-semibold text-jade">✓ Correct — 车票</p>
-            <p className="mt-1 text-xs leading-relaxed text-ink-muted">
-              车票 means ticket. In travel sentences with 去 + city, 车票 / 机票 / 火车票 are
-              the natural fits — not everyday objects like 水果 or 书包.
-            </p>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-jade">
+                  Mastery gate
+                </p>
+                <p className="mt-1 font-display text-2xl font-semibold text-ink">
+                  8 <span className="text-base font-normal text-ink-muted">/ 10</span>
+                </p>
+                <p className="mt-1 text-xs text-ink-muted">Passed · locked into Week 1</p>
+              </div>
+              <span className="rounded-lg bg-jade px-4 py-2 text-sm font-semibold text-white">
+                Continue week
+              </span>
+            </div>
           </FadeIn>
         </div>
-
-        <FadeIn
-          active={active}
-          delay={300}
-          className="rounded-xl border border-mist bg-paper-dark p-4"
-        >
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-            Session
-          </p>
-          <div className="mt-4 space-y-4">
-            <div>
-              <p className="text-xs text-ink-muted">Plan progress</p>
-              <p className="mt-1 font-display text-2xl font-semibold text-ink">6 / 15</p>
-            </div>
-            <div>
-              <p className="text-xs text-ink-muted">Accuracy today</p>
-              <p className="mt-1 font-display text-2xl font-semibold text-jade">83%</p>
-            </div>
-            <div className="h-1.5 overflow-hidden rounded-full bg-white">
-              <div
-                className="h-full rounded-full bg-jade transition-all duration-1000"
-                style={{ width: active ? "40%" : "0%" }}
-              />
-            </div>
-            <p className="text-xs leading-relaxed text-ink-muted">
-              Completing this task counts toward Week 1 on your journey plan.
-            </p>
-          </div>
-        </FadeIn>
       </div>
     </PreviewChrome>
   );
@@ -637,23 +601,23 @@ function PracticePreview({ active }: { active: boolean }) {
 
 function DashboardPreview({ active }: { active: boolean }) {
   const stats = [
-    { label: "Latest mock", value: "72%", sub: "HSK 3 · 2 days ago" },
+    { label: "Readiness", value: "68%", sub: "Up from 61% last mock" },
     { label: "Days to exam", value: "42", sub: "Sep 12, 2026 target" },
-    { label: "This week", value: "1/3", sub: "tasks passed" },
-    { label: "Journey stage", value: "Foundation", sub: "Week 1 of plan" },
+    { label: "Week 1 tasks", value: "2/3", sub: "passed this week" },
+    { label: "Listening gap", value: "−12%", sub: "wrong vs last mock" },
   ];
 
   return (
-    <PreviewChrome title="Dashboard · Coach home" badge="Preview">
+    <PreviewChrome title="Dashboard · Progress & re-test" badge="Preview">
       <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
         <div>
           <FadeIn active={active}>
             <p className="text-xs font-semibold uppercase tracking-wide text-jade">
-              AI Summary
+              Progress glance
             </p>
             <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-              Listening remains your top gap, but accuracy on plan-driven drills is up this
-              week. Keep the travel-phrase focus through Thursday.
+              After a week of plan-driven practice, listening accuracy is trending up. Ready
+              for a follow-up mock to refresh your coach report.
             </p>
           </FadeIn>
 
@@ -677,42 +641,39 @@ function DashboardPreview({ active }: { active: boolean }) {
         <FadeIn
           active={active}
           delay={250}
-          className="rounded-xl border border-mist bg-paper-dark p-5"
+          className="flex flex-col rounded-xl border border-mist bg-paper-dark p-5"
         >
           <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-            This week&apos;s plan
+            Close the loop
           </p>
-          <ul className="mt-4 space-y-3">
-            {[
-              { title: "Listening drills", status: "Done", done: true },
-              { title: "Mistake bank review", status: "Done", done: true },
-              { title: "Vocabulary flashcards", status: "Today", done: false },
-              { title: "Listening patterns", status: "Thu", done: false },
-            ].map((task) => (
-              <li
-                key={task.title}
-                className="flex items-center justify-between gap-3 rounded-lg border border-mist bg-white px-3 py-2.5"
-              >
-                <span
-                  className={`text-sm ${
-                    task.done ? "text-ink-muted line-through" : "font-medium text-ink"
-                  }`}
-                >
-                  {task.title}
-                </span>
-                <span
-                  className={`text-[11px] font-semibold ${
-                    task.done ? "text-jade" : "text-seal"
-                  }`}
-                >
-                  {task.status}
-                </span>
-              </li>
-            ))}
+          <ul className="mt-4 space-y-3 text-sm text-ink-muted">
+            <li className="flex gap-2">
+              <span className="text-jade" aria-hidden="true">
+                ✓
+              </span>
+              Week 1 tasks cleared — Week 2 unlocked on roadmap
+            </li>
+            <li className="flex gap-2">
+              <span className="text-jade" aria-hidden="true">
+                ✓
+              </span>
+              Listening accuracy +9% since last report
+            </li>
+            <li className="flex gap-2">
+              <span className="text-ink-muted" aria-hidden="true">
+                →
+              </span>
+              Take another mock to re-weight the journey
+            </li>
           </ul>
-          <div className="mt-4 rounded-lg border border-jade/20 bg-jade/5 px-3 py-2 text-xs text-ink-muted">
-            Progress since last report: Listening accuracy{" "}
-            <span className="font-semibold text-jade">+9%</span>
+          <div className="mt-auto pt-6">
+            <span className="inline-block rounded-lg bg-jade px-4 py-2.5 text-sm font-semibold text-white">
+              Take follow-up mock
+            </span>
+            <p className="mt-3 text-[11px] leading-relaxed text-ink-muted">
+              New mock → updated report → roadmap adjusts. Then back to This week on
+              Dashboard.
+            </p>
           </div>
         </FadeIn>
       </div>
@@ -777,8 +738,8 @@ export default function HowItWorksShowcase() {
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-semibold text-ink">How it works</h2>
           <p className="mt-3 text-sm text-ink-muted">
-            Mock exam → AI assessment → journey plan to your exam date → weekly tasks and
-            practice. All previews use example data, not your account.
+            Assess → roadmap to exam day → do this week&apos;s tasks → track and re-test.
+            All previews use example data, not your account.
           </p>
           <div className="mx-auto mt-4 h-px w-24 bg-brush-rule" />
         </div>
