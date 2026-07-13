@@ -2,7 +2,7 @@ import MarketingHeader from "@/components/marketing/MarketingHeader";
 import PricingCheckout from "@/components/paywall/PricingCheckout";
 
 export const metadata = {
-  title: "Pricing — HSK Mandarin Prep",
+  title: "Pricing — HSK Prep",
   description:
     "Start free with HSK flashcards and one mock exam. Upgrade to Pro for unlimited AI practice and all mock exams.",
 };

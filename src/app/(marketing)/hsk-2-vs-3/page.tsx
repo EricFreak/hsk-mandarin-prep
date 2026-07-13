@@ -250,12 +250,12 @@ export default function Hsk2Vs3Page() {
         </ul>
 
         <h2 className="mt-10 text-xl font-semibold text-ink">
-          Prepare with HSK 3.0-aligned tools
+          Prepare for HSK Level 3 with AI Coach
         </h2>
         <p className="mt-3 text-ink-muted">
-          Most commercial apps still use HSK 2.0 vocabulary lists. HSK Mandarin
-          Prep is built on the official GF0025-2021 syllabus with AI-generated
-          practice and a free HSK 3 mock exam.
+          Most commercial apps still use HSK 2.0 vocabulary lists. HSK Prep is
+          built on the official GF0025-2021 syllabus with AI-generated practice
+          and a free HSK 3 mock exam.
         </p>
         <div className="mt-6">
           <Link

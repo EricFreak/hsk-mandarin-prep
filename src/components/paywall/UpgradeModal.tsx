@@ -105,7 +105,7 @@ export default function UpgradeModal({
           ×
         </button>
 
-        <p className="section-eyebrow">HSK Mandarin Prep Pro</p>
+        <p className="section-eyebrow">HSK Prep Pro</p>
         <h2
           id="upgrade-modal-title"
           className="mt-2 font-display text-xl font-semibold text-ink"

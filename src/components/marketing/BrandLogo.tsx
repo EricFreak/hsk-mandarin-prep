@@ -9,7 +9,7 @@ type BrandLogoProps = {
 
 export default function BrandLogo({
   href = "/",
-  title = "HSK Mandarin Prep",
+  title = "HSK Prep",
   size = "md",
 }: BrandLogoProps) {
   const dimension = size === "sm" ? 32 : 36;

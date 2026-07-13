@@ -15,9 +15,9 @@ const sans = Source_Sans_3({
 });
 
 export const metadata: Metadata = {
-  title: "HSK Mandarin Prep — AI Coach for HSK 3.0",
+  title: "HSK Prep — AI Coach for HSK Level 3",
   description:
-    "AI Learning Coach for HSK 3.0: mock exams, personalized assessment reports, study plans, and targeted practice aligned to GF0025-2021.",
+    "AI Learning Coach for HSK Level 3: mock exams, personalized assessment reports, study plans, and targeted practice aligned to GF0025-2021.",
 };
 
 export default function RootLayout({

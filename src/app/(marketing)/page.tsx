@@ -18,9 +18,9 @@ export default function LandingPage() {
 
         <div className="relative z-[2] mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:py-20">
           <div>
-            <p className="section-eyebrow">AI Coach · HSK 3.0</p>
+            <p className="section-eyebrow">AI Coach · HSK Level 3</p>
             <h1 className="mt-4 font-display text-4xl font-semibold leading-tight tracking-tight text-ink sm:text-5xl">
-              Your AI coach for HSK 3.0
+              Your AI coach for HSK Level 3
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-muted">
               Take a mock exam. Get an AI assessment. Follow a personalized study plan.
