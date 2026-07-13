@@ -126,8 +126,8 @@ export default function PricingPlans({
 
   return (
     <div className="mx-auto max-w-4xl">
-      <div className="grid items-start gap-6 lg:grid-cols-2">
-        <div className="flex flex-col rounded-2xl border border-mist bg-white p-6 shadow-card sm:p-8">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="flex h-full flex-col rounded-2xl border border-mist bg-white p-6 shadow-card sm:p-8">
           <h3 className="font-display text-xl font-semibold text-ink">Free</h3>
           <div className="mt-2 flex items-baseline gap-2">
             <span className="font-display text-4xl font-semibold tabular-nums text-ink">$0</span>
@@ -136,13 +136,13 @@ export default function PricingPlans({
           <FeatureList features={FREE_TIER_BENEFITS} />
           <Link
             href="/login?next=%2Fmock-exam"
-            className="mt-6 block w-full btn-secondary py-3 text-center text-base font-semibold"
+            className="mt-auto block w-full btn-secondary py-3 pt-6 text-center text-base font-semibold"
           >
             Start free mock exam
           </Link>
         </div>
 
-        <div className="flex flex-col rounded-2xl border border-jade bg-white p-6 shadow-lift ring-2 ring-jade/20 sm:p-8">
+        <div className="flex h-full flex-col rounded-2xl border border-jade bg-white p-6 shadow-lift ring-2 ring-jade/20 sm:p-8">
           <span className="text-xs font-semibold uppercase tracking-wide text-jade">
             Most popular
           </span>
@@ -159,19 +159,15 @@ export default function PricingPlans({
             />
           </div>
 
-          <div className="mt-4 min-h-[5.25rem]">
+          <div className="mt-4">
             <div className="flex items-baseline gap-2">
               <span className="inline-block min-w-[5.5rem] font-display text-4xl font-semibold tabular-nums text-ink">
                 {proPrice}
               </span>
               <span className="text-sm text-ink-muted">{proPeriod}</span>
             </div>
-            <p className="mt-1 min-h-[1.25rem] text-sm leading-snug">
-              {priceType === "yearly" ? (
-                <span className="text-jade">Save about 42% vs monthly billing</span>
-              ) : (
-                <span className="text-ink-muted">or $69/year (save ~42%)</span>
-              )}
+            <p className="mt-1 min-h-[1.25rem] text-sm leading-snug text-jade">
+              {priceType === "yearly" ? "Save about 42% vs monthly billing" : "\u00A0"}
             </p>
           </div>
 
@@ -184,7 +180,7 @@ export default function PricingPlans({
           {mode === "checkout" ? (
             <button
               type="button"
-              className="mt-6 w-full btn-primary py-3 text-base disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-auto w-full btn-primary py-3 pt-6 text-base disabled:cursor-not-allowed disabled:opacity-60"
               disabled={loading}
               onClick={() => void handleCheckout()}
             >
@@ -193,7 +189,7 @@ export default function PricingPlans({
           ) : (
             <Link
               href={pricingHref}
-              className="mt-6 block w-full btn-primary py-3 text-center text-base font-semibold"
+              className="mt-auto block w-full btn-primary py-3 pt-6 text-center text-base font-semibold"
             >
               View Pro plans
             </Link>
