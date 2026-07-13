@@ -19,7 +19,7 @@ const TIERS: Tier[] = [
       "1 full mock exam",
       "AI coach summary (truncated)",
       "20 practice questions per day",
-      "SRS flashcards (beta demo deck)",
+      "SRS flashcards (HSK 3.0 vocabulary)",
     ],
     cta: { label: "Sign up for free mock exam", href: "/login?next=%2Fmock-exam" },
   },

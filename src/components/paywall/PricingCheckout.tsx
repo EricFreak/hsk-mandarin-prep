@@ -140,7 +140,7 @@ export default function PricingCheckout() {
             <span className="text-sm text-ink-muted">Forever</span>
           </div>
           <ul className="mt-6 space-y-3 text-sm text-ink-muted">
-            <li>SRS flashcards (HSK 1–3 demo deck)</li>
+            <li>SRS flashcards (HSK 3.0 vocabulary)</li>
             <li>20 practice questions per day</li>
             <li>1 free mock exam with score</li>
             <li>Weakness summary report</li>

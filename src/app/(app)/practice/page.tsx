@@ -1,12 +1,14 @@
-import DemoVocabularyNotice from "@/components/marketing/DemoVocabularyNotice";
 import PracticeSession from "@/components/practice/PracticeSession";
 import { createClient } from "@/lib/supabase/server";
+import { planLabel, type Plan } from "@/lib/entitlements";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
 export default async function PracticePage() {
+  let plan: Plan = "free";
+
   if (
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -19,6 +21,14 @@ export default async function PracticePage() {
     if (!user) {
       redirect("/login");
     }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("plan")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    plan = profile?.plan === "pro" ? "pro" : "free";
   }
 
   return (
@@ -26,13 +36,13 @@ export default async function PracticePage() {
       <div className="mb-8">
         <h1 className="font-display text-2xl font-semibold text-ink">AI Practice</h1>
         <p className="mt-2 text-sm text-ink-muted">
-          Answer adaptive HSK questions powered by AI. Free accounts get 20 questions
-          per day.
+          {plan === "pro"
+            ? `Adaptive HSK 3 practice for your ${planLabel(plan)} plan — unlimited AI questions from the full HSK 3.0 word list.`
+            : "Adaptive HSK 3 practice powered by AI. Free accounts get 20 questions per day."}
         </p>
-        <DemoVocabularyNotice className="mt-4" />
       </div>
       <Suspense fallback={null}>
-        <PracticeSession />
+        <PracticeSession userPlan={plan} />
       </Suspense>
     </div>
   );

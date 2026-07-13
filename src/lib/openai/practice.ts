@@ -61,9 +61,21 @@ function buildFallbackQuestion(
   };
 }
 
-function buildPrompt(level: 1 | 2 | 3, words: HskWord[], focusSkill?: string): string {
-  const wordList = words
-    .slice(0, 40)
+function pickWordSample(words: HskWord[], seed: number, size: number): HskWord[] {
+  if (words.length <= size) return words;
+  const copy = [...words];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.abs(seed * (i + 1) * 2654435761) % (i + 1);
+    const tmp = copy[i];
+    copy[i] = copy[j];
+    copy[j] = tmp;
+  }
+  return copy.slice(0, size);
+}
+
+function buildPrompt(level: 1 | 2 | 3, words: HskWord[], focusSkill?: string, seed = 0): string {
+  const sample = pickWordSample(words, seed, 40);
+  const wordList = sample
     .map((word) => `${word.hanzi} (${formatPinyinSpaced(word.pinyin)}): ${word.english}`)
     .join("\n");
 
@@ -111,7 +123,7 @@ export async function generatePracticeQuestion(
         },
         {
           role: "user",
-          content: buildPrompt(level, words, focusSkill),
+          content: buildPrompt(level, words, focusSkill, seed),
         },
       ],
     });

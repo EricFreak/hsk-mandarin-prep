@@ -26,10 +26,10 @@ test.describe("PRC — AI Practice", () => {
     }
   });
 
-  test("PRC-004: switch HSK level", async ({ page }) => {
+  test("PRC-004: practice is locked to HSK 3", async ({ page }) => {
     await page.goto("/practice");
-    await expect(page.getByRole("button", { name: "1" })).toBeVisible({ timeout: 30_000 });
-    await page.getByRole("button", { name: "1" }).click();
+    await expect(page.getByText(/hsk 3/i).first()).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole("button", { name: "1" })).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Submit answer" })).toBeVisible({
       timeout: 60_000,
     });
