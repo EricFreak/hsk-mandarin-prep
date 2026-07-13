@@ -383,6 +383,9 @@ This replaces vague "detailed weakness report" with concrete **Coach** SKU.
 | Coach UI surface | **Merge into Dashboard** (no separate `/coach` in MVP) |
 | Tutoring CTA | **WeChat primary** + optional second link in report footer (founder configures handle in env `TUTORING_WECHAT_ID` or settings later) |
 | Free tier report | **Summary paragraph + top 1 gap** after first mock; full report Pro |
+| Free Week 1 | Complete first week of plan tasks (taste Coach) |
+| Primary Pro gate | **After Week 1 completion** — unlock journey continuation (see `2026-07-13-full-journey-coach-positioning.md`) |
+| Single track | **HSK Level 3** only in this milestone; no 1–9 picker |
 
 ---
 
