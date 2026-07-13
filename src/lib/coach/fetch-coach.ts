@@ -4,6 +4,13 @@ import {
   applyFreemiumReport,
   pickTodayTask,
 } from "./freemium";
+import {
+  computeDaysToExam,
+  parseStageCalendar,
+} from "./journey/journey-summary";
+import { isWeekCleared, type PlanTaskForClearance } from "./journey/persist-journey";
+import type { JourneyStageId, StageWindow, WeekOutlineRow } from "./journey/types";
+import { shouldShowWeek1ProCta } from "./journey/week-unlock";
 import { isCoachLLMConfigured } from "./llm";
 import type {
   CoachPlanTaskRow,
@@ -11,6 +18,16 @@ import type {
   CoachStudyPlanRow,
 } from "./types";
 import { gateOrderedWeekTasks } from "./week-tasks";
+
+export type CoachJourneyPayload = {
+  outline: WeekOutlineRow[];
+  stageCalendar: StageWindow[];
+  currentStage: JourneyStageId | null;
+  currentWeekIndex: number;
+  weekIndex: number;
+  daysToExam: number | null;
+  targetExamDate: string | null;
+};
 
 export type CoachDashboardPayload = {
   plan: Plan;
@@ -24,6 +41,13 @@ export type CoachDashboardPayload = {
   hiddenTaskCount: number;
   executionLocked: boolean;
   tutoringWechatId: string | null;
+  currentStage: JourneyStageId | null;
+  daysToExam: number | null;
+  weekIndex: number;
+  currentWeekIndex: number;
+  stageCalendar: StageWindow[];
+  shouldShowWeek1ProCta: boolean;
+  weekCleared: boolean;
 };
 
 export type CoachReportsPayload = {
@@ -89,6 +113,97 @@ function mapTask(row: Record<string, unknown>): CoachPlanTaskRow {
   };
 }
 
+function mapOutlineRow(row: {
+  week_index: number;
+  stage: JourneyStageId;
+  theme: string;
+  skill_focus: string[];
+  status: WeekOutlineRow["status"];
+}): WeekOutlineRow {
+  return {
+    weekIndex: row.week_index,
+    stage: row.stage,
+    theme: row.theme,
+    skillFocus: row.skill_focus ?? [],
+    status: row.status,
+  };
+}
+
+async function loadJourneyOutline(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<WeekOutlineRow[]> {
+  try {
+    const { data, error } = await supabase
+      .from("journey_week_outlines")
+      .select("week_index, stage, theme, skill_focus, status")
+      .eq("user_id", userId)
+      .order("week_index", { ascending: true });
+
+    if (error || !data?.length) return [];
+    return data.map((row) =>
+      mapOutlineRow(
+        row as {
+          week_index: number;
+          stage: JourneyStageId;
+          theme: string;
+          skill_focus: string[];
+          status: WeekOutlineRow["status"];
+        },
+      ),
+    );
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchCoachJourney(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<CoachJourneyPayload> {
+  const [{ data: learnerProfile }, { data: planRow }, outline] = await Promise.all([
+    supabase
+      .from("learner_profiles")
+      .select(
+        "target_exam_date, current_week_index, current_stage, stage_calendar",
+      )
+      .eq("user_id", userId)
+      .maybeSingle(),
+    supabase
+      .from("coach_study_plans")
+      .select("week_index")
+      .eq("user_id", userId)
+      .eq("status", "active")
+      .maybeSingle(),
+    loadJourneyOutline(supabase, userId),
+  ]);
+
+  const stageCalendar = parseStageCalendar(learnerProfile?.stage_calendar);
+  const targetExamDate = (learnerProfile?.target_exam_date as string | null) ?? null;
+  const currentWeekIndex =
+    typeof learnerProfile?.current_week_index === "number"
+      ? learnerProfile.current_week_index
+      : 1;
+  const planWeekIndex =
+    typeof (planRow as { week_index?: number } | null)?.week_index === "number"
+      ? (planRow as { week_index: number }).week_index
+      : currentWeekIndex;
+  const currentStage =
+    (learnerProfile?.current_stage as JourneyStageId | null) ??
+    outline.find((w) => w.weekIndex === currentWeekIndex)?.stage ??
+    null;
+
+  return {
+    outline,
+    stageCalendar,
+    currentStage,
+    currentWeekIndex,
+    weekIndex: planWeekIndex,
+    daysToExam: computeDaysToExam(targetExamDate, stageCalendar),
+    targetExamDate,
+  };
+}
+
 export async function fetchCoachDashboard(
   supabase: SupabaseClient,
   userId: string,
@@ -110,7 +225,9 @@ export async function fetchCoachDashboard(
         .maybeSingle(),
       supabase
         .from("learner_profiles")
-        .select("current_week_index")
+        .select(
+          "current_week_index, current_stage, target_exam_date, stage_calendar",
+        )
         .eq("user_id", userId)
         .maybeSingle(),
     ]);
@@ -120,6 +237,7 @@ export async function fetchCoachDashboard(
   const previousRow = rows[1] ?? null;
 
   let tasks: CoachPlanTaskRow[] = [];
+  let clearanceTasks: PlanTaskForClearance[] = [];
   if (planRow?.id) {
     const { data: taskRows } = await supabase
       .from("coach_plan_tasks")
@@ -127,7 +245,14 @@ export async function fetchCoachDashboard(
       .eq("plan_id", planRow.id)
       .order("day_offset", { ascending: true });
 
-    tasks = ((taskRows ?? []) as Record<string, unknown>[]).map(mapTask);
+    const rows = (taskRows ?? []) as Record<string, unknown>[];
+    tasks = rows.map(mapTask);
+    clearanceTasks = rows.map((row) => ({
+      task_type: row.task_type as string,
+      status: row.status as string,
+      mastery_status: (row.mastery_status as string | null) ?? null,
+      required: typeof row.required === "boolean" ? row.required : true,
+    }));
   }
 
   const report = reportRow ? applyFreemiumReport(mapReport(reportRow), userPlan) : null;
@@ -143,6 +268,20 @@ export async function fetchCoachDashboard(
     typeof learnerProfile?.current_week_index === "number"
       ? learnerProfile.current_week_index
       : 1;
+  const stageCalendar = parseStageCalendar(learnerProfile?.stage_calendar);
+  const targetExamDate = (learnerProfile?.target_exam_date as string | null) ?? null;
+  const currentStage =
+    (learnerProfile?.current_stage as JourneyStageId | null) ??
+    (typeof planRowRecord?.stage === "string"
+      ? (planRowRecord.stage as JourneyStageId)
+      : null);
+  const daysToExam = computeDaysToExam(targetExamDate, stageCalendar);
+  const weekCleared = clearanceTasks.length > 0 && isWeekCleared(clearanceTasks);
+  const showWeek1ProCta = shouldShowWeek1ProCta({
+    plan: userPlan,
+    currentWeekIndex,
+    weekCleared,
+  });
   const { tasks: gatedTasks, hiddenTaskCount, executionLocked } =
     gateOrderedWeekTasks(tasks, topGapSkill, userPlan, {
       weekIndex,
@@ -176,6 +315,13 @@ export async function fetchCoachDashboard(
     hiddenTaskCount,
     executionLocked,
     tutoringWechatId: process.env.TUTORING_WECHAT_ID ?? null,
+    currentStage,
+    daysToExam,
+    weekIndex,
+    currentWeekIndex,
+    stageCalendar,
+    shouldShowWeek1ProCta: showWeek1ProCta,
+    weekCleared,
   };
 }
 
