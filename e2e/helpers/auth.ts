@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { Browser } from "@playwright/test";
 import {
   createAdminClient,
+  ensureOnboardingComplete,
   getEnv,
   projectRefFromUrl,
   resetUserProgress,
@@ -43,6 +44,18 @@ export async function prepareFreeUserContext(
   const user = await ensureAuthUser(email, password);
   await setUserPlan(admin, user.id, user.email, "free");
   await resetUserProgress(admin, user.id);
+  await ensureOnboardingComplete(admin, user.id);
+  return user;
+}
+
+export async function prepareProUserContext(
+  email: string,
+  password: string,
+): Promise<{ id: string; email: string }> {
+  const admin = createAdminClient();
+  const user = await ensureAuthUser(email, password);
+  await setUserPlan(admin, user.id, user.email, "pro");
+  await ensureOnboardingComplete(admin, user.id);
   return user;
 }
 

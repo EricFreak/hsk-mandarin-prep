@@ -77,7 +77,9 @@ test.describe("FREE-JNY — Week 1 execution & Week 2 gate", () => {
     await expect(
       page.getByRole("heading", { name: /unlock week 2 and your full journey/i }),
     ).toBeVisible();
-    await expect(page.getByRole("button", { name: /upgrade to pro/i })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /upgrade to pro/i }).first(),
+    ).toBeVisible();
 
     await page.goto("/dashboard/journey");
     const week2 = page.locator("li").filter({ hasText: /Week 2/i });

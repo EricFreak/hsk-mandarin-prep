@@ -4,8 +4,8 @@ import { mkdirSync } from "fs";
 import path from "path";
 import {
   createStorageState,
-  ensureAuthUser,
   prepareFreeUserContext,
+  prepareProUserContext,
 } from "./helpers/auth";
 import { getEnv } from "./helpers/supabase";
 
@@ -30,6 +30,7 @@ export default async function globalSetup(config: FullConfig) {
   const browser = await chromium.launch();
 
   console.log(`[e2e] Pro auth: ${proEmail}`);
+  await prepareProUserContext(proEmail, proPassword!);
   await createStorageState(browser, baseURL, proEmail, proPassword, proAuthFile);
   await createStorageState(browser, baseURL, proEmail, proPassword, legacyAuthFile);
 

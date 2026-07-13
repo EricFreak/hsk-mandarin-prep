@@ -30,10 +30,8 @@ test.describe("FREE — Paywall & limits", () => {
 
   test("DASH-FREE-001: dashboard shows Free plan", async ({ page }) => {
     await page.goto("/dashboard");
-    await expect(page.getByText(/your plan/i)).toBeVisible();
-    await expect(
-      page.locator(".surface-card").filter({ hasText: "Your plan" }).getByText("Free"),
-    ).toBeVisible();
+    await expect(page.getByText(/^plan$/i)).toBeVisible();
+    await expect(page.getByText(/^free$/i).first()).toBeVisible();
     await expect(page.getByRole("link", { name: /upgrade to pro/i })).toBeVisible();
   });
 

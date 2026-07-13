@@ -69,6 +69,27 @@ export function isCheckoutConfigured(): boolean {
   return isCreemConfigured() || isStripeConfigured();
 }
 
+export async function ensureOnboardingComplete(
+  admin: SupabaseClient,
+  userId: string,
+): Promise<void> {
+  const { error } = await admin.from("learner_profiles").upsert(
+    {
+      user_id: userId,
+      target_level: 3,
+      target_exam_date: "2026-12-01",
+      journey_horizon_weeks: 12,
+      journey_started_at: new Date().toISOString(),
+      current_week_index: 1,
+      current_stage: "foundation",
+    },
+    { onConflict: "user_id" },
+  );
+  if (error) {
+    throw new Error(`learner_profiles onboarding seed: ${error.message}`);
+  }
+}
+
 export async function resetUserProgress(
   admin: SupabaseClient,
   userId: string,
@@ -107,6 +128,23 @@ export async function seedPracticeAttemptsToday(
   }));
   const { error } = await admin.from("practice_attempts").insert(rows);
   if (error) throw new Error(`seed practice: ${error.message}`);
+}
+
+export async function seedDueSrsCard(
+  admin: SupabaseClient,
+  userId: string,
+): Promise<void> {
+  await admin.from("srs_cards").delete().eq("user_id", userId);
+  const { error } = await admin.from("srs_cards").insert({
+    user_id: userId,
+    word_id: "hsk1-0001",
+    level: 1,
+    interval_days: 1,
+    repetitions: 0,
+    ease_factor: 2.5,
+    due_at: new Date().toISOString(),
+  });
+  if (error) throw new Error(`seed srs card: ${error.message}`);
 }
 
 export async function seedMockExamAttempt(
