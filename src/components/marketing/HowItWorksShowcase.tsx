@@ -32,10 +32,10 @@ const STEPS = [
   {
     id: "plan",
     step: "4",
-    title: "Follow your study plan",
-    short: "Study plan",
+    title: "Get your journey to exam day",
+    short: "Journey plan",
     description:
-      "Get a personalized 7-day plan with daily tasks linked to practice and review.",
+      "Enter your target exam date. From your mock results, the coach builds a staged plan to exam day — weekly tasks are how you execute it.",
   },
   {
     id: "practice",
@@ -370,7 +370,8 @@ function SummaryPreview({ active }: { active: boolean }) {
             </p>
             <p className="mt-2 font-display text-5xl font-semibold text-jade">68%</p>
             <p className="mt-2 text-xs leading-relaxed text-ink-muted">
-              Estimated chance of a comfortable HSK 3 pass if you follow this week&apos;s plan.
+              Estimated readiness for your target exam date if you follow this week&apos;s
+              tasks.
             </p>
           </div>
           <div className="mt-6 border-t border-mist pt-4">
@@ -386,128 +387,159 @@ function SummaryPreview({ active }: { active: boolean }) {
 }
 
 function PlanPreview({ active }: { active: boolean }) {
-  const days = [
-    {
-      day: "Mon",
-      title: "Listening drills",
-      detail: "15 questions · time & travel",
-      type: "Practice",
-      today: true,
-    },
-    {
-      day: "Tue",
-      title: "Mistake bank review",
-      detail: "10 incorrect items from mock",
-      type: "Review",
-      today: false,
-    },
-    {
-      day: "Wed",
-      title: "Vocabulary flashcards",
-      detail: "20 SRS cards due",
-      type: "Flashcards",
-      today: false,
-    },
-    {
-      day: "Thu",
-      title: "Listening patterns",
-      detail: "15 questions · schedules",
-      type: "Practice",
-      today: false,
-    },
-    {
-      day: "Fri",
-      title: "Grammar reinforcement",
-      detail: "Particle placement drills",
-      type: "Practice",
-      today: false,
-    },
-    {
-      day: "Sat",
-      title: "Mini mock · Listening",
-      detail: "One focused section",
-      type: "Mock",
-      today: false,
-    },
-    {
-      day: "Sun",
-      title: "Rest & light review",
-      detail: "Optional flashcards only",
-      type: "Rest",
-      today: false,
-    },
+  const journeyStages = [
+    { label: "Diagnose", done: true },
+    { label: "Foundation", current: true },
+    { label: "Skills", done: false },
+    { label: "Sprint", done: false },
+  ];
+
+  const outlineWeeks = [
+    { week: 1, theme: "Vocabulary focus", stage: "Foundation", status: "Current" },
+    { week: 2, theme: "Grammar focus", stage: "Foundation", status: "Up next" },
+    { week: 3, theme: "Listening focus", stage: "Skills", status: "Later" },
+    { week: 4, theme: "Reading & writing", stage: "Skills", status: "Later" },
+  ];
+
+  const weekTasks = [
+    { title: "Listening drills", detail: "Top gap · 15 questions", rank: 1 },
+    { title: "Vocabulary review", detail: "Foundation quota", rank: 2 },
+    { title: "Grammar practice", detail: "Also training", rank: 3 },
   ];
 
   return (
-    <PreviewChrome title="Weekly Study Plan · From your AI coach" badge="Preview">
-      <FadeIn active={active} className="flex flex-wrap items-end justify-between gap-3">
+    <PreviewChrome title="Journey Study Plan · Exam Sep 12, 2026" badge="Preview">
+      <FadeIn active={active} className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-jade">
-            Focus this week
+            Target exam date
           </p>
           <h3 className="mt-1 font-display text-xl font-semibold text-ink">
-            Listening first, then grammar polish
+            September 12, 2026
           </h3>
+          <p className="mt-1 text-sm text-ink-muted">
+            42 days · plan calibrated from your HSK 3 mock (72%)
+          </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {["Listening", "Grammar", "Vocabulary"].map((skill, index) => (
-            <span
-              key={skill}
-              className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                index === 0
-                  ? "bg-seal/10 text-seal"
-                  : "border border-mist bg-paper-dark text-ink-muted"
-              }`}
-            >
-              {skill}
-            </span>
-          ))}
+        <div className="rounded-xl border border-mist bg-paper-dark px-4 py-3 text-right">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-muted">
+            Current stage
+          </p>
+          <p className="mt-1 font-display text-lg font-semibold text-jade">Foundation</p>
         </div>
       </FadeIn>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
-        {days.map((day, index) => (
-          <div
-            key={day.day}
-            className={`rounded-xl border p-3 transition-all duration-500 ${
-              day.today
-                ? "border-jade/40 bg-jade/5 shadow-sm"
-                : "border-mist bg-paper-dark/60"
-            } ${active ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"}`}
-            style={{ transitionDelay: active ? `${index * 70}ms` : "0ms" }}
-          >
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-xs font-semibold text-ink-muted">{day.day}</p>
-              {day.today ? (
-                <span className="rounded-full bg-jade px-2 py-0.5 text-[10px] font-semibold text-white">
-                  Today
+      <FadeIn active={active} delay={120} className="mt-6 rounded-xl border border-mist bg-paper-dark/60 px-4 py-3">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-ink-muted">
+          Journey · Foundation · Week 1
+        </p>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {journeyStages.map((stage) => (
+            <span
+              key={stage.label}
+              className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                stage.current
+                  ? "bg-jade text-white"
+                  : stage.done
+                    ? "bg-jade/15 text-jade"
+                    : "border border-mist bg-white text-ink-muted"
+              }`}
+            >
+              {stage.done ? "✓ " : ""}
+              {stage.label}
+            </span>
+          ))}
+          <span className="ml-auto text-xs text-ink-muted">42 days to exam</span>
+        </div>
+      </FadeIn>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
+        <FadeIn active={active} delay={200}>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
+            Journey outline
+          </p>
+          <ul className="mt-3 space-y-2">
+            {outlineWeeks.map((row, index) => (
+              <li
+                key={row.week}
+                className={`flex items-start justify-between gap-3 rounded-xl border px-3 py-2.5 transition-all duration-500 ${
+                  index === 0
+                    ? "border-jade/40 bg-jade/5"
+                    : "border-mist bg-white"
+                } ${active ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}
+                style={{ transitionDelay: active ? `${220 + index * 60}ms` : "0ms" }}
+              >
+                <div>
+                  <p className="text-sm font-semibold text-ink">
+                    Week {row.week} · {row.theme}
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-ink-muted">{row.stage}</p>
+                </div>
+                <span
+                  className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${
+                    index === 0
+                      ? "bg-jade text-white"
+                      : "bg-paper-dark text-ink-muted"
+                  }`}
+                >
+                  {row.status}
                 </span>
-              ) : null}
-            </div>
-            <p className="mt-2 text-sm font-semibold text-ink">{day.title}</p>
-            <p className="mt-1 text-[11px] leading-relaxed text-ink-muted">{day.detail}</p>
-            <p className="mt-3 text-[10px] font-semibold uppercase tracking-wide text-jade">
-              {day.type}
-            </p>
-          </div>
-        ))}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-[11px] leading-relaxed text-ink-muted">
+            Outline shows your full path. You unlock and execute one week at a time after
+            passing the prior week.
+          </p>
+        </FadeIn>
+
+        <FadeIn active={active} delay={280}>
+          <p className="text-xs font-semibold uppercase tracking-wide text-jade">
+            This week · execution
+          </p>
+          <p className="mt-1 text-sm text-ink-muted">
+            This week&apos;s problem: Listening · evidence from mock
+          </p>
+          <ul className="mt-4 space-y-2">
+            {weekTasks.map((task, index) => (
+              <li
+                key={task.title}
+                className={`rounded-xl border border-mist bg-white px-3 py-2.5 transition-all duration-500 ${
+                  active ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+                }`}
+                style={{ transitionDelay: active ? `${320 + index * 70}ms` : "0ms" }}
+              >
+                <div className="flex items-start gap-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-jade/10 text-xs font-semibold text-jade">
+                    {task.rank}
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-ink">{task.title}</p>
+                    <p className="mt-0.5 text-[11px] text-ink-muted">{task.detail}</p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </FadeIn>
       </div>
 
       <FadeIn
         active={active}
-        delay={550}
+        delay={520}
         className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-jade/30 bg-jade/5 px-4 py-3"
       >
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-jade">
-            Today&apos;s focus
+            Coach logic
           </p>
           <p className="mt-1 text-sm font-medium text-ink">
-            Listening drills — 15 questions on time & travel phrases
+            Exam date sets the calendar · mock gaps set the weights · this week is what you
+            do now
           </p>
         </div>
         <span className="rounded-lg bg-jade px-4 py-2 text-sm font-semibold text-white">
-          Start today&apos;s task
+          Start week 1
         </span>
       </FadeIn>
     </PreviewChrome>
@@ -594,7 +626,7 @@ function PracticePreview({ active }: { active: boolean }) {
               />
             </div>
             <p className="text-xs leading-relaxed text-ink-muted">
-              Completing this task marks Day 1 done on your coach plan.
+              Completing this task counts toward Week 1 on your journey plan.
             </p>
           </div>
         </FadeIn>
@@ -606,9 +638,9 @@ function PracticePreview({ active }: { active: boolean }) {
 function DashboardPreview({ active }: { active: boolean }) {
   const stats = [
     { label: "Latest mock", value: "72%", sub: "HSK 3 · 2 days ago" },
-    { label: "7-day practice", value: "48", sub: "questions answered" },
-    { label: "Accuracy", value: "81%", sub: "last 7 days" },
-    { label: "Plan done", value: "2/7", sub: "days this week" },
+    { label: "Days to exam", value: "42", sub: "Sep 12, 2026 target" },
+    { label: "This week", value: "1/3", sub: "tasks passed" },
+    { label: "Journey stage", value: "Foundation", sub: "Week 1 of plan" },
   ];
 
   return (
@@ -740,13 +772,13 @@ export default function HowItWorksShowcase() {
   const activeStep = STEPS[activeIndex];
 
   return (
-    <section id="how-it-works" className="border-y border-mist bg-white">
+    <section id="how-it-works" className="scroll-mt-[5.5rem] border-y border-mist bg-white">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-semibold text-ink">How it works</h2>
           <p className="mt-3 text-sm text-ink-muted">
-            Watch the full prep loop — from mock exam to targeted practice. All previews use
-            example data, not your account.
+            Mock exam → AI assessment → journey plan to your exam date → weekly tasks and
+            practice. All previews use example data, not your account.
           </p>
           <div className="mx-auto mt-4 h-px w-24 bg-brush-rule" />
         </div>
@@ -759,7 +791,7 @@ export default function HowItWorksShowcase() {
           onBlurCapture={() => setPaused(false)}
         >
           <ol
-            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
             aria-label="How it works steps"
           >
             {STEPS.map((step, index) => {
@@ -786,7 +818,7 @@ export default function HowItWorksShowcase() {
                     <h3 className="mt-3 font-display text-sm font-semibold leading-snug text-ink sm:text-base">
                       {step.short}
                     </h3>
-                    <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-ink-muted">
+                    <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
                       {step.description}
                     </p>
                     {isActive && !reducedMotion ? (

@@ -23,8 +23,8 @@ export default function LandingPage() {
               Your AI coach for HSK Level 3
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-muted">
-              Take a mock exam. Get an AI assessment. Follow a personalized study plan.
-              Practice what actually moves your score.
+              Set your exam date, take a placement mock, and get a journey plan to exam day —
+              with weekly tasks that target your gaps.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <Link href="/login?next=%2Fmock-exam" className="btn-primary px-6 py-3 text-base">
