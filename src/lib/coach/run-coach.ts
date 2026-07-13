@@ -1,5 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { buildSnapshot, ensureLearnerProfile } from "./build-snapshot";
+import { ensureJourney } from "./journey/persist-journey";
+import { reweightQuotas, stageQuotas } from "./journey/stage-quotas";
 import { generatePlan } from "./generate-plan";
 import { generateReport, REPORT_PROMPT_VERSION } from "./generate-report";
 import type { CoachTrigger } from "./types";
@@ -71,9 +73,26 @@ export async function runCoach(
   let planResult;
   let runError: string | null = null;
 
+  let journeyState;
   try {
     reportResult = await generateReport(snapshot);
-    planResult = await generatePlan(snapshot, reportResult.report);
+    journeyState = await ensureJourney(supabase, input.userId, {
+      gaps: reportResult.report.gaps.map((g) => ({
+        skill: g.skill,
+        severity: g.severity,
+      })),
+    });
+    const journeyContext = {
+      stage: journeyState.currentStage,
+      skillQuotas: reweightQuotas(
+        stageQuotas(journeyState.currentStage),
+        reportResult.report.gaps.map((g) => ({
+          skill: g.skill,
+          severity: g.severity,
+        })),
+      ),
+    };
+    planResult = await generatePlan(snapshot, reportResult.report, journeyContext);
   } catch (err) {
     runError = err instanceof Error ? err.message : "Coach generation failed";
     return { ok: false, error: runError, status: 503 };
@@ -111,15 +130,21 @@ export async function runCoach(
     .eq("user_id", input.userId)
     .eq("status", "active");
 
+  const planInsert: Record<string, unknown> = {
+    user_id: input.userId,
+    report_id: reportRow.id,
+    status: "active",
+    week_start: weekStartDate(),
+    focus_skills: planResult.plan.focusSkills,
+  };
+  if (journeyState) {
+    planInsert.week_index = journeyState.currentWeekIndex;
+    planInsert.stage = journeyState.currentStage;
+  }
+
   const { data: planRow, error: planError } = await supabase
     .from("coach_study_plans")
-    .insert({
-      user_id: input.userId,
-      report_id: reportRow.id,
-      status: "active",
-      week_start: weekStartDate(),
-      focus_skills: planResult.plan.focusSkills,
-    })
+    .insert(planInsert)
     .select("id")
     .single();
 

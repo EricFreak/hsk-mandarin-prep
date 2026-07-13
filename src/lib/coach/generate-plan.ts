@@ -1,6 +1,19 @@
+import type { JourneyStageId } from "./journey/types";
 import type { GeneratedPlan, GeneratedReport, LearnerSnapshot } from "./types";
 import { getCoachLLM, getCoachModel } from "./llm";
 import { parsePlanResponse } from "./schemas";
+
+export type JourneyPlanContext = {
+  stage: JourneyStageId;
+  skillQuotas: Record<string, number>;
+};
+
+function topQuotaSkills(quotas: Record<string, number>, count = 2): string[] {
+  return Object.entries(quotas)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, count)
+    .map(([skill]) => skill);
+}
 
 const PLAN_PROMPT_VERSION = 1;
 
@@ -19,8 +32,14 @@ Return valid JSON with keys: focusSkills, tasks`;
 export function buildFallbackPlan(
   snapshot: LearnerSnapshot,
   report: GeneratedReport,
+  journeyContext?: JourneyPlanContext,
 ): GeneratedPlan {
-  const focusSkills = report.gaps.slice(0, 2).map((gap) => gap.skill);
+  let focusSkills: string[];
+  if (journeyContext) {
+    focusSkills = topQuotaSkills(journeyContext.skillQuotas, 2);
+  } else {
+    focusSkills = report.gaps.slice(0, 2).map((gap) => gap.skill);
+  }
   if (!focusSkills.length) {
     focusSkills.push("listening");
   }
@@ -88,25 +107,30 @@ export function buildFallbackPlan(
 export async function generatePlan(
   snapshot: LearnerSnapshot,
   report: GeneratedReport,
+  journeyContext?: JourneyPlanContext,
 ): Promise<{ plan: GeneratedPlan; model: string; tokenUsage: Record<string, unknown> | null }> {
   const client = getCoachLLM();
   const model = getCoachModel();
 
   if (!client) {
     return {
-      plan: buildFallbackPlan(snapshot, report),
+      plan: buildFallbackPlan(snapshot, report, journeyContext),
       model: "fallback",
       tokenUsage: null,
     };
   }
 
+  const stageHint = journeyContext
+    ? `\nCurrent journey stage: ${journeyContext.stage}. Bias tasks toward skills with highest quotas in journeyContext.skillQuotas.`
+    : "";
+
   const completion = await client.chat.completions.create({
     model,
     messages: [
-      { role: "system", content: SYSTEM_PROMPT },
+      { role: "system", content: SYSTEM_PROMPT + stageHint },
       {
         role: "user",
-        content: JSON.stringify({ snapshot, report }),
+        content: JSON.stringify({ snapshot, report, journeyContext }),
       },
     ],
     response_format: { type: "json_object" },

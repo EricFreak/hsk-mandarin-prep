@@ -97,7 +97,7 @@ export async function buildSnapshot(
     supabase.from("profiles").select("plan").eq("id", userId).maybeSingle(),
     supabase
       .from("learner_profiles")
-      .select("target_level, minutes_per_day")
+      .select("target_level, minutes_per_day, target_exam_date")
       .eq("user_id", userId)
       .maybeSingle(),
     supabase
@@ -152,6 +152,7 @@ export async function buildSnapshot(
     userId,
     plan,
     targetLevel: learnerProfile?.target_level ?? 3,
+    targetExamDate: learnerProfile?.target_exam_date ?? null,
     minutesPerDay: learnerProfile?.minutes_per_day ?? null,
     mockExams: ((mockExams ?? []) as MockExamRow[]).map(toMockExamSnapshot),
     practiceLast30d: { bySkill },

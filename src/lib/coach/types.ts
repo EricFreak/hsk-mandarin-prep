@@ -27,6 +27,7 @@ export type LearnerSnapshot = {
   userId: string;
   plan: Plan;
   targetLevel: number;
+  targetExamDate?: string | null;
   minutesPerDay: number | null;
   mockExams: SnapshotMockExam[];
   practiceLast30d: {
@@ -94,6 +95,7 @@ export type CoachPlanTaskRow = {
   task_type: CoachTaskType;
   skill: string | null;
   target_count: number | null;
+  attempted_count?: number;
   title: string;
   status: CoachTaskStatus;
   completed_at: string | null;
