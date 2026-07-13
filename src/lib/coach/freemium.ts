@@ -27,10 +27,9 @@ export function applyFreemiumReport(
 
 export function applyFreemiumTasks(
   tasks: CoachPlanTaskRow[],
-  plan: Plan,
+  _plan: Plan,
 ): CoachPlanTaskRow[] {
-  if (plan === "pro") return tasks;
-  return tasks.slice(0, 3);
+  return tasks;
 }
 
 export function getTodayDayOffset(weekStart: string): number {

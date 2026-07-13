@@ -43,20 +43,20 @@ describe("coach freemium", () => {
     expect(gated.gaps).toHaveLength(2);
   });
 
-  it("limits free tasks to three", () => {
+  it("passthrough all tasks for free and pro", () => {
     const tasks = Array.from({ length: 7 }, (_, index) => ({
-      id: `t${index}`,
+      id: `t`,
       plan_id: "p1",
       user_id: "u1",
       day_offset: index,
       task_type: "practice" as const,
       skill: "listening",
       target_count: 15,
-      title: `Task ${index}`,
+      title: `Task `,
       status: "pending" as const,
       completed_at: null,
     }));
-    expect(applyFreemiumTasks(tasks, "free")).toHaveLength(3);
+    expect(applyFreemiumTasks(tasks, "free")).toHaveLength(7);
     expect(applyFreemiumTasks(tasks, "pro")).toHaveLength(7);
   });
 
