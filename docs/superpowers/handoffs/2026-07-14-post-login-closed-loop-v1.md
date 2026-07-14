@@ -1,5 +1,6 @@
 # Handoff — 2026-07-14 Post-login closed-loop v1
 
+**Status:** EOD archived — resume tomorrow with live Free/Pro smoke  
 **Branch:** `feature/mvp-implementation`  
 **Worktree:** `/Users/eric/cursor_projects/hsk-mandarin-prep/.worktrees/mvp-implementation`  
 **Production (Vercel):** binds to **`feature/mvp-implementation`**, not `main`  
@@ -7,7 +8,24 @@
 **Spec (locked doctrine):** `docs/superpowers/specs/2026-07-14-post-login-closed-loop-design.md` (rev 2)  
 **Related:** `2026-07-14-auth-aware-user-journey-design.md`, `docs/testing/journey-audit-2026-07-14.md`  
 **Personas:** Free `wangkejay@126.com`; Pro `657696471@qq.com`  
-**Git:** feature `e9ee975`; docs tip on `feature/mvp-implementation` (ahead of origin by 2; **not pushed**)
+**Git tip (pushed):** `b2fe482` on `origin/feature/mvp-implementation`  
+**Feature commit:** `e9ee975` — `fix(journey): close post-login Free/Pro loops (rev 2)`
+
+---
+
+## EOD snapshot (2026-07-14 evening)
+
+| Item | State |
+|------|--------|
+| Rev 2 closed-loop code | Shipped in `e9ee975` |
+| Migration `009` | Applied on Supabase (founder confirmed) |
+| Local unit + Playwright smoke | 27 unit + 19 e2e passed |
+| Push | Done → `origin/feature/mvp-implementation` @ `b2fe482` |
+| Vercel deploy | Should track branch; **confirm production build picked tip** before live smoke |
+| Live Free funnel walkthrough | **Not done yet** (tomorrow P0) |
+| Live Pro plan-retention check | **Not done yet** (tomorrow P0) |
+
+Untracked throwaway (do not commit): `docs/prototypes/`
 
 ---
 
@@ -47,21 +65,13 @@ Guards: `src/lib/auth/continue-destination.ts` (`requireJourneyRoute`)
 
 ---
 
-## Migration (required before prod smoke)
+## Migration
 
-**File:** `supabase/migrations/009_post_login_closed_loop.sql`
+**File:** `supabase/migrations/009_post_login_closed_loop.sql` — **applied**
 
 Adds: `onboarding_prefs_at`, `diagnosis_completed_at`, `w1_cleared_at`, `coach_last_error`, `coach_last_run_at`  
 Drops: `journey_horizon_weeks` DEFAULT 12  
 Backfills prefs + diagnosis from existing attempts / journeys
-
-**Ops checklist**
-
-1. Apply `009` on Supabase (staging then production)
-2. Deploy this branch to Vercel
-3. Reset Free learner prefs for a clean funnel run on `wangkejay@126.com` if needed
-4. Smoke Free path: login → onboarding (date **or** unsure confirm) → diagnosis → score → **Dashboard stays** → Retry if pending → Week 1 → clear → Pro CTA
-5. Smoke Pro path: `657696471@qq.com` stays Pro after re-login; no Free overwrite
 
 ---
 
@@ -80,29 +90,42 @@ Backfills prefs + diagnosis from existing attempts / journeys
 | Account chrome | `src/components/app/AccountMenu.tsx`, `AppHeader.tsx` |
 | Coach pending UI | `src/components/dashboard/DashboardView.tsx` |
 | Unit tests | `tests/lib/auth/resolve-continue-href.test.ts`, `tests/lib/coach/journey/week-unlock.test.ts` |
-| E2E (auth matrix / doors) | `e2e/authenticated/journey-auth-matrix.spec.ts`, `e2e/public/journey-doors.spec.ts` |
+| E2E | `e2e/authenticated/journey-auth-matrix.spec.ts`, `e2e/public/journey-doors.spec.ts` |
 
 ---
 
-## Verification done locally
+## Verification (local, 2026-07-14)
 
-- Vitest: `resolve-continue-href` + `week-unlock` — **27 passed** (2026-07-14)
-- Playwright smoke (local `:3000`, after Chromium install): **19 passed** — `journey-doors` + public project deps + `journey-auth-matrix` (JNY-PUB-*, JNY-AUTH-004, JNY-GAP-001..004)
-
-## Not done in this cut / follow-ups
-
-- [x] Apply migration `009` on remote Supabase (founder confirmed)
-- [x] Commit (not pushed)
-- [ ] Deploy / push to `origin/feature/mvp-implementation` (Vercel)
-- [ ] Dedicated coach **error** banner (pending banner + Retry exists; surface `coach_last_error` copy)
-- [ ] Soft-disable tool links in header while `diagnosis_done` (guards hard-redirect; chrome soft reason is nicer)
-- [ ] End-to-end Free funnel smoke with `wangkejay@126.com` on **live** after deploy
+- Vitest: **27 passed** (`resolve-continue-href` + `week-unlock`)
+- Playwright: **19 passed** (journey doors + public deps + auth matrix: JNY-PUB-*, JNY-AUTH-004, JNY-GAP-001..004)
 
 ---
 
-## How to resume tomorrow
+## Tomorrow — start here
 
-1. Confirm `009` applied
-2. Walk Free persona closed loop once; if bounce returns, check `diagnosis_completed_at` vs `journey_started_at` on `learner_profiles`
-3. Walk Pro re-auth; confirm `profiles.plan` stays `pro`
-4. Only then commit if founder requests
+### P0 live smoke (do first)
+
+1. Confirm Vercel production is on **`b2fe482`** (or later) — not a stale deploy.
+2. **Free** `wangkejay@126.com` (reset learner data if mid-funnel leftover):
+   - login → onboarding (date **or** unsure confirm) → diagnosis → score → **Dashboard stays** (no bounce to paper)
+   - pending → Retry if needed → Week 1 tasks appear → clear W1 → **Pro CTA** still shows
+   - Account menu: email + Free + Sign out
+3. **Pro** `657696471@qq.com`:
+   - re-login; `profiles.plan` stays **pro**
+   - marketing “Start free Week 1” does **not** land on `/login`
+4. If bounce returns: inspect `learner_profiles.diagnosis_completed_at` vs `journey_started_at`
+
+Reset helper (if needed): `node scripts/reset-user-data.mjs wangkejay@126.com`
+
+### P1 polish (after live smoke green)
+
+- [ ] Surface dedicated coach **error** banner (`coach_last_error` copy; Retry already exists)
+- [ ] Soft-disable tool links in header while `diagnosis_done` (today: hard redirect to Dashboard)
+
+### Done checklist
+
+- [x] Migration `009` on Supabase
+- [x] Code commit + push (`e9ee975` / tip `b2fe482`)
+- [x] Local unit + Playwright smoke
+- [ ] Live Free closed-loop walkthrough
+- [ ] Live Pro plan-retention + CTA check
