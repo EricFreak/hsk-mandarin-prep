@@ -6,7 +6,6 @@ const FOOTER_LINKS = [
   { href: "/#how-it-works", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
   { href: "/hsk-2-vs-3", label: "HSK exam guide" },
-  { href: "/login?next=%2Fmock-exam", label: "Start free mock" },
 ] as const;
 
 export default function MarketingLayout({
