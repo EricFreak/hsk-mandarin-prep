@@ -7,7 +7,7 @@
 **Spec (locked doctrine):** `docs/superpowers/specs/2026-07-14-post-login-closed-loop-design.md` (rev 2)  
 **Related:** `2026-07-14-auth-aware-user-journey-design.md`, `docs/testing/journey-audit-2026-07-14.md`  
 **Personas:** Free `wangkejay@126.com`; Pro `657696471@qq.com`  
-**Git:** changes are **uncommitted** on this branch (do not assume shipped until commit + migrate + deploy)
+**Git:** feature `e9ee975`; docs tip on `feature/mvp-implementation` (ahead of origin by 2; **not pushed**)
 
 ---
 
@@ -87,15 +87,16 @@ Backfills prefs + diagnosis from existing attempts / journeys
 ## Verification done locally
 
 - Vitest: `resolve-continue-href` + `week-unlock` — **27 passed** (2026-07-14)
+- Playwright smoke (local `:3000`, after Chromium install): **19 passed** — `journey-doors` + public project deps + `journey-auth-matrix` (JNY-PUB-*, JNY-AUTH-004, JNY-GAP-001..004)
 
 ## Not done in this cut / follow-ups
 
-- [ ] Apply migration `009` on remote Supabase
-- [ ] Commit + deploy (explicit founder ask)
-- [ ] Full Playwright re-run after migrate (auth matrix assumes stamps)
+- [x] Apply migration `009` on remote Supabase (founder confirmed)
+- [x] Commit (not pushed)
+- [ ] Deploy / push to `origin/feature/mvp-implementation` (Vercel)
 - [ ] Dedicated coach **error** banner (pending banner + Retry exists; surface `coach_last_error` copy)
 - [ ] Soft-disable tool links in header while `diagnosis_done` (guards hard-redirect; chrome soft reason is nicer)
-- [ ] End-to-end Free funnel smoke with `wangkejay@126.com` on live after deploy
+- [ ] End-to-end Free funnel smoke with `wangkejay@126.com` on **live** after deploy
 
 ---
 
