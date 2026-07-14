@@ -1,16 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import BrandLogo from "@/components/marketing/BrandLogo";
 
 const NAV_LINKS = [
-  { href: "/hsk-2-vs-3", label: "HSK exam guide" },
+  { href: "/#how-it-works", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
 ] as const;
 
 export default function MarketingHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  function resolveHref(href: string) {
+    if (href === "/#how-it-works" && pathname === "/") {
+      return "#how-it-works";
+    }
+    return href;
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-mist/80 bg-paper/90 backdrop-blur-md">
@@ -21,7 +30,7 @@ export default function MarketingHeader() {
           {NAV_LINKS.map(({ href, label }) => (
             <Link
               key={href}
-              href={href}
+              href={resolveHref(href)}
               className="text-sm font-medium text-ink-muted transition hover:text-ink"
             >
               {label}
@@ -60,7 +69,7 @@ export default function MarketingHeader() {
             {NAV_LINKS.map(({ href, label }) => (
               <li key={href}>
                 <Link
-                  href={href}
+                  href={resolveHref(href)}
                   className="block rounded-lg px-3 py-2.5 text-sm font-medium text-ink-muted hover:bg-paper-dark hover:text-ink"
                   onClick={() => setMenuOpen(false)}
                 >

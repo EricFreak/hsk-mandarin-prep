@@ -1,11 +1,13 @@
+import Link from "next/link";
 import MarketingHeader from "@/components/marketing/MarketingHeader";
 import LearnerAvatars from "@/components/marketing/LearnerAvatars";
 
-const FOOTER_TRUST = [
-  "Designed for international learners",
-  "Secure & privacy-focused",
-  "Aligned with official HSK 3.0",
-];
+const FOOTER_LINKS = [
+  { href: "/#how-it-works", label: "How it works" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/hsk-2-vs-3", label: "HSK exam guide" },
+  { href: "/login?next=%2Fmock-exam", label: "Start free mock" },
+] as const;
 
 export default function MarketingLayout({
   children,
@@ -16,30 +18,34 @@ export default function MarketingLayout({
     <div className="min-h-screen bg-paper">
       <MarketingHeader />
       <main>{children}</main>
-      <footer className="border-t border-mist bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-          <div className="flex flex-col items-center gap-6 border-b border-mist pb-8 sm:flex-row sm:justify-between">
+      <footer>
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+          <div className="flex flex-col items-center gap-5 sm:flex-row sm:justify-between">
             <div className="text-center sm:text-left">
-              <p className="font-display text-lg font-semibold text-ink">
-                Trusted by students worldwide
-              </p>
-              <p className="mt-1 text-sm text-ink-muted">Join our founder beta cohort</p>
+              <p className="font-display text-base font-semibold text-ink">HSK Prep</p>
+              <p className="mt-1 text-xs text-ink-muted">AI Coach for HSK Level 3</p>
             </div>
             <LearnerAvatars />
           </div>
-          <ul className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-ink-muted">
-            {FOOTER_TRUST.map((item) => (
-              <li key={item} className="flex items-center gap-2">
-                <span className="text-jade" aria-hidden="true">
-                  ✓
-                </span>
-                {item}
-              </li>
+
+          <nav
+            aria-label="Footer"
+            className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm"
+          >
+            {FOOTER_LINKS.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className="font-medium text-ink-muted transition hover:text-ink"
+              >
+                {label}
+              </Link>
             ))}
-          </ul>
-          <p className="mt-8 text-center text-sm text-ink-muted">
-            Aligned with the official HSK 3.0 syllabus (GF0025-2021). Not affiliated
-            with Hanban or chinesetest.cn.
+          </nav>
+
+          <p className="mt-6 text-center text-xs leading-relaxed text-ink-muted">
+            Aligned with the official HSK Level 3 syllabus (GF0025-2021). Not affiliated with
+            Hanban or chinesetest.cn.
           </p>
         </div>
       </footer>

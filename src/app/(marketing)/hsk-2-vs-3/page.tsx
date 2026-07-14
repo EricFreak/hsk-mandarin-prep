@@ -254,16 +254,24 @@ export default function Hsk2Vs3Page() {
         <p className="mt-3 text-ink-muted">
           Most commercial apps still use HSK 2.0 vocabulary lists. HSK Prep is
           built on the official GF0025-2021 syllabus with AI-generated practice
-          and a free HSK 3 mock exam.
+          and a free HSK Level 3 mock exam.
         </p>
-        <div className="mt-6">
+        <div className="mt-6 flex flex-wrap gap-3">
           <Link
-            href="/mock-exam"
+            href="/login?next=%2Fmock-exam"
             className="btn-primary px-5 py-2.5 text-sm"
           >
-            Take free HSK 3 mock exam
+            Take free HSK Level 3 mock exam
+          </Link>
+          <Link href="/#how-it-works" className="btn-secondary px-5 py-2.5 text-sm">
+            See the AI coach loop
           </Link>
         </div>
+        <p className="mt-4 text-sm text-ink-muted">
+          <Link href="/" className="font-medium text-jade transition hover:text-jade-light">
+            ← Back to HSK Prep
+          </Link>
+        </p>
       </div>
     </article>
   );

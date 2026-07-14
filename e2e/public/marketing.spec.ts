@@ -4,8 +4,20 @@ test.describe("MKT — Marketing & public pages", () => {
   test("MKT-001: home page loads", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expect(page.getByRole("link", { name: /HSK exam guide/i }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: /How it works/i }).first()).toBeVisible();
     await expect(page.getByRole("link", { name: /pricing/i }).first()).toBeVisible();
+    await expect(page.getByRole("contentinfo").getByRole("link", { name: /HSK exam guide/i })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Built for your first real HSK/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Free Week 1\. Pro for the rest/i }),
+    ).toBeVisible();
+    await expect(page.getByText(/GF0025-2021/i).first()).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Questions before you start/i }),
+    ).toBeVisible();
+    await expect(page.getByText(/How long is the free mock/i)).toBeVisible();
   });
 
   test("MKT-003: HSK exam guide page", async ({ page }) => {
