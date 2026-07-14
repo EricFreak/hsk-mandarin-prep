@@ -1,8 +1,8 @@
 import MockExamSession from "@/components/mock-exam/MockExamSession";
 import UpgradeCTA from "@/components/paywall/UpgradeCTA";
+import { requireJourneyRoute } from "@/lib/auth/continue-destination";
 import { canTakeMockExam, type Plan } from "@/lib/entitlements";
 import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +31,9 @@ export default async function MockExamPage() {
     return (
       <div>
         <div className="mb-8">
-          <h1 className="font-display text-2xl font-semibold text-ink">HSK 3 Mock Exam</h1>
+          <h1 className="font-display text-2xl font-semibold text-ink">
+            HSK Level 3 Mock Exam
+          </h1>
           <p className="mt-2 text-sm text-ink-muted">
             Supabase is not configured. Set environment variables to take the exam.
           </p>
@@ -41,21 +43,16 @@ export default async function MockExamPage() {
     );
   }
 
+  const { userId } = await requireJourneyRoute({ intent: "/mock-exam" });
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
 
   const [plan, { count }] = await Promise.all([
-    getUserPlan(supabase, user.id),
+    getUserPlan(supabase, userId),
     supabase
       .from("mock_exam_attempts")
       .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id),
+      .eq("user_id", userId)
+      .not("template_id", "in", '("hsk3-diagnosis","hsk3-placement")'),
   ]);
 
   const completedExams = count ?? 0;
@@ -64,9 +61,11 @@ export default async function MockExamPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="font-display text-2xl font-semibold text-ink">HSK 3 Mock Exam</h1>
+        <h1 className="font-display text-2xl font-semibold text-ink">
+          HSK Level 3 Mock Exam
+        </h1>
         <p className="mt-2 text-sm text-ink-muted">
-          A scaled-down HSK 3 exam with listening, reading, and writing sections.
+          A scaled-down HSK Level 3 exam with listening, reading, and writing sections.
           {plan === "free" ? " Free accounts include one mock exam." : null}
         </p>
       </div>
@@ -76,7 +75,7 @@ export default async function MockExamPage() {
       ) : (
         <UpgradeCTA
           title="Mock exam limit reached"
-          description="You have completed your free HSK 3 mock exam. Upgrade to Pro for unlimited mock exams, detailed weakness reports, and AI writing feedback."
+          description="You have completed your free HSK Level 3 mock exam. Upgrade to Pro for unlimited mock exams, detailed weakness reports, and AI writing feedback."
         />
       )}
     </div>

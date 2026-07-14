@@ -256,6 +256,45 @@ export async function clearWeekAndUnlockNext(
 
   if (!isWeekCleared(tasks)) return { advanced: false };
 
+  // Free: record W1 cleared for Pro CTA — do NOT advance executable week index.
+  let userPlan: "free" | "pro" = "free";
+  try {
+    const { data: planRow } = await supabase
+      .from("profiles")
+      .select("plan")
+      .eq("id", userId)
+      .maybeSingle();
+    userPlan = planRow?.plan === "pro" ? "pro" : "free";
+  } catch {
+    userPlan = "free";
+  }
+
+  if (userPlan === "free" && currentWeekIndex === 1) {
+    try {
+      await supabase
+        .from("journey_week_outlines")
+        .update({ status: "passed", updated_at: new Date().toISOString() })
+        .eq("user_id", userId)
+        .eq("week_index", 1);
+    } catch {
+      // Outline table may be missing.
+    }
+
+    try {
+      await supabase
+        .from("learner_profiles")
+        .update({
+          w1_cleared_at: new Date().toISOString(),
+          // Keep current_week_index at 1 so shouldShowWeek1ProCta stays valid.
+        })
+        .eq("user_id", userId);
+    } catch {
+      // Column may be missing before migration 009.
+    }
+
+    return { advanced: false };
+  }
+
   const newWeekIndex = nextWeekAfterClear(currentWeekIndex);
 
   try {

@@ -114,11 +114,14 @@ type PricingPlansProps = {
   /** marketing: Pro CTA links to /pricing; checkout: Pro button starts payment */
   mode?: "marketing" | "checkout";
   defaultBilling?: PriceType;
+  /** Auth-aware Free CTA (resolved on the server). */
+  freeCtaHref?: string;
 };
 
 export default function PricingPlans({
   mode = "marketing",
   defaultBilling = "monthly",
+  freeCtaHref = "/login?next=%2Fonboarding",
 }: PricingPlansProps) {
   const [priceType, setPriceType] = useState<PriceType>(defaultBilling);
   const [loading, setLoading] = useState(false);
@@ -174,8 +177,8 @@ export default function PricingPlans({
           </div>
           <FeatureList features={FREE_TIER_BENEFITS} />
           <CardCtaFooter>
-            <Link href="/login?next=%2Fmock-exam" className={pricingCtaClass.free}>
-              Start free mock exam
+            <Link href={freeCtaHref} className={pricingCtaClass.free}>
+              Start free Week 1
             </Link>
           </CardCtaFooter>
         </div>

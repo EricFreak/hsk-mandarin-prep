@@ -1,4 +1,4 @@
-import Link from "next/link";
+import ContinueCta from "@/components/marketing/ContinueCta";
 import HeroBrandVisual from "@/components/marketing/HeroBrandVisual";
 import ProblemFrame from "@/components/marketing/ProblemFrame";
 import HowItWorksShowcase from "@/components/marketing/HowItWorksShowcase";
@@ -21,13 +21,13 @@ export default function LandingPage() {
               Your AI coach for HSK Level 3
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-muted">
-              Set your exam date, take a placement mock, and follow a weekly plan aimed at
+              Set your exam date, take a short diagnosis, and follow a weekly plan aimed at
               your gaps — through exam day.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
-              <Link href="/login?next=%2Fmock-exam" className="btn-primary px-6 py-3 text-base">
-                Start with free mock exam
-              </Link>
+              <ContinueCta className="btn-primary px-6 py-3 text-base">
+                Start free Week 1
+              </ContinueCta>
               <a href="#how-it-works" className="btn-secondary px-6 py-3 text-base">
                 See how it works
               </a>
@@ -69,13 +69,13 @@ export default function LandingPage() {
       <section>
         <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 sm:py-14">
           <h2 className="font-display text-3xl font-semibold text-ink">
-            Start with a free mock exam
+            Start free Week 1
           </h2>
           <p className="mt-3 text-sm text-ink-muted">No credit card required.</p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
-            <Link href="/login?next=%2Fmock-exam" className="btn-primary px-8 py-3 text-base">
-              Start with free mock exam
-            </Link>
+            <ContinueCta className="btn-primary px-8 py-3 text-base">
+              Start free Week 1
+            </ContinueCta>
             <a href="#pricing" className="btn-secondary px-6 py-3 text-base">
               Compare Free &amp; Pro
             </a>

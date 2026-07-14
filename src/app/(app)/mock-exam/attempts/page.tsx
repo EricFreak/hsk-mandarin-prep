@@ -1,6 +1,6 @@
 import Link from "next/link";
+import { requireJourneyRoute } from "@/lib/auth/continue-destination";
 import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -40,19 +40,13 @@ export default async function MockExamAttemptsPage() {
     );
   }
 
+  const { userId } = await requireJourneyRoute({ intent: "/mock-exam" });
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
 
   const { data } = await supabase
     .from("mock_exam_attempts")
     .select("id, score, status, created_at")
-    .eq("user_id", user.id)
+    .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(50);
 

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import UpgradeCTA from "@/components/paywall/UpgradeCTA";
+import { requireJourneyRoute } from "@/lib/auth/continue-destination";
 import { planLabel, type Plan } from "@/lib/entitlements";
 import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -105,16 +105,9 @@ export default async function MistakesPage({
     );
   }
 
+  const { userId } = await requireJourneyRoute({ intent: "/mistakes" });
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
-  const plan = await getUserPlan(supabase, user.id);
+  const plan = await getUserPlan(supabase, userId);
 
   const practiceLimit = plan === "pro" ? 100 : 10;
   const mockLimit = plan === "pro" ? 25 : 5;
@@ -125,14 +118,14 @@ export default async function MistakesPage({
       .select(
         "created_at, correct, skill, practice_question_id, practice_questions(id, level, stem, choices, answer_index, explanation, skill)",
       )
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("correct", false)
       .order("created_at", { ascending: false })
       .limit(practiceLimit),
     supabase
       .from("mock_exam_attempts")
       .select("id, created_at, answers")
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .order("created_at", { ascending: false })
       .limit(mockLimit),
   ]);

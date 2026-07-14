@@ -1,6 +1,7 @@
 import Link from "next/link";
 import MarketingHeader from "@/components/marketing/MarketingHeader";
 import LearnerAvatars from "@/components/marketing/LearnerAvatars";
+import { resolveVisitorContinueHref } from "@/lib/auth/continue-destination";
 
 const FOOTER_LINKS = [
   { href: "/#how-it-works", label: "How it works" },
@@ -8,14 +9,17 @@ const FOOTER_LINKS = [
   { href: "/hsk-2-vs-3", label: "HSK exam guide" },
 ] as const;
 
-export default function MarketingLayout({
+export default async function MarketingLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const accountHref = await resolveVisitorContinueHref("/dashboard");
+  const accountLabel = accountHref.startsWith("/login") ? "Login" : "Dashboard";
+
   return (
     <div className="min-h-screen bg-paper">
-      <MarketingHeader />
+      <MarketingHeader accountHref={accountHref} accountLabel={accountLabel} />
       <main>{children}</main>
       <footer>
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">

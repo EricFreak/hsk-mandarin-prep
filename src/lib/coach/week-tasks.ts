@@ -30,7 +30,11 @@ export function gateOrderedWeekTasks(
   tasks: CoachPlanTaskRow[],
   topGapSkill: string | null,
   plan: Plan,
-  journey?: { weekIndex: number; currentWeekIndex: number },
+  journey?: {
+    weekIndex: number;
+    currentWeekIndex: number;
+    w1ClearedAt?: string | null;
+  },
 ): { tasks: CoachPlanTaskRow[]; hiddenTaskCount: number; executionLocked: boolean } {
   const ordered = orderWeekTasks(tasks, topGapSkill);
   if (
@@ -39,6 +43,7 @@ export function gateOrderedWeekTasks(
       weekIndex: journey.weekIndex,
       currentWeekIndex: journey.currentWeekIndex,
       plan,
+      w1ClearedAt: journey.w1ClearedAt,
     })
   ) {
     return { tasks: [], hiddenTaskCount: ordered.length, executionLocked: true };

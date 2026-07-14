@@ -21,12 +21,12 @@ const FAQ_ITEMS = [
     ),
   },
   {
-    q: "How long is the free mock?",
+    q: "How long is the free diagnosis?",
     a: (
       <>
-        One sit-down placement mock with{" "}
-        <span className="font-medium text-ink">listening, reading, and a writing prompt</span>
-        . It is sized for a diagnostic first attempt — shorter than a full official HSK 3
+        One sit-down Level 3 diagnosis with{" "}
+        <span className="font-medium text-ink">listening and reading MCQs</span>
+        . It is sized for a first check — shorter than a full official HSK Level 3
         paper — so you can open your coach report and Week 1 without a multi-hour session.
       </>
     ),
@@ -35,8 +35,8 @@ const FAQ_ITEMS = [
     q: "Is writing scored by AI?",
     a: (
       <>
-        You can <span className="font-medium text-ink">submit writing on Free</span> with the
-        mock. <span className="font-medium text-ink">AI writing score and feedback</span> is
+        You can <span className="font-medium text-ink">submit writing on Free</span> with a
+        full mock. <span className="font-medium text-ink">AI writing score and feedback</span> is
         a Pro feature. Free still gets MCQ scoring, a (truncated) coach report, and full Week
         1.
       </>
@@ -46,7 +46,7 @@ const FAQ_ITEMS = [
     q: "What is free, and when do I need Pro?",
     a: (
       <>
-        Free includes one full mock, a truncated coach report, and{" "}
+        Free includes diagnosis, a truncated coach report, and{" "}
         <span className="font-medium text-ink">full Week 1</span> on your journey.
         Pro unlocks continued weeks after Week 1, full reports, and unlimited mocks &amp;
         plan-driven practice. See the pricing cards above for the full split.
@@ -58,7 +58,7 @@ const FAQ_ITEMS = [
     a: (
       <>
         After you <span className="font-medium text-ink">clear Week 1</span> — that is the
-        primary moment the product asks you to continue the journey with Pro. Placement and
+        primary moment the product asks you to continue the journey with Pro. Diagnosis and
         Week 1 itself are not interrupted by a mid-week paywall.
       </>
     ),

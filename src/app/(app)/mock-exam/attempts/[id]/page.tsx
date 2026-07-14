@@ -1,8 +1,9 @@
 import Link from "next/link";
 import SpeakChineseButton from "@/components/audio/SpeakChineseButton";
 import PracticeStem from "@/components/practice/PracticeStem";
+import { requireJourneyRoute } from "@/lib/auth/continue-destination";
 import { createClient } from "@/lib/supabase/server";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -85,14 +86,8 @@ export default async function MockExamAttemptDetailPage({
     );
   }
 
+  const { userId } = await requireJourneyRoute({ intent: `/mock-exam/attempts/${id}` });
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
 
   const { data } = await supabase
     .from("mock_exam_attempts")
@@ -100,7 +95,7 @@ export default async function MockExamAttemptDetailPage({
       "id, score, status, created_at, template_id, template_version, duration_seconds, answers, breakdown",
     )
     .eq("id", id)
-    .eq("user_id", user.id)
+    .eq("user_id", userId)
     .maybeSingle();
 
   const attempt = data as AttemptRow | null;

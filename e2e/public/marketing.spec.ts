@@ -17,7 +17,7 @@ test.describe("MKT — Marketing & public pages", () => {
     await expect(
       page.getByRole("heading", { name: /Questions before you start/i }),
     ).toBeVisible();
-    await expect(page.getByText(/How long is the free mock/i)).toBeVisible();
+    await expect(page.getByText(/How long is the free diagnosis/i)).toBeVisible();
   });
 
   test("MKT-003: HSK exam guide page", async ({ page }) => {

@@ -3,11 +3,12 @@ import {
   type Plan,
 } from "@/lib/entitlements";
 import {
-  HSK3_PLACEMENT_EXAM,
-  HSK3_PLACEMENT_MCQ_COUNT,
-  HSK3_PLACEMENT_TEMPLATE_ID,
-  HSK3_PLACEMENT_TEMPLATE_VERSION,
-} from "@/data/placement/hsk3-placement";
+  HSK3_DIAGNOSIS_EXAM,
+  HSK3_DIAGNOSIS_MCQ_COUNT,
+  HSK3_DIAGNOSIS_TEMPLATE_ID,
+  HSK3_DIAGNOSIS_TEMPLATE_VERSION,
+  isDiagnosisTemplateId,
+} from "@/data/diagnosis/hsk3-diagnosis";
 import {
   HSK3_MOCK_EXAM,
   HSK3_MOCK_EXAM_MCQ_COUNT,
@@ -16,6 +17,7 @@ import {
   type MockExamQuestion,
 } from "@/lib/mock-exam/hsk3-template";
 import { computeWeaknesses } from "@/lib/weakness";
+import { runCoach } from "@/lib/coach/run-coach";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -75,13 +77,25 @@ async function countCompletedMockExams(
   supabase: ReturnType<typeof createClient>,
   userId: string,
 ): Promise<number> {
+  // Diagnosis / legacy placement must NOT consume the Free mock quota.
   const { count, error } = await supabase
     .from("mock_exam_attempts")
     .select("*", { count: "exact", head: true })
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .not("template_id", "in", '("hsk3-diagnosis","hsk3-placement")');
 
   if (error) {
-    throw error;
+    // Fallback if filter unsupported: fetch and filter client-side.
+    const { data, error: listError } = await supabase
+      .from("mock_exam_attempts")
+      .select("template_id")
+      .eq("user_id", userId);
+    if (listError) throw listError;
+    return (data ?? []).filter(
+      (row) =>
+        row.template_id !== "hsk3-diagnosis" &&
+        row.template_id !== "hsk3-placement",
+    ).length;
   }
 
   return count ?? 0;
@@ -109,12 +123,12 @@ type ExamTemplate = {
 };
 
 function resolveExamTemplate(templateId?: string): ExamTemplate {
-  if (templateId === HSK3_PLACEMENT_TEMPLATE_ID) {
+  if (isDiagnosisTemplateId(templateId)) {
     return {
-      questions: HSK3_PLACEMENT_EXAM,
-      templateId: HSK3_PLACEMENT_TEMPLATE_ID,
-      templateVersion: HSK3_PLACEMENT_TEMPLATE_VERSION,
-      mcqCount: HSK3_PLACEMENT_MCQ_COUNT,
+      questions: HSK3_DIAGNOSIS_EXAM,
+      templateId: HSK3_DIAGNOSIS_TEMPLATE_ID,
+      templateVersion: HSK3_DIAGNOSIS_TEMPLATE_VERSION,
+      mcqCount: HSK3_DIAGNOSIS_MCQ_COUNT,
       skipFreemiumLimit: true,
     };
   }
@@ -255,6 +269,43 @@ export async function POST(request: Request) {
       throw error;
     }
 
+    const isDiagnosis = isDiagnosisTemplateId(templateId);
+    if (isDiagnosis && inserted?.id) {
+      const stampAt = completedAt;
+      await supabase
+        .from("learner_profiles")
+        .update({
+          diagnosis_completed_at: stampAt,
+          coach_last_error: null,
+          coach_last_run_at: stampAt,
+          updated_at: stampAt,
+        })
+        .eq("user_id", user.id);
+
+      // Server-owned coach trigger (do not rely only on client fire-and-forget).
+      void runCoach(supabase, {
+        userId: user.id,
+        trigger: "mock_exam_completed",
+        sourceAttemptId: inserted.id,
+      }).catch(async (coachErr) => {
+        console.error("Diagnosis coach run failed:", coachErr);
+        try {
+          await supabase
+            .from("learner_profiles")
+            .update({
+              coach_last_error:
+                coachErr instanceof Error
+                  ? coachErr.message
+                  : "Coach generation failed",
+              coach_last_run_at: new Date().toISOString(),
+            })
+            .eq("user_id", user.id);
+        } catch {
+          // Column may be missing before migration 009.
+        }
+      });
+    }
+
     return NextResponse.json({
       ok: true,
       attemptId: inserted?.id ?? null,
@@ -263,6 +314,7 @@ export async function POST(request: Request) {
       totalMcq: mcqCount,
       weaknesses,
       coachPending: Boolean(inserted?.id),
+      diagnosisComplete: isDiagnosis,
     });
   } catch (err) {
     console.error("Mock exam submit failed:", err);

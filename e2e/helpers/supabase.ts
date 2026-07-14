@@ -73,13 +73,16 @@ export async function ensureOnboardingComplete(
   admin: SupabaseClient,
   userId: string,
 ): Promise<void> {
+  const now = new Date().toISOString();
   const { error } = await admin.from("learner_profiles").upsert(
     {
       user_id: userId,
       target_level: 3,
       target_exam_date: "2026-12-01",
       journey_horizon_weeks: 12,
-      journey_started_at: new Date().toISOString(),
+      onboarding_prefs_at: now,
+      diagnosis_completed_at: now,
+      journey_started_at: now,
       current_week_index: 1,
       current_stage: "foundation",
     },

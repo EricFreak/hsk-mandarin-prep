@@ -72,15 +72,25 @@ export async function POST(request: Request) {
   try {
     await ensureLearnerProfile(supabase, user.id);
 
+    const today = new Date().toISOString().slice(0, 10);
+    if (!unsure && examDate && examDate < today) {
+      return NextResponse.json(
+        { error: "examDate must be today or later" },
+        { status: 400 },
+      );
+    }
+
     const targetExamDate = unsure ? null : examDate;
     const journeyHorizonWeeks = unsure ? 12 : weeksUntilExam(examDate!);
+    const now = new Date().toISOString();
 
     const { error } = await supabase
       .from("learner_profiles")
       .update({
         target_exam_date: targetExamDate,
         journey_horizon_weeks: journeyHorizonWeeks,
-        updated_at: new Date().toISOString(),
+        onboarding_prefs_at: now,
+        updated_at: now,
       })
       .eq("user_id", user.id);
 
@@ -88,7 +98,7 @@ export async function POST(request: Request) {
       throw error;
     }
 
-    return NextResponse.json({ next: "/placement" });
+    return NextResponse.json({ next: "/diagnosis" });
   } catch (err) {
     console.error("Onboarding update failed:", err);
     return NextResponse.json(

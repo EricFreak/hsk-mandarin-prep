@@ -102,6 +102,31 @@ export default function DashboardView() {
         </div>
       </div>
 
+      {coach?.status === "pending" ? (
+        <div className="rounded-xl border border-jade/30 bg-jade/5 p-5">
+          <h2 className="font-display text-base font-semibold text-ink">
+            Building your Week 1 plan
+          </h2>
+          <p className="mt-2 text-sm text-ink-muted">
+            Your diagnosis score is saved. Tools unlock when Week 1 tasks are ready. You can
+            stay here — this page refreshes automatically.
+          </p>
+          <button
+            type="button"
+            className="btn-secondary mt-4"
+            onClick={() => {
+              void fetch("/api/coach/run", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ trigger: "mock_exam_completed" }),
+              }).then(() => mutateCoach());
+            }}
+          >
+            Retry build
+          </button>
+        </div>
+      ) : null}
+
       {coach?.currentStage ? (
         <JourneyStrip
           stage={coach.currentStage}

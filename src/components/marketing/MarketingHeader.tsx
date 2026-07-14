@@ -10,7 +10,12 @@ const NAV_LINKS = [
   { href: "/pricing", label: "Pricing" },
 ] as const;
 
-export default function MarketingHeader() {
+type Props = {
+  accountHref: string;
+  accountLabel: string;
+};
+
+export default function MarketingHeader({ accountHref, accountLabel }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
 
@@ -36,14 +41,14 @@ export default function MarketingHeader() {
               {label}
             </Link>
           ))}
-          <Link href="/login" className="btn-primary text-sm">
-            Login
+          <Link href={accountHref} className="btn-primary text-sm">
+            {accountLabel}
           </Link>
         </nav>
 
         <div className="flex items-center gap-2 sm:hidden">
-          <Link href="/login" className="btn-primary text-sm">
-            Login
+          <Link href={accountHref} className="btn-primary text-sm">
+            {accountLabel}
           </Link>
           <button
             type="button"

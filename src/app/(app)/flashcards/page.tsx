@@ -1,31 +1,18 @@
 import FlashcardReview from "@/components/flashcards/FlashcardReview";
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import { requireJourneyRoute } from "@/lib/auth/continue-destination";
 
 export const dynamic = "force-dynamic";
 
 export default async function FlashcardsPage() {
-  if (
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ) {
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      redirect("/login");
-    }
-  }
+  await requireJourneyRoute({ intent: "/flashcards" });
 
   return (
     <div>
       <div className="mb-8">
         <h1 className="font-display text-2xl font-semibold text-ink">Flashcards</h1>
         <p className="mt-2 text-sm text-ink-muted">
-          Review HSK 3.0 vocabulary with spaced repetition. Flip the card, then rate how well you
-          remembered it.
+          Review HSK Level 3 vocabulary with spaced repetition. Flip the card, then rate how
+          well you remembered it.
         </p>
       </div>
       <FlashcardReview />

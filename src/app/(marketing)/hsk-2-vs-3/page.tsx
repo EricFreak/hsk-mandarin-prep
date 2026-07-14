@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import ContinueCta from "@/components/marketing/ContinueCta";
 
 export const metadata: Metadata = {
   title: "HSK Exam Guide: 2.0 vs 3.0, Levels & Which Test to Take",
@@ -257,12 +258,9 @@ export default function Hsk2Vs3Page() {
           and a free HSK Level 3 mock exam.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            href="/login?next=%2Fmock-exam"
-            className="btn-primary px-5 py-2.5 text-sm"
-          >
-            Take free HSK Level 3 mock exam
-          </Link>
+          <ContinueCta className="btn-primary px-5 py-2.5 text-sm">
+            Start free Week 1
+          </ContinueCta>
           <Link href="/#how-it-works" className="btn-secondary px-5 py-2.5 text-sm">
             See the AI coach loop
           </Link>

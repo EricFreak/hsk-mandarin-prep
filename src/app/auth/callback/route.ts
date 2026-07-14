@@ -1,10 +1,16 @@
+import { ensureProfileWithoutClobberingPlan, fetchLearnerContinueProfile } from "@/lib/auth/continue-destination";
+import {
+  isSafeIntent,
+  resolveContinueHref,
+} from "@/lib/auth/resolve-continue-href";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/";
+  const rawNext = searchParams.get("next");
+  const intent = isSafeIntent(rawNext) ? rawNext : "/onboarding";
 
   if (code) {
     const supabase = createClient();
@@ -16,28 +22,24 @@ export async function GET(request: Request) {
       } = await supabase.auth.getUser();
 
       if (user) {
-        await supabase.from("profiles").upsert(
-          {
-            id: user.id,
-            email: user.email,
-            plan: "free",
-          },
-          { onConflict: "id" }
-        );
+        await ensureProfileWithoutClobberingPlan(user.id, user.email);
       }
+
+      const profile = user
+        ? await fetchLearnerContinueProfile(user.id)
+        : null;
+      const dest = resolveContinueHref({
+        authenticated: Boolean(user),
+        profile,
+        intent,
+      });
 
       const forwardedHost = request.headers.get("x-forwarded-host");
       const isLocalEnv = process.env.NODE_ENV === "development";
+      const base =
+        !isLocalEnv && forwardedHost ? `https://${forwardedHost}` : origin;
 
-      if (isLocalEnv) {
-        return NextResponse.redirect(`${origin}${next}`);
-      }
-
-      if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}`);
-      }
-
-      return NextResponse.redirect(`${origin}${next}`);
+      return NextResponse.redirect(`${base}${dest}`);
     }
   }
 

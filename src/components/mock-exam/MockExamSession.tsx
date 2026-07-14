@@ -52,6 +52,8 @@ type MockExamSessionProps = {
   completePrimaryHref?: string;
   completePrimaryLabel?: string;
   hideReviewLink?: boolean;
+  /** Diagnosis setup: don't offer tool links until coach ready; soften dashboard CTA while pending. */
+  setupFlow?: boolean;
 };
 
 export default function MockExamSession({
@@ -60,6 +62,7 @@ export default function MockExamSession({
   completePrimaryHref = "/dashboard",
   completePrimaryLabel = "View dashboard",
   hideReviewLink = false,
+  setupFlow = false,
 }: MockExamSessionProps) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, AnswerState>>({});
@@ -379,10 +382,14 @@ export default function MockExamSession({
 
         {coachStatus !== "idle" ? (
           <div className="surface-card p-6">
-            <h3 className="text-sm font-semibold text-ink">AI coach report</h3>
+            <h3 className="text-sm font-semibold text-ink">
+              {setupFlow ? "Building your Week 1 plan" : "AI coach report"}
+            </h3>
             {coachStatus === "running" ? (
               <p className="mt-2 text-sm text-ink-muted">
-                Generating your personalized summary and study plan…
+                Your score is saved. We&apos;re building your personalized summary and Week 1
+                plan — usually under a couple of minutes. You can open the dashboard anytime;
+                tools unlock when the plan is ready.
               </p>
             ) : coachStatus === "ready" ? (
               <p className="mt-2 text-sm text-ink-muted">
@@ -390,7 +397,8 @@ export default function MockExamSession({
               </p>
             ) : (
               <p className="mt-2 text-sm text-ink-muted">
-                Report generation is delayed. Open your dashboard to retry shortly.
+                Plan generation is delayed. Open your dashboard and use Retry — your score is
+                kept; you do not need to retake the level check.
               </p>
             )}
           </div>
@@ -404,16 +412,26 @@ export default function MockExamSession({
           ) : null}
           <Link
             href={completePrimaryHref}
-            className={result.attemptId && !hideReviewLink ? "btn-secondary" : "btn-primary"}
+            className={
+              result.attemptId && !hideReviewLink ? "btn-secondary" : "btn-primary"
+            }
           >
-            {completePrimaryLabel}
+            {setupFlow
+              ? coachStatus === "ready"
+                ? "Open your Week 1"
+                : "Open dashboard"
+              : completePrimaryLabel}
           </Link>
-          <Link
-            href="/practice"
-            className="btn-secondary"
-          >
-            Practice weak areas
-          </Link>
+          {setupFlow ? null : (
+            <Link href="/practice" className="btn-secondary">
+              Practice weak areas
+            </Link>
+          )}
+          {setupFlow && coachStatus === "running" ? (
+            <p className="w-full text-xs text-ink-muted">
+              Practice and full mock exam unlock after Week 1 is ready.
+            </p>
+          ) : null}
         </div>
       </div>
     );

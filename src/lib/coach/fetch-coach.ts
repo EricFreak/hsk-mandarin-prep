@@ -165,7 +165,7 @@ export async function fetchCoachJourney(
     supabase
       .from("learner_profiles")
       .select(
-        "target_exam_date, current_week_index, current_stage, stage_calendar",
+        "target_exam_date, current_week_index, current_stage, stage_calendar, w1_cleared_at",
       )
       .eq("user_id", userId)
       .maybeSingle(),
@@ -226,7 +226,7 @@ export async function fetchCoachDashboard(
       supabase
         .from("learner_profiles")
         .select(
-          "current_week_index, current_stage, target_exam_date, stage_calendar",
+          "current_week_index, current_stage, target_exam_date, stage_calendar, w1_cleared_at",
         )
         .eq("user_id", userId)
         .maybeSingle(),
@@ -281,11 +281,13 @@ export async function fetchCoachDashboard(
     plan: userPlan,
     currentWeekIndex,
     weekCleared,
+    w1ClearedAt: (learnerProfile?.w1_cleared_at as string | null) ?? null,
   });
   const { tasks: gatedTasks, hiddenTaskCount, executionLocked } =
     gateOrderedWeekTasks(tasks, topGapSkill, userPlan, {
       weekIndex,
       currentWeekIndex,
+      w1ClearedAt: (learnerProfile?.w1_cleared_at as string | null) ?? null,
     });
   const todayTask = studyPlan ? pickTodayTask(gatedTasks, studyPlan.week_start) : null;
 
