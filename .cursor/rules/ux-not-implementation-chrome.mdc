@@ -1,0 +1,35 @@
+---
+description: Keep product UX distinct from engineering/implementation chrome
+alwaysApply: true
+---
+
+# Product UX ≠ implementation chrome
+
+Engineering patterns (SWR/React Query revalidation, polling, retries, optimistic updates) must not invent user-visible UI unless product explicitly owns that state.
+
+## Doctrine
+
+1. **User milestone ≠ backend job.** Show places and outcomes the learner understands (score saved, Week 1 ready, next task). Hide transport: syncing, revalidating, refetching, “calling the API”.
+2. **Async is a status inside an owned place,** not a floating system ticker. Prefer one durable surface (e.g. Dashboard banner / task zone) over global “Syncing…” rows.
+3. **Never mount/unmount chrome that shifts layout** for background work. If a status must exist, reserve space or put it on an already-owned card — better: delete it.
+4. **One story per wait.** If the product already explains the wait (“Building your Week 1 plan”), do not add a second line that rephrases the network.
+
+## Canonical miss (do not repeat)
+
+```tsx
+// ❌ BAD — SWR isValidating leaked as product UI; polls → layout jump / “system log” feel
+{isValidating ? <div>Syncing latest progress</div> : null}
+
+// ✅ GOOD — silent revalidate; product copy only where the journey owns the wait
+{coach?.status === "pending" ? (
+  <div>Building your Week 1 plan…</div>
+) : null}
+```
+
+## Before shipping UI
+
+Ask: *Would a learner understand this without knowing we use SWR/Supabase?* If no, it is implementation chrome — remove it or bury it in diagnostics / dev-only.
+
+## When in doubt
+
+Prefer invisible background refresh + honest product states (`pending` / `ready` / `error` + Retry) over any “sync / loading / updating” chrome at page chrome level.
