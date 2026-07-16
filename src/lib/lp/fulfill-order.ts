@@ -14,12 +14,14 @@ export async function fulfillLpOrder(
   if (order.status === "paid") return { ok: true }; // idempotent (webhook retries)
 
   const now = new Date().toISOString();
-  await admin
+  const { error: supersedeError } = await admin
     .from("lp_orders")
     .update({ status: "superseded", updated_at: now })
     .eq("user_id", order.user_id)
     .eq("status", "paid");
-  await admin
+  if (supersedeError) return { ok: false };
+
+  const { error: paidError } = await admin
     .from("lp_orders")
     .update({
       status: "paid",
@@ -29,13 +31,15 @@ export async function fulfillLpOrder(
       updated_at: now,
     })
     .eq("id", order.id);
+  if (paidError) return { ok: false };
 
   const pack = getCoachPack(order.service_type);
   if (pack) {
-    await admin
+    const { error: horizonError } = await admin
       .from("learner_profiles")
       .update({ journey_horizon_weeks: pack.weeks, updated_at: now })
       .eq("user_id", order.user_id);
+    if (horizonError) return { ok: false };
   }
   return { ok: true };
 }
