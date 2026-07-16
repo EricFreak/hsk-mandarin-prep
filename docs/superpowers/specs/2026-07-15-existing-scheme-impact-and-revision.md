@@ -1,8 +1,9 @@
 # 现有产品方案 · 因锁项产生的影响与调整后总案
 
-- **Date:** 2026-07-15  
-- **Status:** 产品方案修订稿 · **未实施代码** · **部分过时草稿**（见下）  
-- **EOD 2026-07-15：** 续谈见 `docs/superpowers/handoffs/2026-07-15-short-runway-freemium-scheme-eod.md`。你倾向 **废除 exam_sprint、只留 standard+compressed**——本文 §1c 双拍/sprint 段待明日按该意向重写后再标 Locked。  
+- **Date:** 2026-07-15（Freemium 段 **2026-07-16 锁定回写**）  
+- **Status:** 行程/短跑道修订稿 + **计费以 Locked 定价终案为准** · **未实施代码**  
+- **计费权威：** `2026-07-16-unit-time-fair-pricing-scheme.md`（**Locked 2026-07-16**）。本文 §1c / R3 已按该终案回写；与旧「月费解锁 W2+ / sprint 双拍」冲突处以定价终案为准。  
+- **EOD：** `handoffs/2026-07-15-short-runway-freemium-scheme-eod.md`  
 - **目的：** 回答「锁项对**现有方案**有何影响、应如何改」，并给出**调整后的整体方案**——不是只证明新功能自己能闭环。  
 - **现有方案基线（被改对象）：**  
   1. `2026-07-13-full-journey-ux-brand-design.md`（完整旅程 / 弹性阶段 / Freemium）  
@@ -16,7 +17,7 @@
 
 | 判断 | 说明 |
 |------|------|
-| **会冲击现有方案** | 是。冲击集中在：三档时长轴、内容选择权、整单替换，以及 **Freemium 不能再用「一律清关卖 W2+」**（尤其 D=1 sprint）。 |
+| **会冲击现有方案** | 是。冲击集中在：三档时长轴、内容选择权、整单替换，以及 **Freemium 改为 Coach-day 单价 + Runway pack + sprint 一生一次免费**。 |
 | **不推翻** | 登录后阶段门、Dashboard 当家、诊断不算免费模考次数、升级主高潮、账号不把 Pro 刷成 Free、不要 Waiting Room。 |
 | **调整方式** | **改旧说明书里的句子**，让新旧不打架；不是再做一个 App。 |
 
@@ -39,14 +40,14 @@
 | 2 | 诊断出弱项后，只是微调比例，**不能推翻**阶段骨架 | 你要求 Focus 可把时间 **按自己比例砸满 100%**，那就等于可以「听我说怎么练」，而不是「系统阶段说了算」 | **仅当用户选 Focus** 时：以用户比例为准。听系统建议（Coach-led）或完整线：仍主要由系统排 | Focus：听力 70%+阅读 30%。Coach-led：系统按诊断弱项自动排 |
 | 3 | 以后改考期 → 系统在**当前计划上悄悄重算** | 你要求计划生成后是冻结的，改念要走自定义重规划，不能打补丁 | 改考期 / 改策略 / 改比例 → **作废旧计划，生成新计划**（先确认） | 已开始突击又改考期：确认「替换当前计划」后重做，而不是后台偷改任务列表 |
 | 4 | 填日期 → 诊断 → **直接**进入 Week 1 | 短跑道还要让用户选「听建议」还是「自己分配时间」，中间少一步 | 诊断后：**Short 先选策略（±填比例）再生成**；Standard 仍可诊断后直接生成完整线 | 还剩 10 天：诊断后先选 Coach 或 Focus，再出任务 |
-| 5 | Free：「做完 **Week 1** → 推 Pro → **解锁 W2+**」 | 单一 Short 不够：三档里 **exam_sprint（尤其 D=1）** 清关时考试常还没过，硬卖 W2/下场完整线会空心 | 见 **§1c**：standard/compressed 清关可续本旅程；**sprint 双拍**（清关=拍A平静；考后=拍B主转化） | 明天考、今晚清关 → 先庆祝继续考前练；考过后再主推 Pro 下场完整线 |
+| 5 | Free：「做完 **Week 1** → 推 Pro → **解锁 W2+**」（月费同学费） | 同学费不同剩余周不公；sprint 无剩余周可卖；紧急强收像打劫 | 见 **§1c + 定价终案**：Coach-day 单价 R；长档 Free 第1周后买剩余天×R；sprint **lifetime 一次 Free**，再次 D×R 无溢价 | 30 天与 50 天用户按剩余付费天计价；明天考首次紧急免单 |
 | 6 | rev2：家在 Dashboard、四段路由、诊断免费、登录 | 和你的锁项不打架 | **基本不动** | 登录门、Dashboard、Sign out 等照旧 |
 
 ### 调整后一句话总叙事（对应上表）
 
 - 还是**同一个产品**：时间够 → 完整旅程；时间紧 → 短跑道（里再选听系统或自己定时间比例）。  
 - 换计划从「在旧计划上改改」变成「**整份换成新的**」。  
-- Free 转化：三档都「本程用满」；**卖点按档分叉**（standard/compressed=续本旅程；exam_sprint=考后主转化），见 §1c。
+- Free 转化：长档「本程用满 → Runway pack」；sprint「一生一次免 → 再次按天付」；见 §1c + 定价终案。
 
 ### 和「只证明新功能自己能闭环」的差别
 
@@ -55,92 +56,40 @@
 
 ---
 
-## 1c. 第五项深挖：付费转化必须按「三档」+ 边界拆开
+## 1c. Freemium（已锁定 · 2026-07-16）
 
-先前把 `compressed` / `exam_sprint` 压成一个 **Short**，再用「清关 → 下场完整线」一句话带过——在 **D=1（明天考）** 上会空心：用户清关时往往**还没考完**，主心智是「今晚还能练什么」，不是「下场 12 周」。
+**权威全文：** [`2026-07-16-unit-time-fair-pricing-scheme.md`](./2026-07-16-unit-time-fair-pricing-scheme.md)（Locked）。
 
-故：Freemium **时机与卖点都必须回到初版三档**（与讨论底稿一致），再单写极限边界。
+### 底线
 
-### 三档回顾（时长轴，非内容轴）
+> 卖 **单位时间可量化的公平价值**（Coach-day 单价 **R**）；即使用户只剩一天，**不趁火打劫**（无紧急溢价）。
 
-| `plan_mode` | 距考约 | 本程长什么样 | 和「W2+」的关系 |
-|-------------|--------|--------------|-----------------|
-| **standard** | ≥21 天，或 I'm not sure | 完整旅程；Free 执行 Week 1 | 清关后 Pro **就是**解锁本旅程 W2+ |
-| **compressed** | 7–20 天 | 压进真实 D；仍可能有 1–3 个可执行周；禁止 `max(21,D)` | Free 仍先吃满**第一可执行周**；清关后 Pro = 解锁**本压缩旅程剩余周**（像缩小版 standard） |
-| **exam_sprint** | 1–6 天（含今天考 D=0） | 单窗突击；不装多周地图 | **没有**本旅程 W2。清关 ≠ 自动等于「该卖下场完整线」——要看考期过没过 |
+### 三档 × 计费（锁定）
 
-内容轴（Coach-led / Focus）只挂在需要短跑道选择权的档上；**不改变**上表 Freemium 分叉。
+| `plan_mode` | 距考 | Free | 付费 |
+|-------------|------|------|------|
+| **standard** | D≥21 或 unsure | 诊断+报告+大纲+**Week 1** | W1 清关后：**Runway pack** = 剩余 Coach-days × R |
+| **compressed** | 7≤D≤20 | 同上（第一可执行周） | 第一周清关后：剩余天 × R（同单价） |
+| **exam_sprint** | **1≤D≤6**（含 D=0） | **每账号 lifetime 一次**整段紧急方案给满（`free_sprint_used_at`） | **再次** sprint：D × R；无溢价。首次清关**不当**旅途续费主墙 |
 
-### 不变量（三档共用）
+### 已锁定的四项确认
 
-> 诊断 / 策略拍 / **本程执行中途**不炸主 Pro 墙。Free **给满本程**（sprint 不因天数短再砍半）。
+1. 采纳定价终案 P1–P5 + R-Pay-1…6  
+2. Sprint 免费窗 = **D≤6**  
+3. 首版主 SKU = **Runway pack**（月费预充 → 二期）  
+4. **保留** sprint，一生一次免费  
 
-### 三档 × Free → Pro（并排）
+### 废止的旧 Freemium 说法（本文曾写、现废）
 
-| | standard | compressed | exam_sprint（含 D=1） |
-|--|----------|------------|------------------------|
-| Free 给满 | Week 1 | 压缩旅程的**第 1 可执行周** | **整段单窗突击** |
-| 清关戳 | `w1_cleared_at` | 同左（第一周清） | 同左（sprint complete） |
-| 清关后若仍 **Free** | 主 CTA：Upgrade → **续本旅程 W2+** | 主 CTA：Upgrade → **续本压缩旅程剩余周** | **见下一节双拍**——禁止照搬「Unlock Week 2」 |
-| 拒付费停哪 | W2 可见不可跑 | 剩余周可见不可跑 | 突击已结束；考前可练工具（权益内）；无「下一周执行」 |
+- 月费同学费解锁不等量「剩余周」当作公平  
+- sprint「双拍：考期过了再主推下场完整线」作为主转化（含糊且未对齐单位时间）  
+- 「Short 清关统一卖 Unlock Week 2」
 
----
+### Custom / 防刷
 
-### 极限例：距考只剩 1 天（`exam_sprint`，D=1）应如何走 Pro
-
-**用户路径（Free）：**
-
-```
-选明天考试 → one-beat 告知「这是考前突击，不是多周地图」
-  → 诊断 →（可选 Coach / Focus）→ 生成「到考前」单窗任务
-  → Dashboard 做突击（中途不主推 Pro）
-  → 本程可能几小时内清关（w1_cleared_at）
-```
-
-此时钟面上通常是：**考试还没开始或就在今晚/明天**。若立刻用 standard 同款高潮「升级解锁 Week 2 / 下场完整旅程」——承诺与场景错位。
-
-**推荐：sprint 用「双拍转化」，不要单拍硬塞下场完整线。**
-
-| 拍 | 触发条件 | Dashboard 主表达 | Pro 是否主 CTA | Pro 若点开卖什么 |
-|----|----------|------------------|----------------|------------------|
-| **拍 A · 清关当下（考期未过）** | sprint 已清，且 `today ≤ examDate` | 庆祝「突击计划完成」+ **平静延续到考前**（今日任务/工具仍可用） | **否（不当主墙）**；Pro 可作次要链（Pricing / 文案弱） | 次要可讲：**考前火力权益**（如写作评分、额外模考次数等既有 Pro 包）——**不**讲 Unlock Week 2，**不**强迫设下场日期 |
-| **拍 B · 主转化高潮** | `today > examDate`（考期已过），或用户主动「设下一考期」 | “Exam date has passed — unlock your next full journey” / 设下一考期 | **是** | **下场 / 持续备考**：新日期 → standard 或再分档；+ 既有 Pro 权益 |
-
-**D=1 时间线示意：**
-
-```
-Day 0 选考期=明天 → 诊断 → 突击进行中 …… 禁止主 Pro 墙
-Day 0/1 突击清关 → 【拍 A】庆祝 + 考前继续练；Pro 仅次要
-考试日结束 / 次日回访 → 【拍 B】主 CTA = Pro 下场完整旅程
-```
-
-**若清关时考期已经过了**（起得很晚、或改过系统日）：跳过拍 A，**直接拍 B**。
-
-**若清关前就付费（中途升级）：** 允许；不重走 setup。考前享用 Pro 权益；考后自然具备拍 B 的「下场完整线」能力，不再卡第二道主墙。
-
-**Free 一直拒付费：** 拍 A 后可停留；拍 B 出现后主 CTA 持续；也可用 Custom 设新考期开**新 Free 本程**（新一程再走对应分档与清关规则）。
-
----
-
-### compressed 为何不必跟 sprint 同一套双拍
-
-7–20 天压缩后通常仍有「第一周之后还有可执行周」。清关后的 Pro 承诺与 standard **同构**（续本旅程），只是旅程更短——**单拍即可**。
-
-只有 **exam_sprint（无剩余周）** 必须双拍，否则会把「下场完整线」砸在临考大脑上。
-
----
-
-### 与 Custom replan
-
-- Custom **不改** `profiles.plan`。  
-- 重置本程进度；未清关不把旧清关姿态带去骗过转化。  
-- sprint 在拍 A 未到拍 B 前 Custom 换日期：若新 D 进入 standard/compressed，转化逻辑跟新档走。
-
-### ◆ 取代原 ◆D-Short-Pro（请确认）
-
-- **◆D-Freemium-Tiers：** 付费叙事按 **standard / compressed / exam_sprint** 三档，不再用单一 Short 卖点。  
-- **◆D-Sprint-Pro：** exam_sprint（含 D=1）**主转化高潮在拍 B（考期过后或主动设下场）**；拍 A 清关不当主 Pro 墙。  
-- compressed：清关后单拍，卖点 = 续本压缩旅程剩余周。  
+- Custom **不重置** `free_sprint_used_at`  
+- 不白送新的 Runway 余额  
+- 多账号骗免：MVP 接受  
 
 ---
 
@@ -158,7 +107,7 @@ Day 0/1 突击清关 → 【拍 A】庆祝 + 考前继续练；Pro 仅次要
 | §4.3 Slim strip = stage + days-to-exam | 🟡 unsure 假 “to exam”；Short/Focus 铬不同 | Strip 按 shape/strategy 显示；unsure 用 planning horizon 文案（联动 JUX-001） |
 | §4.4 再生成：Onboarding complete→旅程；考期编辑→重算 | 🔴 与「禁止在现方案打补丁、须 Custom replan」部分打架 | **考期/策略/比例变更**一律走 **Custom replan（整单 superseded）**；不再静默「编辑考期重算进行中周」作为主路径（见 §4 修订） |
 | §5 大纲可见 + 顺序解锁 + Free 仅 W1 | 🟡 Short 可能只有「一程」而非多周 outline | Short：大纲退化为短列表/突击日程；清关仍打「本程完成」戳（复用 w1_cleared_at）；Free 仅执行本 Short 程 |
-| §6 Freemium 主转化在 W1 clear + Pro=解锁 W2+ | 🔴 对 **exam_sprint/D=1** 卖点与时机都冲突 | 按三档：standard/compressed 清关续本旅程；**sprint 双拍**（§1c）。禁止 sprint 清关当下写 Unlock Week 2 / 强迫下场完整线 |
+| §6 Freemium 主转化在 W1 clear + Pro=解锁 W2+ | 🔴 月费×剩余周不公；sprint 无货 | **以定价终案为准**：Coach-day×R；Runway pack；sprint lifetime 一次 Free |
 | §7 Placement→报告→旅程 init→W1 | 🟡 Short 在「旅程 init」前插入策略/分配 | 诊断后 →（short：策略±分配）→ 再生成 |
 
 ### 2.2 vs Auth-aware 旅程（2026-07-14）
@@ -177,7 +126,7 @@ Day 0/1 突击清关 → 【拍 A】庆祝 + 考前继续练；Pro 仅次要
 | 原则 2–3：里程碑≠后端；异步是状态 | 🟢 强化 | 策略/分配/生成均不得新开 Waiting 页 |
 | 原则 5：冲突要一拍 | 🟡 增加策略拍、分配校验、Custom 确认、退回 Coach | 写入场景表 |
 | Setup：prefs→diagnosis→diagnosis_done→complete | 🟡 complete 的「任务落库」触发点延后到策略选定之后（short） | short：`diagnosis_done` 可更长；**策略未选不算 complete** |
-| Free 闭环定义「→ Week 1 → clear → Upgrade（→ W2+）」 | 🔴 sprint/D=1 不能同构 W2+ | 三档分叉；sprint **拍B** 才是主转化（§1c） |
+| Free 闭环定义「→ Week 1 → clear → Upgrade（→ W2+）」 | 🔴 卖点尺子错位 | 长档 → clear → **Runway pack**；sprint 首次免，再次 D×R（定价终案） |
 | Must never：假工具门、逼重考等 | 🟢 | 另增：Must never **静默覆盖用户 Focus 比例**；Must never **在 active 上打补丁改焦** |
 | Recovery = Retry coach | 🟡 | 保留；另增 Custom replan / 向导退回 Coach-led |
 
@@ -200,7 +149,7 @@ Day 0/1 突击清关 → 【拍 A】庆祝 + 考前继续练；Pro 仅次要
 ### R1 · 时长轴与旅程骨架（修 2026-07-13 §4）
 
 1. 时长轴恢复 **`plan_mode ∈ { standard, compressed, exam_sprint }`**（对齐初版三档；**废除**「D≤20=单一 short」作付费叙事）。  
-2. **◆ 默认切分（待你确认）：** D≥21 或 unsure → standard；7≤D≤20 → compressed；1≤D≤6（含 D=0 今天考）→ exam_sprint。  
+2. **◆D1 已锁定：** D≥21 或 unsure → standard；7≤D≤20 → compressed；1≤D≤6（含 D=0）→ exam_sprint。  
 3. **standard：** 维持四阶段弹性骨架；弱项 reweight 不推翻骨架。  
 4. **compressed：** 总跨度=真实 D，禁止 `max(21,D)`；可保留压缩后的阶段/1–3 周。  
 5. **exam_sprint：** 单窗突击，不装多周地图；日历 end=真实考期；内容轴见 R2。
@@ -213,16 +162,15 @@ Day 0/1 突击清关 → 【拍 A】庆祝 + 考前继续练；Pro 仅次要
 4. **退回 coach_led：** 生成前向导内；生成后仅 Custom replan。  
 5. **standard 不出现** R2 二选一。
 
-### R3 · 三档 Freemium（修 2026-07-13 §5–6；废止「单一 Short 卖点」）
+### R3 · Freemium / 计费（修 2026-07-13 §5–6；**以定价终案 Locked 为准**）
 
-1. 时长轴恢复 **`plan_mode ∈ { standard, compressed, exam_sprint }`**（与初版三档一致）；付费叙事跟档走，不用笼统 Short。  
-2. Free **给满本程**；中途禁主 Pro 墙。清关戳统一 `w1_cleared_at`。  
-3. **standard：** 清关 → 主 CTA Pro = 解锁本旅程 **W2+**。  
-4. **compressed：** 清关 → 主 CTA Pro = 解锁**本压缩旅程剩余周**（单拍，同构缩小版 standard）。  
-5. **exam_sprint（含 D=1 / 今天考）：双拍**  
-   - **拍 A**（已清关且考期未过）：庆祝 + 考前延续；**Pro 不当主墙**（可次要链讲权益包）。  
-   - **拍 B**（考期已过，或用户主动设下场）：**主转化** = 下场/持续备考完整线。  
-6. Custom replan：不改 `profiles.plan`；进度/清关姿态按 §1c。  
+1. 价值单位：**Coach-day**；全场同一单价 **R**（对外可说每周 W=7R）。禁止紧急溢价。  
+2. 首版主 SKU：**Runway pack** = 剩余付费 Coach-days × R；月费预充 → 二期。  
+3. **standard / compressed：** Free 给满第一可执行周；清关后主转化 = 购 Runway pack（剩余天×R），不再叙事「月费随便解锁多少剩余周」。  
+4. **exam_sprint（D≤6）：** 每账号 **lifetime 一次** Free 紧急方案（`free_sprint_used_at`）；再次 = D×R。首次清关不当旅途续费主墙。  
+5. 工具权益（模考/写作等）随付费席（有效 Runway/预充）附带。  
+6. Custom replan：不重置免费紧急戳；余额规则见定价终案 R-Pay-5。  
+7. 全文细则：`2026-07-16-unit-time-fair-pricing-scheme.md`。
 
 ### R4 · 诊断后 → 生成（修 auth-aware §3 直线）
 
@@ -284,9 +232,9 @@ Auth × Plan(free|pro)
               （可退回 Coach-led）
               → 按剩余真实天数生成短程任务
   → Dashboard 为家（pending 用状态+Retry）
-  → 执行本程 → 清关 →（Free）转化按档——§1c
-        ├─ standard / compressed：主 CTA Pro = 续本旅程剩余周
-        └─ exam_sprint：拍A考前平静；拍B考后/设下场才主转化
+  → 执行本程 → 清关 →（Free）转化按档——§1c + 定价终案
+        ├─ standard / compressed：主 CTA = Runway pack（剩余天 × R）
+        └─ exam_sprint：首次 lifetime Free；再次 D×R；首次清关不主推旅途续费
   → 若改念：Custom replan（整单替换），禁止打补丁
   → Sign out / Sign in：按 DB 恢复
 ```
@@ -308,6 +256,8 @@ Auth × Plan(free|pro)
 | 考期编辑 → 静默重算进行中旅程 | **降级**；主路径改为 Custom replan |
 | 「永远 Week 1」作为唯一第一程隐喻 | **扩展为本程**（W1 或 short） |
 | 诊断提交立刻无条件开始最终旅程生成（short） | **加策略闸门** |
+| 月费同学费 = 公平；清关卖 Unlock W2+ | **废止为主叙事** → Coach-day×R + Runway pack |
+| sprint 双拍「考期过了再转化」 | **废止为主路径** → lifetime 一次 Free + 再次按天 |
 
 ---
 
@@ -317,7 +267,7 @@ Auth × Plan(free|pro)
 
 - **影响识别充分：** 最大真实冲突是 §4 骨架不变量与 Focus 主权、以及 §4.4 再生成与「冻结契约」。R1–R5 对症。  
 - **闭环：** 调整后 Free/Pro 主叙事仍闭环；短跑道不再假装长旅程，减少假日历开环。  
-- **要求你确认 ◆D1（D≤20）**，否则 short/standard 边界仍虚。
+- **◆D1 已锁定**（三档切分）。计费 **◆ 定价终案已锁定**。
 
 ### 5.2 UX
 
@@ -336,14 +286,14 @@ Auth × Plan(free|pro)
 | 考期 | 过去/今天/D=1/D=20/D=21/unsure/跨时区；短禁假 21 天 |
 | 策略 | 未选中断恢复；Focus Σ；退回 Coach；Standard 无 A/B |
 | 契约 | Retry vs Custom；superseded；replan 再诊豁免 |
-| Freemium | 本程给满；**三档分叉**；sprint 双拍（§1c）；Custom 不改 plan |
+| Freemium | Coach-day×R；Runway pack；sprint 一次 Free；Custom 不重置紧急戳 |
 | 旧路径兼容 | Pro 长旅程用户仍走 standard；已 complete 用户不被强制进 Focus |
 
 ### 5.5 评审结论
 
 > **可以对现有方案做有版本的修订，并形成自洽总案。**  
-> 不是「新功能自闭环」，而是：**长旅程让出三档时长轴 + sprint 双拍 Freemium + 再生成整单替换 + 内容轴选择权。**  
-> 代码未跟方案前，以本文 + rev2 已落地部分并存；开干应按 R1–R7 改生成与闸门。
+> 不是「新功能自闭环」，而是：**三档时长轴 + 单位时间公平计费（Runway pack / sprint 一次免）+ 整单替换 + 内容轴选择权。**  
+> 计费以 `2026-07-16-unit-time-fair-pricing-scheme.md` 为准；开干前仍待实现计划与明确开工令。
 
 ---
 
@@ -351,20 +301,24 @@ Auth × Plan(free|pro)
 
 | 文档 | 调整后地位 |
 |------|------------|
-| 本文 | **锁项冲击 + 修订总案**（优先阅读） |
-| `2026-07-14-post-login-closed-loop-design.md` | 基线仍有效；与本文冲突处以 **本文 R*** 为准 |
-| `2026-07-13-full-journey-ux-brand-design.md` | §4–6 被 R1–R3 修订 |
+| 本文 | 行程/短跑道冲击 + 修订总案 |
+| `2026-07-16-unit-time-fair-pricing-scheme.md` | **计费 / Freemium 权威（Locked）**；与本文 R3 冲突时以它为准 |
+| `2026-07-14-post-login-closed-loop-design.md` | 基线仍有效；Freemium 转化被定价终案修订 |
+| `2026-07-13-full-journey-ux-brand-design.md` | §4 被 R1；§6 被定价终案 / R3 修订 |
 | `2026-07-14-auth-aware-user-journey-design.md` | §3 直线被 R4 修订 |
 | `2026-07-15-short-exam-horizon-design.md` | 讨论底稿 |
-| `2026-07-15-plan-shape-focus-product-scheme.md` | 细节/矩阵附录；若与本文冲突 → **以本文为准** |
+| `2026-07-15-plan-shape-focus-product-scheme.md` | 细节附录；冲突 → 本文 / 定价终案 |
 
 ---
 
-## 7. 请你确认后，总案即可标 Locked
+## 7. 锁定状态（2026-07-16）
 
-1. 是否接受 **§3 R1–R7** 作为对现有三份基线的正式修订？  
-2. ◆D1：**三档切分**（≥21 standard / 7–20 compressed / 1–6 sprint；D=0 并入 sprint），是否照用？（废止「D≤20=单一 short」）  
-3. 策略拍固定诊断后（R2/R4），是否照用？（内容轴；与三档独立）  
-4. ◆D-Sprint-Pro：**D=1 等 exam_sprint 采用双拍**（清关考前=拍A不主推；考后/设下场=拍B主转化），是否照用？见 §1c。  
+| 项 | 状态 |
+|----|------|
+| 计费终案（Coach-day / Runway pack / sprint 一次免 / D≤6） | **Locked**（见定价规格 §10） |
+| ◆D1 三档切分 | **Locked**（写入 R1） |
+| R1–R7 行程/策略/Custom（除 R3 已按定价回写） | 行程侧仍有效；**R3 以定价终案为准** |
+| R2 策略拍（compressed/sprint 诊断后） | 默认有效；若要收窄「仅 sprint 强制」可另令 |
+| 产品代码 | **未实施**；未下令前不改 |
 
-确认前 **不改代码**。
+**下一步（需你下令）：** 写实现计划 → 改 entitlements / checkout / 旅程生成闸门。

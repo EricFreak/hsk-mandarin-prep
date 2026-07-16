@@ -37,11 +37,7 @@ function formatPercent(value: number): string {
 }
 
 export default function DashboardView() {
-  const {
-    data,
-    error,
-    isValidating,
-  } = useSWR("/api/dashboard", dashboardFetcher, {
+  const { data, error } = useSWR("/api/dashboard", dashboardFetcher, {
     revalidateOnFocus: true,
     dedupingInterval: 3_000,
     keepPreviousData: true,
@@ -77,13 +73,6 @@ export default function DashboardView() {
 
   return (
     <div className="space-y-6">
-      {isValidating || coachValidating ? (
-        <div className="flex items-center gap-2 text-xs text-ink-muted">
-          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-jade" />
-          Syncing latest progress
-        </div>
-      ) : null}
-
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-semibold text-ink">Dashboard</h1>

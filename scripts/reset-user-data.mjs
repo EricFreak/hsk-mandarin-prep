@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 /**
- * Reset beta user progress (mock exams, practice counts, SRS cards).
+ * Reset a learner toward a clean test state.
  * Requires SUPABASE_SERVICE_ROLE_KEY in .env.local
  *
  * Usage:
  *   node scripts/reset-user-data.mjs you@example.com
  *   node scripts/reset-user-data.mjs you@example.com --mock-only
+ *   node scripts/reset-user-data.mjs you@example.com --to-signup
+ *
+ * --to-signup: wipe progress + coach + journey + learner_profiles so stage is
+ *              needs_exam_prefs (just after registration). Keeps auth + profiles.plan.
  */
-
 import { createClient } from "@supabase/supabase-js";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -33,9 +36,17 @@ loadEnvLocal();
 
 const email = process.argv[2];
 const mockOnly = process.argv.includes("--mock-only");
+const toSignup = process.argv.includes("--to-signup");
 
 if (!email) {
-  console.error("Usage: node scripts/reset-user-data.mjs <email> [--mock-only]");
+  console.error(
+    "Usage: node scripts/reset-user-data.mjs <email> [--mock-only|--to-signup]",
+  );
+  process.exit(1);
+}
+
+if (mockOnly && toSignup) {
+  console.error("Choose either --mock-only or --to-signup, not both.");
   process.exit(1);
 }
 
@@ -43,13 +54,28 @@ const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!url || !serviceKey) {
-  console.error("Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env.local");
+  console.error(
+    "Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env.local",
+  );
   process.exit(1);
 }
 
 const supabase = createClient(url, serviceKey, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
+
+async function deleteByUser(table, userId) {
+  const { count: before } = await supabase
+    .from(table)
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", userId);
+
+  const { error } = await supabase.from(table).delete().eq("user_id", userId);
+  if (error) {
+    throw new Error(`${table}: ${error.message}`);
+  }
+  console.log(`  ${table}: deleted ${before ?? 0} row(s)`);
+}
 
 async function main() {
   const { data: profile, error: profileError } = await supabase
@@ -67,56 +93,55 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`Resetting data for ${profile.email} (${profile.id})…`);
-
-  const { count: mockBefore } = await supabase
-    .from("mock_exam_attempts")
-    .select("*", { count: "exact", head: true })
-    .eq("user_id", profile.id);
-
-  const { error: mockDeleteError } = await supabase
-    .from("mock_exam_attempts")
-    .delete()
-    .eq("user_id", profile.id);
-
-  if (mockDeleteError) {
-    throw new Error(`mock_exam_attempts: ${mockDeleteError.message}`);
+  console.log(
+    `Resetting data for ${profile.email} (${profile.id}) plan=${profile.plan}…`,
+  );
+  if (toSignup) {
+    console.log("Mode: --to-signup (fresh registration / needs_exam_prefs)");
   }
 
-  console.log(`  mock_exam_attempts: deleted ${mockBefore ?? 0} row(s)`);
+  if (toSignup) {
+    // FK-safe order: tasks → runs → plans → reports → journey → attempts → learner row
+    for (const table of [
+      "coach_plan_tasks",
+      "coach_runs",
+      "coach_study_plans",
+      "coach_reports",
+      "journey_week_outlines",
+      "practice_questions",
+      "practice_attempts",
+      "srs_cards",
+      "mock_exam_attempts",
+    ]) {
+      await deleteByUser(table, profile.id);
+    }
+
+    const { count: lpBefore } = await supabase
+      .from("learner_profiles")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", profile.id);
+
+    const { error: lpError } = await supabase
+      .from("learner_profiles")
+      .delete()
+      .eq("user_id", profile.id);
+
+    if (lpError) {
+      throw new Error(`learner_profiles: ${lpError.message}`);
+    }
+    console.log(`  learner_profiles: deleted ${lpBefore ?? 0} row(s)`);
+
+    console.log(
+      "Done. Account kept; journey stage should be needs_exam_prefs → /onboarding.",
+    );
+    return;
+  }
+
+  await deleteByUser("mock_exam_attempts", profile.id);
 
   if (!mockOnly) {
-    const { count: practiceBefore } = await supabase
-      .from("practice_attempts")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", profile.id);
-
-    const { error: practiceDeleteError } = await supabase
-      .from("practice_attempts")
-      .delete()
-      .eq("user_id", profile.id);
-
-    if (practiceDeleteError) {
-      throw new Error(`practice_attempts: ${practiceDeleteError.message}`);
-    }
-
-    console.log(`  practice_attempts: deleted ${practiceBefore ?? 0} row(s)`);
-
-    const { count: srsBefore } = await supabase
-      .from("srs_cards")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", profile.id);
-
-    const { error: srsDeleteError } = await supabase
-      .from("srs_cards")
-      .delete()
-      .eq("user_id", profile.id);
-
-    if (srsDeleteError) {
-      throw new Error(`srs_cards: ${srsDeleteError.message}`);
-    }
-
-    console.log(`  srs_cards: deleted ${srsBefore ?? 0} row(s)`);
+    await deleteByUser("practice_attempts", profile.id);
+    await deleteByUser("srs_cards", profile.id);
   }
 
   console.log("Done. Free mock exam slot restored (limit is 1 completed exam).");
