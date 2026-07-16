@@ -89,6 +89,7 @@ export default function OnboardingForm() {
 
   function handleSprintFallback() {
     if (!serviceIntent) return;
+    setServiceIntent("exam_custom");
     void submitOnboarding({
       serviceIntent: "exam_custom",
       examDate: examDate || null,

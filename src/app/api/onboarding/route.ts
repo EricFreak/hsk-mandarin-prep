@@ -63,6 +63,7 @@ export async function POST(request: Request) {
   }
 
   const { serviceIntent, examDate, unsure } = parsed.data;
+  const effectiveUnsure = serviceIntent === "coach" ? unsure : false;
 
   // Non-coach services (exam_custom, sprint) always require an exam date.
   if (serviceIntent !== "coach" && !examDate) {
@@ -72,7 +73,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!unsure && !examDate) {
+  if (!effectiveUnsure && !examDate) {
     return NextResponse.json(
       { error: "examDate is required unless unsure is true" },
       { status: 400 },
@@ -83,7 +84,7 @@ export async function POST(request: Request) {
     await ensureLearnerProfile(supabase, user.id);
 
     const today = new Date().toISOString().slice(0, 10);
-    if (!unsure && examDate && examDate < today) {
+    if (!effectiveUnsure && examDate && examDate < today) {
       return NextResponse.json(
         { error: "examDate must be today or later" },
         { status: 400 },
@@ -97,8 +98,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const targetExamDate = unsure ? null : examDate;
-    const journeyHorizonWeeks = unsure ? 12 : weeksUntilExam(examDate!);
+    const targetExamDate = effectiveUnsure ? null : examDate;
+    const journeyHorizonWeeks = effectiveUnsure ? 12 : weeksUntilExam(examDate!);
     const now = new Date().toISOString();
 
     const { error } = await supabase
