@@ -1,4 +1,5 @@
 import { ensureLearnerProfile } from "@/lib/coach/build-snapshot";
+import { isSprintEligible } from "@/lib/lp/sprint";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -23,6 +24,7 @@ function weeksUntilExam(examDate: string): number {
 }
 
 const bodySchema = z.object({
+  serviceIntent: z.enum(["coach", "exam_custom", "sprint"]),
   examDate: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -60,7 +62,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  const { examDate, unsure } = parsed.data;
+  const { serviceIntent, examDate, unsure } = parsed.data;
+
+  // Non-coach services (exam_custom, sprint) always require an exam date.
+  if (serviceIntent !== "coach" && !examDate) {
+    return NextResponse.json(
+      { error: "exam_date_required" },
+      { status: 400 },
+    );
+  }
 
   if (!unsure && !examDate) {
     return NextResponse.json(
@@ -80,6 +90,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (serviceIntent === "sprint" && !isSprintEligible(today, examDate)) {
+      return NextResponse.json(
+        { error: "not_sprint_eligible" },
+        { status: 422 },
+      );
+    }
+
     const targetExamDate = unsure ? null : examDate;
     const journeyHorizonWeeks = unsure ? 12 : weeksUntilExam(examDate!);
     const now = new Date().toISOString();
@@ -87,6 +104,7 @@ export async function POST(request: Request) {
     const { error } = await supabase
       .from("learner_profiles")
       .update({
+        service_intent: serviceIntent,
         target_exam_date: targetExamDate,
         journey_horizon_weeks: journeyHorizonWeeks,
         onboarding_prefs_at: now,
