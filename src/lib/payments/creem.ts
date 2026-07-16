@@ -9,14 +9,6 @@ type CreemCheckoutResponse = {
   id?: string;
 };
 
-export function isCreemConfigured(): boolean {
-  return Boolean(
-    process.env.CREEM_API_KEY &&
-      process.env.CREEM_PRODUCT_PRO_MONTHLY &&
-      process.env.CREEM_PRODUCT_PRO_YEARLY,
-  );
-}
-
 function getCreemApiBaseUrl(): string {
   const testMode = process.env.CREEM_TEST_MODE !== "false";
   return testMode ? "https://test-api.creem.io" : "https://api.creem.io";

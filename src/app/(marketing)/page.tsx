@@ -50,11 +50,11 @@ export default function LandingPage() {
             id="pricing"
             className="text-center font-display text-3xl font-semibold text-ink"
           >
-            Free Week 1. Pro for the rest of the journey.
+            Free diagnosis. Pay once for the rest of the journey.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-center text-sm text-ink-muted">
-            One mock and full Week 1 on Free. Clear Week 1, then Pro continues weeks to exam
-            day — unlimited mocks and plan-driven practice.
+            Start with a full, free diagnosis. Then pick a coach package, a custom exam
+            plan, or an emergency sprint — one transparent rate, no subscriptions.
           </p>
           <div className="mt-10">
             <PricingTable />
@@ -77,7 +77,7 @@ export default function LandingPage() {
               Start free Week 1
             </ContinueCta>
             <a href="#pricing" className="btn-secondary px-6 py-3 text-base">
-              Compare Free &amp; Pro
+              See pricing
             </a>
           </div>
         </div>

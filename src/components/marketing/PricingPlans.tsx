@@ -1,11 +1,6 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
+import { COACH_PACKS } from "@/lib/lp/catalog";
 import { FREE_TIER_BENEFITS, PRO_BENEFITS } from "@/lib/payments";
-
-/** Legacy billing-period toggle state — kept visual until Task 16 redoes the pricing UI. */
-type BillingPeriod = "monthly" | "yearly";
 
 function CheckIcon() {
   return (
@@ -41,98 +36,24 @@ function CardCtaFooter({ children }: { children: React.ReactNode }) {
 
 const pricingCtaClass = {
   free: "flex w-full items-center justify-center rounded-xl border border-mist/90 bg-paper-dark px-4 py-3 text-sm font-semibold text-ink shadow-sm transition hover:border-jade/40 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jade",
-  pro: "flex w-full items-center justify-center rounded-xl bg-jade px-4 py-3 text-sm font-semibold text-white shadow-sm shadow-jade/20 transition hover:bg-jade-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jade disabled:cursor-not-allowed disabled:opacity-60",
+  pro: "flex w-full items-center justify-center rounded-xl bg-jade px-4 py-3 text-sm font-semibold text-white shadow-sm shadow-jade/20 transition hover:bg-jade-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jade",
 } as const;
 
-const PRO_BILLING_OPTIONS = [
-  {
-    id: "monthly" as const,
-    label: "Monthly",
-    price: "$9.99",
-    period: "/month",
-    hint: "Flexible billing",
-    badge: null,
-  },
-  {
-    id: "yearly" as const,
-    label: "Yearly",
-    price: "$69",
-    period: "/year",
-    hint: "Save about 42%",
-    badge: "Best value",
-  },
-];
-
-function ProBillingOptions({
-  billingPeriod,
-  onChange,
-}: {
-  billingPeriod: BillingPeriod;
-  onChange: (type: BillingPeriod) => void;
-}) {
-  return (
-    <div className="mt-4 grid grid-cols-2 gap-2" role="radiogroup" aria-label="Pro billing period">
-      {PRO_BILLING_OPTIONS.map((option) => {
-        const selected = billingPeriod === option.id;
-        return (
-          <button
-            key={option.id}
-            type="button"
-            role="radio"
-            aria-checked={selected}
-            onClick={() => onChange(option.id)}
-            className={`flex min-h-[6.75rem] flex-col rounded-xl border px-3 py-3 text-left transition ${
-              selected
-                ? "border-jade bg-jade/5 shadow-sm ring-1 ring-jade/25"
-                : "border-mist bg-white hover:border-jade/25 hover:bg-paper-dark/40"
-            }`}
-          >
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-                {option.label}
-              </span>
-              {option.badge ? (
-                <span className="rounded-full bg-jade/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-jade">
-                  {option.badge}
-                </span>
-              ) : null}
-            </div>
-            <div className="mt-2 flex items-baseline gap-1">
-              <span className="font-display text-2xl font-semibold tabular-nums text-ink">
-                {option.price}
-              </span>
-              <span className="text-sm text-ink-muted">{option.period}</span>
-            </div>
-            <p className={`mt-1 text-xs leading-snug ${option.badge ? "text-jade" : "text-ink-muted"}`}>
-              {option.hint}
-            </p>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
 type PricingPlansProps = {
-  /** marketing: Pro CTA links to /pricing; checkout: Pro button starts payment */
-  mode?: "marketing" | "checkout";
-  defaultBilling?: BillingPeriod;
-  /** Auth-aware Free CTA (resolved on the server). */
+  /** Free-chain card CTA — resolved on the server (auth-aware). */
   freeCtaHref?: string;
+  /** Service card CTA — /plan/quote when signed in, signup funnel when out. */
+  serviceCtaHref?: string;
+  serviceCtaLabel?: string;
 };
 
 export default function PricingPlans({
-  mode = "marketing",
-  defaultBilling = "monthly",
   freeCtaHref = "/login?next=%2Fonboarding",
+  serviceCtaHref = "/login?next=%2Fonboarding",
+  serviceCtaLabel = "Start free",
 }: PricingPlansProps) {
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>(defaultBilling);
-
-  const pricingHref =
-    billingPeriod === "yearly" ? "/pricing?billing=yearly" : "/pricing";
-
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto max-w-5xl">
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="flex h-full flex-col rounded-2xl border border-mist bg-white p-6 shadow-card sm:p-8">
           <h3 className="font-display text-xl font-semibold text-ink">Free</h3>
@@ -143,33 +64,109 @@ export default function PricingPlans({
           <FeatureList features={FREE_TIER_BENEFITS} />
           <CardCtaFooter>
             <Link href={freeCtaHref} className={pricingCtaClass.free}>
-              Start free Week 1
+              Start free diagnosis
             </Link>
           </CardCtaFooter>
         </div>
 
         <div className="flex h-full flex-col rounded-2xl border border-jade bg-white p-6 shadow-lift ring-2 ring-jade/20 sm:p-8">
           <span className="text-xs font-semibold uppercase tracking-wide text-jade">
-            Most popular
+            Pay once
           </span>
-          <h3 className="mt-1 font-display text-xl font-semibold text-ink">Pro</h3>
-          <p className="mt-1 text-sm text-ink-muted">Same features — pick how you pay.</p>
+          <h3 className="mt-1 font-display text-xl font-semibold text-ink">
+            Coach packages
+          </h3>
+          <p className="mt-1 text-sm text-ink-muted">
+            One rate for every plan. Custom exam plans and emergency sprints are priced the
+            same way.
+          </p>
 
-          <ProBillingOptions billingPeriod={billingPeriod} onChange={setBillingPeriod} />
+          <ul className="mt-6 flex-1 space-y-3">
+            {COACH_PACKS.map((pack) => (
+              <li
+                key={pack.id}
+                className="flex items-baseline justify-between gap-3 rounded-xl border border-mist/80 bg-paper-dark/40 px-4 py-3"
+              >
+                <span className="text-sm font-medium text-ink">
+                  {pack.weeks} weeks
+                </span>
+                <span className="font-display text-lg font-semibold tabular-nums text-ink">
+                  ${(pack.priceCents / 100).toFixed(0)}
+                </span>
+              </li>
+            ))}
+          </ul>
 
-          <FeatureList features={PRO_BENEFITS} />
           <CardCtaFooter>
-            {mode === "checkout" ? (
-              <Link href="/pricing" className={pricingCtaClass.pro}>
-                Upgrade to Pro
-              </Link>
-            ) : (
-              <Link href={pricingHref} className={pricingCtaClass.pro}>
-                Upgrade to Pro
-              </Link>
-            )}
+            <Link href={serviceCtaHref} className={pricingCtaClass.pro}>
+              {serviceCtaLabel}
+            </Link>
           </CardCtaFooter>
         </div>
+      </div>
+
+      <div className="mt-6 grid gap-6 sm:grid-cols-2">
+        <div className="flex h-full flex-col rounded-2xl border border-mist bg-white p-6 shadow-card sm:p-8">
+          <h3 className="font-display text-xl font-semibold text-ink">
+            Custom exam plan
+          </h3>
+          <div className="mt-2 flex items-baseline gap-1">
+            <span className="font-display text-2xl font-semibold tabular-nums text-ink">
+              Priced by workload
+            </span>
+          </div>
+          <p className="mt-3 text-sm text-ink-muted">
+            Pay for exactly the work you schedule. After your diagnosis we generate a
+            transparent quote — no bundles, no surprises.
+          </p>
+          <FeatureList features={PRO_BENEFITS} />
+          <CardCtaFooter>
+            <Link href={serviceCtaHref} className={pricingCtaClass.pro}>
+              {serviceCtaLabel}
+            </Link>
+          </CardCtaFooter>
+        </div>
+
+        <div className="flex h-full flex-col rounded-2xl border border-mist bg-white p-6 shadow-card sm:p-8">
+          <h3 className="font-display text-xl font-semibold text-ink">
+            Emergency sprint
+          </h3>
+          <div className="mt-2 flex items-baseline gap-1">
+            <span className="font-display text-2xl font-semibold tabular-nums text-ink">
+              First one free
+            </span>
+            <span className="text-sm text-ink-muted">Exam ≤ 6 days</span>
+          </div>
+          <p className="mt-3 text-sm text-ink-muted">
+            When the exam is close and you need a focused push, the first sprint is on us —
+            same single rate applies after that.
+          </p>
+          <CardCtaFooter>
+            <Link href={serviceCtaHref} className={pricingCtaClass.pro}>
+              {serviceCtaLabel}
+            </Link>
+          </CardCtaFooter>
+        </div>
+      </div>
+
+      <div className="mt-8 rounded-2xl border border-mist/80 bg-paper-dark/40 p-6 text-sm text-ink-muted sm:p-8">
+        <h4 className="font-display text-base font-semibold text-ink">
+          How pricing works
+        </h4>
+        <ul className="mt-3 space-y-2">
+          <li className="flex items-start gap-2">
+            <CheckIcon />
+            <span>One single rate for every plan — coach, custom, or sprint.</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <CheckIcon />
+            <span>No urgency premium, even when your exam is days away.</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <CheckIcon />
+            <span>Unused work is credited when you replan, so you never pay for nothing.</span>
+          </li>
+        </ul>
       </div>
     </div>
   );

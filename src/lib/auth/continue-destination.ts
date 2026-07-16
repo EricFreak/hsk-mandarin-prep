@@ -126,6 +126,28 @@ export async function resolveVisitorContinueHref(
 }
 
 /**
+ * Pricing page CTAs — auth-aware.
+ * Signed in: service CTAs go to /plan/quote (the buying hub).
+ * Signed out: all CTAs funnel to /login?next=/onboarding (signup → diagnosis → quote).
+ */
+export async function resolvePricingCtas(): Promise<{
+  freeCtaHref: string;
+  serviceCtaHref: string;
+  serviceCtaLabel: string;
+}> {
+  const ctx = await getSessionContinueContext();
+  const freeCtaHref = resolveContinueHref({
+    authenticated: ctx.authenticated,
+    profile: ctx.profile,
+    intent: "/onboarding",
+  });
+  if (ctx.authenticated) {
+    return { freeCtaHref, serviceCtaHref: "/plan/quote", serviceCtaLabel: "See my quote" };
+  }
+  return { freeCtaHref, serviceCtaHref: freeCtaHref, serviceCtaLabel: "Start free" };
+}
+
+/**
  * Guard app routes.
  * - allowIncomplete: onboarding / diagnosis screens
  * - allowDiagnosisHome: dashboard while coach pending (diagnosis_done)

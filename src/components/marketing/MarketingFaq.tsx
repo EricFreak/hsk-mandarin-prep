@@ -37,29 +37,30 @@ const FAQ_ITEMS = [
       <>
         You can <span className="font-medium text-ink">submit writing on Free</span> with a
         full mock. <span className="font-medium text-ink">AI writing score and feedback</span> is
-        a Pro feature. Free still gets MCQ scoring, a (truncated) coach report, and full Week
-        1.
+        part of the paid services. Free still gets MCQ scoring and a complete coach report.
       </>
     ),
   },
   {
-    q: "What is free, and when do I need Pro?",
+    q: "What is free, and when do I pay?",
     a: (
       <>
-        Free includes diagnosis, a truncated coach report, and{" "}
-        <span className="font-medium text-ink">full Week 1</span> on your journey.
-        Pro unlocks continued weeks after Week 1, full reports, and unlimited mocks &amp;
-        plan-driven practice. See the pricing cards above for the full split.
+        Free includes the full diagnosis and your complete coach report — no truncation, no
+        quotas. You only pay when you want more work: a{" "}
+        <span className="font-medium text-ink">coach package</span>, a{" "}
+        <span className="font-medium text-ink">custom exam plan</span>, or an{" "}
+        <span className="font-medium text-ink">emergency sprint</span>. See the pricing cards
+        above — one rate for all three.
       </>
     ),
   },
   {
-    q: "When should I upgrade?",
+    q: "When should I buy a plan?",
     a: (
       <>
-        After you <span className="font-medium text-ink">clear Week 1</span> — that is the
-        primary moment the product asks you to continue the journey with Pro. Diagnosis and
-        Week 1 itself are not interrupted by a mid-week paywall.
+        After your <span className="font-medium text-ink">diagnosis</span> — that is when you
+        get a transparent quote for exactly the work you want to schedule. Diagnosis itself is
+        never interrupted by a paywall.
       </>
     ),
   },

@@ -1,21 +1,17 @@
-export type PaymentProvider = "creem" | "stripe";
-
 export const FREE_TIER_BENEFITS = [
-  "1 full HSK 3 mock exam",
-  "AI coach report (truncated + top gap)",
-  "Full Week 1 coach journey execution",
-  "Journey roadmap outline through exam day",
-  "20 AI practice questions per day",
-  "SRS flashcards (HSK 3 vocabulary)",
+  "Full diagnosis — never counts against quotas",
+  "Complete AI report, no truncation",
+  "Full course outline with a one-time price",
+  "A real, doable sample day",
+  "Personalized previews of locked tasks",
 ] as const;
 
 export const PRO_BENEFITS = [
-  "Full AI coach report (gaps, strengths, readiness)",
-  "Continue journey: Week 2+ after Week 1 cleared",
-  "Unlimited HSK 3 mock exams",
-  "Unlimited plan-driven AI practice",
-  "AI writing score and feedback",
-  "Full mistake review bank",
+  "One rate for every plan — coach, custom, or sprint",
+  "No urgency premium, even for near exams",
+  "Unused work credited when you replan",
+  "Pay once for a defined amount of work",
+  "Same price whether you finish in 4 or 12 weeks",
 ] as const;
 
 export function getAppUrl(): string {

@@ -1,8 +1,14 @@
 import PricingPlans from "@/components/marketing/PricingPlans";
-import { resolveVisitorContinueHref } from "@/lib/auth/continue-destination";
+import { resolvePricingCtas } from "@/lib/auth/continue-destination";
 
-/** Homepage pricing block — checkout-ready (no hop to /pricing). */
+/** Homepage pricing block — renders the three-service model with auth-aware CTAs. */
 export default async function PricingTable() {
-  const freeCtaHref = await resolveVisitorContinueHref("/onboarding");
-  return <PricingPlans mode="checkout" freeCtaHref={freeCtaHref} />;
+  const { freeCtaHref, serviceCtaHref, serviceCtaLabel } = await resolvePricingCtas();
+  return (
+    <PricingPlans
+      freeCtaHref={freeCtaHref}
+      serviceCtaHref={serviceCtaHref}
+      serviceCtaLabel={serviceCtaLabel}
+    />
+  );
 }

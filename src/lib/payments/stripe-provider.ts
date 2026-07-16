@@ -1,14 +1,6 @@
 import Stripe from "stripe";
 import { getAppUrl } from "@/lib/payments/types";
 
-export function isStripeConfigured(): boolean {
-  return Boolean(
-    process.env.STRIPE_SECRET_KEY &&
-      process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY &&
-      process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY,
-  );
-}
-
 function getStripe(): Stripe | null {
   const secretKey = process.env.STRIPE_SECRET_KEY;
   if (!secretKey) {

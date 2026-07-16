@@ -1,7 +1,5 @@
 export { PRO_BENEFITS, getAppUrl } from "@/lib/payments/types";
 
-export { isStripeConfigured as getStripeConfigured } from "@/lib/payments/stripe-provider";
-
 import Stripe from "stripe";
 
 export function getStripe(): Stripe | null {

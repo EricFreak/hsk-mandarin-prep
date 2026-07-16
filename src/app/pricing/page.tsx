@@ -1,17 +1,20 @@
 import MarketingHeader from "@/components/marketing/MarketingHeader";
-import PricingCheckout from "@/components/paywall/PricingCheckout";
-import { resolveVisitorContinueHref } from "@/lib/auth/continue-destination";
+import PricingPlans from "@/components/marketing/PricingPlans";
+import {
+  resolvePricingCtas,
+  resolveVisitorContinueHref,
+} from "@/lib/auth/continue-destination";
 
 export const metadata = {
   title: "Pricing — HSK Prep",
   description:
-    "Start free with full Week 1 on your HSK Level 3 coach journey. Upgrade to Pro after Week 1 to continue to exam day.",
+    "Three services, one transparent rate. Coach packages, custom exam plans, and emergency sprints — pay once for exactly the work you schedule.",
 };
 
 export default async function PricingPage() {
   const accountHref = await resolveVisitorContinueHref("/dashboard");
   const accountLabel = accountHref.startsWith("/login") ? "Login" : "Dashboard";
-  const freeCtaHref = await resolveVisitorContinueHref("/onboarding");
+  const { freeCtaHref, serviceCtaHref, serviceCtaLabel } = await resolvePricingCtas();
 
   return (
     <div className="min-h-screen bg-paper">
@@ -19,18 +22,23 @@ export default async function PricingPage() {
 
       <main className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <div className="text-center">
-          <p className="section-eyebrow">Plans</p>
+          <p className="section-eyebrow">Pricing</p>
           <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            Simple, transparent pricing
+            Three services, one transparent rate
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-ink-muted">
-            Start free with full Week 1. Upgrade after Week 1 to continue your coach journey
-            to exam day — full reports, unlimited mocks, and plan-driven practice.
+            Pay once for a defined amount of work. Coach packages, custom exam plans, and
+            emergency sprints are all priced the same way — no subscriptions, no urgency
+            premium.
           </p>
         </div>
 
         <div className="mt-12">
-          <PricingCheckout freeCtaHref={freeCtaHref} />
+          <PricingPlans
+            freeCtaHref={freeCtaHref}
+            serviceCtaHref={serviceCtaHref}
+            serviceCtaLabel={serviceCtaLabel}
+          />
         </div>
       </main>
 
