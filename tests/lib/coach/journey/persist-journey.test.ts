@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  ensureJourney,
   isTaskCleared,
   isWeekCleared,
   type PlanTaskForClearance,
@@ -11,6 +12,63 @@ function task(overrides: Partial<PlanTaskForClearance>): PlanTaskForClearance {
     status: "pending",
     ...overrides,
   };
+}
+
+type StubProfile = {
+  service_intent?: string | null;
+  target_exam_date?: string | null;
+  journey_horizon_weeks?: number | null;
+  current_week_index?: number | null;
+  current_stage?: string | null;
+  stage_calendar?: unknown;
+  journey_started_at?: string | null;
+};
+
+function baseProfile(overrides: Partial<StubProfile> = {}): StubProfile {
+  return {
+    service_intent: "coach",
+    target_exam_date: null,
+    journey_horizon_weeks: 12,
+    current_week_index: null,
+    current_stage: null,
+    stage_calendar: {},
+    journey_started_at: null,
+    ...overrides,
+  };
+}
+
+/** Chainable thenable supabase stub: returns the given profile for the
+ *  learner_profiles maybeSingle() read, empty outlines (forces init), and
+ *  succeeds on upsert/update. Mirrors the style in fulfill-order.test.ts. */
+function stubClient(profile: StubProfile) {
+  const from = (table: string) => {
+    const state: { update?: Record<string, unknown> } = {};
+    const chain: any = {
+      select: () => chain,
+      order: () => chain,
+      upsert: () => chain,
+      update: (values: Record<string, unknown>) => {
+        state.update = values;
+        return chain;
+      },
+      eq: () => chain,
+      maybeSingle: async () => ({
+        data: table === "learner_profiles" ? profile : null,
+        error: null,
+      }),
+      then: (resolve: (v: unknown) => void) => {
+        if (state.update) {
+          resolve({ data: null, error: null });
+        } else if (table === "journey_week_outlines") {
+          resolve({ data: [], error: null });
+        } else {
+          resolve({ data: null, error: null });
+        }
+      },
+    };
+    return chain;
+  };
+  return { from } as any;
 }
 
 describe("isTaskCleared", () => {
@@ -63,5 +121,28 @@ describe("isWeekCleared", () => {
       task({ status: "pending" }),
     ];
     expect(isWeekCleared(tasks)).toBe(false);
+  });
+});
+
+describe("ensureJourney sprint branch", () => {
+  it("builds a single sprint window when service_intent=sprint and exam within 6 days", async () => {
+    const profile = baseProfile({
+      service_intent: "sprint",
+      target_exam_date: "2026-07-19", // today stub = 2026-07-16
+      stage_calendar: {},
+    });
+    const result = await ensureJourney(stubClient(profile), "u1", {
+      gaps: [],
+      today: "2026-07-16",
+    });
+    expect(result.stageCalendar).toEqual([
+      { stage: "sprint", startDate: "2026-07-16", endDate: "2026-07-19" },
+    ]);
+    expect(result.outline).toHaveLength(1);
+    expect(result.outline[0]).toMatchObject({
+      weekIndex: 1,
+      stage: "sprint",
+      status: "available",
+    });
   });
 });

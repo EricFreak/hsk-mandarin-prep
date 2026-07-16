@@ -1,7 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { isSprintEligible } from "@/lib/lp/sprint";
 import { allocateStages, stageAtDate } from "./allocate-stages";
 import { buildWeekOutline } from "./build-outline";
-import { stageQuotas, reweightQuotas } from "./stage-quotas";
+import { primaryTheme, stageQuotas, reweightQuotas } from "./stage-quotas";
 import { nextWeekAfterClear } from "./week-unlock";
 import type { JourneyStageId, StageWindow, WeekOutlineRow } from "./types";
 import { buildSnapshot } from "../build-snapshot";
@@ -68,6 +69,7 @@ export function isWeekCleared(tasks: PlanTaskForClearance[]): boolean {
 }
 
 type LearnerJourneyProfile = {
+  service_intent?: string | null;
   target_exam_date?: string | null;
   journey_horizon_weeks?: number | null;
   current_week_index?: number | null;
@@ -84,7 +86,7 @@ async function loadLearnerJourneyProfile(
     const { data, error } = await supabase
       .from("learner_profiles")
       .select(
-        "target_exam_date, journey_horizon_weeks, current_week_index, current_stage, stage_calendar, journey_started_at",
+        "service_intent, target_exam_date, journey_horizon_weeks, current_week_index, current_stage, stage_calendar, journey_started_at",
       )
       .eq("user_id", userId)
       .maybeSingle();
@@ -179,12 +181,31 @@ export async function ensureJourney(
 
   const today = input.today ?? todayIso();
   const examDate = profile?.target_exam_date ?? null;
-  const stages = allocateStages({
-    today,
-    examDate,
-    defaultHorizonWeeks: profile?.journey_horizon_weeks ?? 12,
-  });
-  const outline = buildWeekOutline({ stages, today, gaps: input.gaps });
+
+  let stages: StageWindow[];
+  let outline: WeekOutlineRow[];
+
+  if (
+    profile?.service_intent === "sprint" &&
+    isSprintEligible(today, examDate)
+  ) {
+    // Sprint journey: a single window from today to the exam date and one
+    // available week. Persisted through the same path as the normal branch.
+    stages = [
+      { stage: "sprint", startDate: today, endDate: examDate! },
+    ];
+    const { theme, skillFocus } = primaryTheme(stageQuotas("sprint"), "sprint");
+    outline = [
+      { weekIndex: 1, stage: "sprint", theme, skillFocus, status: "available" },
+    ];
+  } else {
+    stages = allocateStages({
+      today,
+      examDate,
+      defaultHorizonWeeks: profile?.journey_horizon_weeks ?? 12,
+    });
+    outline = buildWeekOutline({ stages, today, gaps: input.gaps });
+  }
 
   const persisted = await upsertOutlines(supabase, userId, outline);
   const currentStage = stageAtDate(stages, today);
