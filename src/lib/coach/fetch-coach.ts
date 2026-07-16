@@ -291,10 +291,15 @@ export async function fetchCoachDashboard(
   const access = await fetchAccess(supabase, userId);
   const showQuoteCta = shouldShowQuoteCta({ access, sampleDayTasks });
   const { tasks: gatedTasks, hiddenTaskCount, executionLocked } =
-    gateOrderedWeekTasks(tasks, topGapSkill, {
-      weekIndex,
-      currentWeekIndex,
-    });
+    gateOrderedWeekTasks(
+      tasks,
+      topGapSkill,
+      {
+        weekIndex,
+        currentWeekIndex,
+      },
+      { access },
+    );
   const todayTask = studyPlan ? pickTodayTask(gatedTasks, studyPlan.week_start) : null;
 
   let status: CoachDashboardPayload["status"] = "none";
