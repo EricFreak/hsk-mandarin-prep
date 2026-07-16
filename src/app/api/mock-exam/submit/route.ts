@@ -19,6 +19,8 @@ import {
 import { computeWeaknesses } from "@/lib/weakness";
 import { runCoach } from "@/lib/coach/run-coach";
 import { createClient } from "@/lib/supabase/server";
+import { fetchAccess } from "@/lib/lp/access-server";
+import { hasFullAccess } from "@/lib/lp/access";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -165,12 +167,14 @@ export async function POST(request: Request) {
     const { questions, templateId, templateVersion, mcqCount, skipFreemiumLimit } =
       examTemplate;
 
-    const [plan, completedExams] = await Promise.all([
+    const [plan, completedExams, access] = await Promise.all([
       getUserPlan(supabase, user.id),
       countCompletedMockExams(supabase, user.id),
+      fetchAccess(supabase, user.id),
     ]);
+    const fullAccess = hasFullAccess(access);
 
-    if (!skipFreemiumLimit && !canTakeMockExam(plan, completedExams)) {
+    if (!skipFreemiumLimit && !canTakeMockExam(plan, fullAccess, completedExams)) {
       return NextResponse.json(
         { error: "limit_reached", upgrade: true },
         { status: 402 },

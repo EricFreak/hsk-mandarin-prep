@@ -59,18 +59,24 @@ describe("getWeaknessSummary", () => {
     { skill: "reading", wrongCount: 1 },
   ];
 
-  it("returns only top skill for free users", () => {
-    expect(getWeaknessSummary(breakdown, "free")).toEqual([
+  it("returns only top skill for free users without access", () => {
+    expect(getWeaknessSummary(breakdown, "free", false)).toEqual([
       { skill: "vocabulary", wrongCount: 3 },
     ]);
   });
 
   it("returns full breakdown for pro users", () => {
-    expect(getWeaknessSummary(breakdown, "pro")).toEqual(breakdown);
+    expect(getWeaknessSummary(breakdown, "pro", false)).toEqual(breakdown);
+  });
+
+  it("returns full breakdown for full-access users (paid order / free sprint)", () => {
+    // plan='free' but access from lp_orders — the new paying-customer path.
+    expect(getWeaknessSummary(breakdown, "free", true)).toEqual(breakdown);
   });
 
   it("returns empty array when breakdown is empty", () => {
-    expect(getWeaknessSummary([], "free")).toEqual([]);
-    expect(getWeaknessSummary([], "pro")).toEqual([]);
+    expect(getWeaknessSummary([], "free", false)).toEqual([]);
+    expect(getWeaknessSummary([], "pro", false)).toEqual([]);
+    expect(getWeaknessSummary([], "free", true)).toEqual([]);
   });
 });

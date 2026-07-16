@@ -3,6 +3,7 @@
 import Link from "next/link";
 import UpgradeCTA from "@/components/paywall/UpgradeCTA";
 import type { CoachDashboardPayload } from "@/lib/coach/fetch-coach";
+import { hasFullAccess } from "@/lib/lp/access";
 import { readinessDelta, skillDirectionChips } from "@/lib/coach/progress-glance";
 
 function capitalizeSkill(skill: string): string {
@@ -47,7 +48,8 @@ export default function ProgressGlance({ data }: Props) {
   const report = data.report;
   const previous = data.previousReport;
   const delta = readinessDelta(report, previous);
-  const chipLimit = data.plan === "pro" ? 4 : 1;
+  const fullAccess = hasFullAccess(data.access);
+  const chipLimit = fullAccess ? 4 : 1;
   const chips = skillDirectionChips(report, previous, chipLimit);
 
   return (
@@ -91,16 +93,16 @@ export default function ProgressGlance({ data }: Props) {
         <Link href="/dashboard/progress" className="text-sm text-link">
           Full progress →
         </Link>
-        {data.plan === "free" ? (
-          <span className="text-xs text-ink-muted">Pro shows more skill chips</span>
+        {!fullAccess ? (
+          <span className="text-xs text-ink-muted">A plan unlocks more skill chips</span>
         ) : null}
       </div>
 
-      {data.plan === "free" ? (
+      {!fullAccess ? (
         <div className="mt-4">
           <UpgradeCTA
             title="See full multi-dimensional progress"
-            description="Unlock complete skill trends, gap history, and report comparison on Pro — alongside your full week plan."
+            description="Unlock complete skill trends, gap history, and report comparison — alongside your full week plan."
             className="text-left"
           />
         </div>

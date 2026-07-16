@@ -59,7 +59,7 @@ export default async function MockExamPage() {
   ]);
 
   const completedExams = count ?? 0;
-  const canTake = canTakeMockExam(plan, completedExams);
+  const canTake = canTakeMockExam(plan, hasFullAccess(access), completedExams);
   const canScoreWriting = hasFullAccess(access);
 
   return (

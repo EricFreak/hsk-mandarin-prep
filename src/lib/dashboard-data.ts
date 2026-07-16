@@ -9,6 +9,8 @@ import {
   type WeaknessEntry,
 } from "@/lib/weakness";
 import { createClient } from "@/lib/supabase/server";
+import { fetchAccess } from "@/lib/lp/access-server";
+import { hasFullAccess } from "@/lib/lp/access";
 
 type MockExamRow = {
   id: string;
@@ -79,6 +81,7 @@ export async function fetchDashboardForUser(
     { data: profile },
     { data: examAttempts },
     { data: practiceAttempts },
+    access,
   ] = await Promise.all([
     supabase.from("profiles").select("plan").eq("id", userId).maybeSingle(),
     supabase
@@ -94,9 +97,11 @@ export async function fetchDashboardForUser(
       .order("created_at", { ascending: false })
       .gte("created_at", since30)
       .limit(500),
+    fetchAccess(supabase, userId),
   ]);
 
   const plan: Plan = profile?.plan === "pro" ? "pro" : "free";
+  const fullAccess = hasFullAccess(access);
   const rows = (examAttempts ?? []) as MockExamRow[];
   const exam = rows[0] ?? null;
   const attempts = rows.map(({ id, score, created_at }) => ({
@@ -136,7 +141,7 @@ export async function fetchDashboardForUser(
     fullBreakdown = computeWeaknesses(practiceResults);
   }
 
-  const visibleBreakdown = getWeaknessSummary(fullBreakdown, plan);
+  const visibleBreakdown = getWeaknessSummary(fullBreakdown, plan, fullAccess);
   const showDetail = canViewWeaknessDetail(plan);
   const hiddenCount = fullBreakdown.length - visibleBreakdown.length;
 

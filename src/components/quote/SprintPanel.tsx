@@ -16,7 +16,9 @@ export function SprintPanel(props: { freeUsed: boolean }) {
         setError(
           data.error === "not_sprint_eligible"
             ? "Sprint is for exams within 6 days. Try the Custom exam plan instead."
-            : "Something went wrong. Please try again.",
+            : data.error === "active_package_exists"
+              ? "You already have an active package — starting a sprint would replace it. Contact support or finish your package first."
+              : "Something went wrong. Please try again.",
         );
         return;
       }

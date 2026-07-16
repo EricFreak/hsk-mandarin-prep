@@ -44,6 +44,28 @@ export async function POST() {
   const quote = computeQuote(composition);
   const now = new Date().toISOString();
 
+  // Guard (review I1): never silently supersede an active paid NON-sprint
+  // package. A coach_*/exam_custom order with price_cents > 0 represents
+  // purchased value that must not be destroyed by starting a sprint. The
+  // free-sprint path and the repeat-purchase path both flow through here,
+  // so a single check covers both.
+  const { data: activePaidOrder } = await supabase
+    .from("lp_orders")
+    .select("id, service_type, price_cents")
+    .eq("user_id", user.id)
+    .eq("status", "paid")
+    .maybeSingle();
+  if (
+    activePaidOrder &&
+    activePaidOrder.service_type !== "sprint" &&
+    (activePaidOrder.price_cents ?? 0) > 0
+  ) {
+    return NextResponse.json(
+      { error: "active_package_exists" },
+      { status: 409 },
+    );
+  }
+
   if (canUseFreeSprint(learner!.free_sprint_used_at ?? null)) {
     // Lifetime-free first sprint. Insert as `quoted`, then flip to `paid` via
     // fulfillLpOrder, which supersedes any prior paid order for this user
@@ -93,8 +115,16 @@ export async function POST() {
     return NextResponse.json({ started: true });
   }
 
-  // Repeat sprint: quote it (RLS allows own quoted inserts) for /api/checkout.
-  const { data: inserted, error } = await supabase
+  // Repeat sprint: quote it through the admin client (no user insert policy
+  // on lp_orders — review C1) for /api/checkout.
+  const admin = createAdminClient();
+  if (!admin) {
+    return NextResponse.json(
+      { error: "Sprint checkout is not configured" },
+      { status: 503 },
+    );
+  }
+  const { data: inserted, error } = await admin
     .from("lp_orders")
     .insert({
       user_id: user.id,

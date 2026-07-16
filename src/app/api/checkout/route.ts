@@ -50,6 +50,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "order_not_found" }, { status: 404 });
   }
 
+  // Defense-in-depth (review C1): the order must be for a known service.
+  // All inserts now go through admin-client server routes that compute the
+  // price themselves, so a forged row with an unknown service_type can be
+  // rejected here before any Stripe call or fulfillment.
+  if (!PRODUCT_NAMES[order.service_type]) {
+    return NextResponse.json({ error: "invalid_service_type" }, { status: 409 });
+  }
+
   if (order.price_cents === 0) {
     const admin = createAdminClient();
     if (!admin) {

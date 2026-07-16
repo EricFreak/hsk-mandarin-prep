@@ -52,7 +52,7 @@ export default function AppHeader() {
                 prefetch
                 className="ml-1 rounded-lg px-3 py-2 text-sm font-medium text-ink-muted transition hover:text-seal"
               >
-                Pro
+                Pricing
               </Link>
             </nav>
             <AccountMenu />

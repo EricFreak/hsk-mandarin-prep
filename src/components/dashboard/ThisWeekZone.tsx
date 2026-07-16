@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import UpgradeCTA from "@/components/paywall/UpgradeCTA";
 import { LockedTaskCard } from "@/components/journey/LockedTaskCard";
 import { PreviewCards } from "@/components/journey/PreviewCards";
 import type { CoachDashboardPayload } from "@/lib/coach/fetch-coach";
@@ -109,18 +108,18 @@ export default function ThisWeekZone({
       <div className="surface-card border-jade/25 bg-jade/5 p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-jade">
-            This week · Week {data.currentWeekIndex}
+            This week · Week {data.weekIndex}
           </p>
           <Link href="/dashboard/journey" className="text-sm text-link">
             Full journey →
           </Link>
         </div>
         <h2 className="mt-3 font-display text-lg font-semibold text-ink">
-          Week {data.currentWeekIndex} is locked
+          Week {data.weekIndex} is locked
         </h2>
         <p className="mt-2 text-sm text-ink-muted">
           {free
-            ? "Free includes the sample day (Week 1, Day 1) plus a preview of every task. Get a plan quote to unlock the full week and beyond."
+            ? "Free includes the sample day (the first day) plus a preview of every task. Get a plan quote to unlock the full week and beyond."
             : "Complete your current week with mastery before this week unlocks."}
         </p>
         {free ? (
@@ -195,7 +194,6 @@ export default function ThisWeekZone({
           </p>
           <p className="mt-1 text-xs text-ink-muted">
             {passedCount} of {tasks.length} passed
-            {data.hiddenTaskCount > 0 ? ` · +${data.hiddenTaskCount} more on Pro` : null}
           </p>
         </>
       )}
@@ -294,16 +292,6 @@ export default function ThisWeekZone({
             severity: gap.severity,
           }))}
         />
-      ) : null}
-
-      {data.hiddenTaskCount > 0 ? (
-        <div className="mt-4">
-          <UpgradeCTA
-            title="Unlock your full week plan"
-            description="Pro unlocks the rest of this week’s tasks, all plan-driven practice, and full progress trends."
-            className="text-left"
-          />
-        </div>
       ) : null}
 
       <div className="mt-4">

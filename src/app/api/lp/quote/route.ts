@@ -4,6 +4,7 @@ import { checkFeasibility, DEFAULT_MINUTES_PER_DAY } from "@/lib/lp/feasibility"
 import { daysUntilExam, isSprintEligible, sprintComposition } from "@/lib/lp/sprint";
 import { computeUnspentLp, applyCredit } from "@/lib/lp/replan-credit";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -74,7 +75,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "invalid_body" }, { status: 400 });
     }
     composition = parsed.data.composition;
-    const days = Math.max(1, daysUntilExam(todayIso(), learner.target_exam_date));
+    const days = daysUntilExam(todayIso(), learner.target_exam_date);
+    if (days < 0) {
+      // Past exam date — never clamp to a 1-day window (review Minor).
+      return NextResponse.json({ error: "exam_date_in_past" }, { status: 422 });
+    }
     feasibility = checkFeasibility({
       composition,
       daysUntilExam: days,
@@ -107,22 +112,46 @@ export async function POST(request: Request) {
   let creditLp = 0;
   const { data: activeOrder } = await supabase
     .from("lp_orders")
-    .select("id, lp_total")
+    .select("id, lp_total, paid_at")
     .eq("user_id", user.id)
     .eq("status", "paid")
     .maybeSingle();
   if (activeOrder && serviceType !== "sprint") {
-    // coach_plan_tasks carries a user_id column (migration 006), so a direct
-    // filter is sufficient — no plan join required.
-    const { data: doneTasks } = await supabase
+    // Scope done tasks to the active order: only count work completed after
+    // the order was paid, so superseded orders' tasks don't under-credit
+    // (review I3). coach_plan_tasks.completed_at is the done-transition
+    // timestamp (migration 006).
+    const paidAt = activeOrder.paid_at ?? null;
+    let doneQuery = supabase
       .from("coach_plan_tasks")
       .select("task_type, skill, target_count, status")
-      .eq("user_id", user.id);
-    creditLp = computeUnspentLp(activeOrder, doneTasks ?? []);
-    quote = applyCredit(quote, creditLp);
+      .eq("user_id", user.id)
+      .eq("status", "done");
+    if (paidAt) {
+      doneQuery = doneQuery.gte("completed_at", paidAt);
+    }
+    const { data: doneTasks, error: doneError } = await doneQuery;
+    if (doneError) {
+      // Log instead of silently zeroing credit (review Minor). Conservative:
+      // credit stays 0 on error rather than over-crediting.
+      console.error("lp/quote: done-tasks fetch failed", doneError);
+    } else {
+      creditLp = computeUnspentLp(activeOrder, doneTasks ?? []);
+      quote = applyCredit(quote, creditLp);
+    }
   }
 
-  const { data: inserted, error } = await supabase
+  // Insert via admin client only — there is no user insert policy on
+  // lp_orders (review C1). The server computes price_cents; a user cannot
+  // self-mint a $0 order.
+  const admin = createAdminClient();
+  if (!admin) {
+    return NextResponse.json(
+      { error: "Quoting is not configured" },
+      { status: 503 },
+    );
+  }
+  const { data: inserted, error } = await admin
     .from("lp_orders")
     .insert({
       user_id: user.id,

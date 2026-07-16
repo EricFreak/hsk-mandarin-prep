@@ -34,7 +34,7 @@ alter table lp_orders enable row level security;
 create policy "lp_orders_select_own" on lp_orders
   for select using (auth.uid() = user_id);
 
--- Users may create quotes for themselves; paid/superseded transitions are
--- service-role only (webhook / server), so no update policy for users.
-create policy "lp_orders_insert_own_quote" on lp_orders
-  for insert with check (auth.uid() = user_id and status = 'quoted');
+-- No user insert policy: all lp_orders writes go through admin-client server
+-- routes (/api/lp/quote, /api/sprint/start, /api/checkout, webhook) which
+-- compute price_cents server-side. Allowing users to self-insert quoted
+-- rows would let them mint $0 orders and bypass the paywall (review C1).
