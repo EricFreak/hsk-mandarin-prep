@@ -513,8 +513,8 @@ export default function PracticeSession({ userPlan = "free" }: Props) {
           practice.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <Link href="/pricing" className="btn-primary">
-            View pricing
+          <Link href="/plan/quote" className="btn-primary">
+            See plans
           </Link>
           {isPlanSession ? (
             <button type="button" className="btn-secondary" onClick={() => void handleSaveAndExit()}>

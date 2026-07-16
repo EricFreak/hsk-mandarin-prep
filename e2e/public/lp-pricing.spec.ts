@@ -8,9 +8,9 @@ test.describe("LP — Pricing page (three-service, buy-once)", () => {
   }) => {
     await page.goto("/pricing");
 
-    await expect(page.getByText("$13")).toBeVisible();
-    await expect(page.getByText("$26")).toBeVisible();
-    await expect(page.getByText("$39")).toBeVisible();
+    await expect(page.getByText("$13", { exact: true })).toBeVisible();
+    await expect(page.getByText("$26", { exact: true })).toBeVisible();
+    await expect(page.getByText("$39", { exact: true })).toBeVisible();
 
     await expect(page.getByText(/per month|\/month|yearly/i)).toHaveCount(0);
 
@@ -36,11 +36,12 @@ test.describe("LP — Pricing page (three-service, buy-once)", () => {
   }) => {
     await page.goto("/pricing");
 
-    const serviceCta = page.getByRole("link", { name: /^start free$/i }).first();
-    await expect(serviceCta).toBeVisible();
-    await expect(serviceCta).toHaveAttribute(
-      "href",
-      /\/login\?next=%2Fonboarding/,
-    );
+    // All three service cards (Coach packages / Custom exam plan / Emergency sprint)
+    // share the same CTA and must funnel anonymous visitors to signup, not checkout.
+    const serviceCtas = page.getByRole("link", { name: /^start free$/i });
+    await expect(serviceCtas).toHaveCount(3);
+    for (const cta of await serviceCtas.all()) {
+      await expect(cta).toHaveAttribute("href", /\/login\?next=%2Fonboarding/);
+    }
   });
 });

@@ -32,7 +32,9 @@ test.describe("FREE — Paywall & limits", () => {
     await page.goto("/dashboard");
     await expect(page.getByText(/^plan$/i)).toBeVisible();
     await expect(page.getByText(/^free$/i).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: /upgrade to pro/i })).toBeVisible();
+    const quoteCta = page.getByRole("link", { name: /view plans & pricing/i });
+    await expect(quoteCta).toBeVisible();
+    await expect(quoteCta).toHaveAttribute("href", "/plan/quote");
   });
 
   test("MOCK-007: second mock exam blocked with quote CTA", async ({ page }) => {
@@ -88,7 +90,9 @@ test.describe("FREE — Paywall & limits", () => {
 
     await page.goto("/practice");
     await expect(page.getByText(/daily limit reached/i)).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByRole("link", { name: /view pricing/i })).toBeVisible();
+    const quoteCta = page.getByRole("link", { name: /see plans/i });
+    await expect(quoteCta).toBeVisible();
+    await expect(quoteCta).toHaveAttribute("href", "/plan/quote");
   });
 
   test("API-MOCK-402: mock submit blocked after free limit", async ({ request }) => {

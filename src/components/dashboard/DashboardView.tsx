@@ -7,6 +7,7 @@ import ProgressGlance from "@/components/dashboard/ProgressGlance";
 import ThisWeekZone from "@/components/dashboard/ThisWeekZone";
 import type { CoachDashboardPayload } from "@/lib/coach/fetch-coach";
 import { planLabel } from "@/lib/entitlements";
+import { hasFullAccess } from "@/lib/lp/access";
 import type { DashboardPayload } from "@/lib/dashboard-data";
 import useSWR from "swr";
 
@@ -72,6 +73,7 @@ export default function DashboardView() {
   }
 
   const plan = data?.plan ?? coach?.plan ?? "free";
+  const showQuoteUpsell = !hasFullAccess(coach?.access ?? null);
 
   return (
     <div className="space-y-6">
@@ -94,9 +96,9 @@ export default function DashboardView() {
           <p className="font-display text-lg font-semibold text-ink">
             {data || coach ? planLabel(plan) : "—"}
           </p>
-          {plan === "free" ? (
-            <Link href="/pricing" className="text-sm text-link">
-              Upgrade to Pro
+          {showQuoteUpsell ? (
+            <Link href="/plan/quote" className="text-sm text-link">
+              View plans &amp; pricing
             </Link>
           ) : null}
         </div>
