@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import UpgradeCTA from "@/components/paywall/UpgradeCTA";
+import { LockedTaskCard } from "@/components/journey/LockedTaskCard";
+import { PreviewCards } from "@/components/journey/PreviewCards";
 import type { CoachDashboardPayload } from "@/lib/coach/fetch-coach";
 import type { CoachPlanTaskRow } from "@/lib/coach/types";
 import { taskTypeLabel } from "@/lib/coach/week-tasks";
+import { canExecuteTask, hasFullAccess } from "@/lib/lp/access";
 
 function capitalizeSkill(skill: string): string {
   return skill.charAt(0).toUpperCase() + skill.slice(1);
@@ -88,10 +91,20 @@ export default function ThisWeekZone({
   );
   const tasks = data.tasks;
   const passedCount = tasks.filter((task) => task.status === "done").length;
-  const firstActionableIndex = tasks.findIndex((task) => task.status !== "done");
-  const allPassed = tasks.length > 0 && firstActionableIndex === -1;
+  const firstActionableIndex = tasks.findIndex(
+    (task) =>
+      task.status !== "done" &&
+      canExecuteTask({
+        access: data.access,
+        weekIndex: data.weekIndex,
+        dayOffset: task.day_offset,
+      }),
+  );
+  const allPassed = tasks.length > 0 && tasks.every((task) => task.status === "done");
+  const reportGaps = data.report?.gaps ?? [];
 
   if (data.executionLocked) {
+    const free = !hasFullAccess(data.access);
     return (
       <div className="surface-card border-jade/25 bg-jade/5 p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -106,17 +119,15 @@ export default function ThisWeekZone({
           Week {data.currentWeekIndex} is locked
         </h2>
         <p className="mt-2 text-sm text-ink-muted">
-          {data.plan === "free"
-            ? "Free includes full Week 1 execution. Upgrade to Pro to unlock Week 2 and beyond."
+          {free
+            ? "Free includes the sample day (Week 1, Day 1) plus a preview of every task. Get a plan quote to unlock the full week and beyond."
             : "Complete your current week with mastery before this week unlocks."}
         </p>
-        {data.plan === "free" ? (
+        {free ? (
           <div className="mt-4">
-            <UpgradeCTA
-              title="Unlock Week 2 and your full journey"
-              description="Pro unlocks sequential weeks, full plan execution, and complete progress trends."
-              className="text-left"
-            />
+            <Link href="/plan/quote" className="btn-primary inline-flex">
+              Get plan quote
+            </Link>
           </div>
         ) : null}
       </div>
@@ -133,7 +144,7 @@ export default function ThisWeekZone({
           <Link href="/dashboard/journey" className="text-sm text-link">
             Full journey →
           </Link>
-          {data.plan === "pro" && onRefreshCoach ? (
+          {hasFullAccess(data.access) && onRefreshCoach ? (
             <button type="button" className="text-sm text-link" onClick={onRefreshCoach}>
               Refresh coach
             </button>
@@ -191,10 +202,27 @@ export default function ThisWeekZone({
 
       <ol className="mt-4 space-y-2">
         {tasks.map((task, index) => {
+          const rank = index + 1;
+          const executable = canExecuteTask({
+            access: data.access,
+            weekIndex: data.weekIndex,
+            dayOffset: task.day_offset,
+          });
+
+          if (!executable) {
+            return (
+              <LockedTaskCard
+                key={task.id}
+                rank={rank}
+                title={task.title}
+                skill={task.skill}
+              />
+            );
+          }
+
           const chip = statusChip(task);
           const isPrimary = index === firstActionableIndex;
           const href = taskHref(task);
-          const rank = index + 1;
 
           return (
             <li
@@ -257,6 +285,15 @@ export default function ThisWeekZone({
             Get plan quote
           </Link>
         </div>
+      ) : null}
+
+      {!hasFullAccess(data.access) ? (
+        <PreviewCards
+          gaps={reportGaps.map((gap) => ({
+            skill: gap.skill,
+            severity: gap.severity,
+          }))}
+        />
       ) : null}
 
       {data.hiddenTaskCount > 0 ? (

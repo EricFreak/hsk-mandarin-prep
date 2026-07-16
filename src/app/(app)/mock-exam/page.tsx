@@ -2,6 +2,8 @@ import MockExamSession from "@/components/mock-exam/MockExamSession";
 import UpgradeCTA from "@/components/paywall/UpgradeCTA";
 import { requireJourneyRoute } from "@/lib/auth/continue-destination";
 import { canTakeMockExam, type Plan } from "@/lib/entitlements";
+import { hasFullAccess } from "@/lib/lp/access";
+import { fetchAccess } from "@/lib/lp/access-server";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -38,7 +40,7 @@ export default async function MockExamPage() {
             Supabase is not configured. Set environment variables to take the exam.
           </p>
         </div>
-        <MockExamSession plan="free" />
+        <MockExamSession />
       </div>
     );
   }
@@ -46,17 +48,19 @@ export default async function MockExamPage() {
   const { userId } = await requireJourneyRoute({ intent: "/mock-exam" });
   const supabase = createClient();
 
-  const [plan, { count }] = await Promise.all([
+  const [plan, { count }, access] = await Promise.all([
     getUserPlan(supabase, userId),
     supabase
       .from("mock_exam_attempts")
       .select("*", { count: "exact", head: true })
       .eq("user_id", userId)
       .not("template_id", "in", '("hsk3-diagnosis","hsk3-placement")'),
+    fetchAccess(supabase, userId),
   ]);
 
   const completedExams = count ?? 0;
   const canTake = canTakeMockExam(plan, completedExams);
+  const canScoreWriting = hasFullAccess(access);
 
   return (
     <div>
@@ -71,7 +75,7 @@ export default async function MockExamPage() {
       </div>
 
       {canTake ? (
-        <MockExamSession plan={plan} />
+        <MockExamSession canScoreWriting={canScoreWriting} />
       ) : (
         <UpgradeCTA
           title="Mock exam limit reached"

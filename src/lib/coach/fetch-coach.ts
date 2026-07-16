@@ -1,6 +1,7 @@
 import type { Plan } from "@/lib/entitlements";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { fetchAccess } from "@/lib/lp/access-server";
+import type { AccessSource } from "@/lib/lp/access";
 import {
   applyFreemiumReport,
   pickTodayTask,
@@ -32,6 +33,7 @@ export type CoachJourneyPayload = {
 
 export type CoachDashboardPayload = {
   plan: Plan;
+  access: AccessSource | null;
   llmConfigured: boolean;
   status: "ready" | "pending" | "none";
   report: CoachReportRow | null;
@@ -311,6 +313,7 @@ export async function fetchCoachDashboard(
 
   return {
     plan: userPlan,
+    access,
     llmConfigured: isCoachLLMConfigured(),
     status,
     report,

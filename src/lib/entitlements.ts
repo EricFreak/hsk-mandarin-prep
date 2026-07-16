@@ -13,10 +13,6 @@ export function canTakeMockExam(plan: Plan, mockExamsCompleted: number): boolean
   return mockExamsCompleted < FREE_MOCK_EXAM_LIMIT;
 }
 
-export function canUseAiWritingScore(plan: Plan): boolean {
-  return plan === "pro";
-}
-
 export function canViewWeaknessDetail(_plan: Plan): boolean {
   void _plan;
   return true;

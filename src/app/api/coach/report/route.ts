@@ -1,5 +1,7 @@
-import { getAuthenticatedCoachUser, getUserPlan } from "@/lib/coach/api-auth";
+import { getAuthenticatedCoachUser } from "@/lib/coach/api-auth";
 import { runCoach } from "@/lib/coach/run-coach";
+import { fetchAccess } from "@/lib/lp/access-server";
+import { hasFullAccess } from "@/lib/lp/access";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -9,9 +11,9 @@ export async function POST() {
   if ("error" in auth) return auth.error;
 
   const { supabase, user } = auth;
-  const plan = await getUserPlan(supabase, user.id);
+  const access = await fetchAccess(supabase, user.id);
 
-  if (plan !== "pro") {
+  if (!hasFullAccess(access)) {
     return NextResponse.json({ error: "pro_required", upgrade: true }, { status: 402 });
   }
 

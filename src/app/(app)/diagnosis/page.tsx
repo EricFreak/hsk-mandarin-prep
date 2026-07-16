@@ -39,7 +39,7 @@ export default async function DiagnosisPage() {
       </div>
 
       <MockExamSession
-        plan="free"
+        canScoreWriting={false}
         exam={{
           questions: HSK3_DIAGNOSIS_EXAM,
           templateId: HSK3_DIAGNOSIS_TEMPLATE_ID,

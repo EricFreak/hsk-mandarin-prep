@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import SpeakChineseButton from "@/components/audio/SpeakChineseButton";
 import PracticeStem from "@/components/practice/PracticeStem";
 import UpgradeCTA from "@/components/paywall/UpgradeCTA";
-import { canUseAiWritingScore, type Plan } from "@/lib/entitlements";
 import {
   HSK3_MOCK_EXAM,
   HSK3_MOCK_EXAM_MCQ_COUNT,
@@ -47,7 +46,12 @@ type SubmitResponse = {
 };
 
 type MockExamSessionProps = {
-  plan?: Plan;
+  /**
+   * Whether the AI writing score should be shown for this session. Derived
+   * server-side from access (hasFullAccess) — plan alone is wrong because
+   * free_sprint/paid_order users have plan='free' but full access.
+   */
+  canScoreWriting?: boolean;
   exam?: ExamConfig;
   completePrimaryHref?: string;
   completePrimaryLabel?: string;
@@ -57,7 +61,7 @@ type MockExamSessionProps = {
 };
 
 export default function MockExamSession({
-  plan = "free",
+  canScoreWriting = false,
   exam = DEFAULT_EXAM,
   completePrimaryHref = "/dashboard",
   completePrimaryLabel = "View dashboard",
@@ -78,7 +82,6 @@ export default function MockExamSession({
   const { questions, templateId, mcqCount } = exam;
   const writingQuestion = questions.find((q) => q.section === "writing");
 
-  const canScoreWriting = canUseAiWritingScore(plan);
   const writingAnswer = writingQuestion
     ? answers[writingQuestion.id]?.writingText?.trim()
     : undefined;
