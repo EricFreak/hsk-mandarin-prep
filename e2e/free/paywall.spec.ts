@@ -35,7 +35,7 @@ test.describe("FREE — Paywall & limits", () => {
     await expect(page.getByRole("link", { name: /upgrade to pro/i })).toBeVisible();
   });
 
-  test("MOCK-007: second mock exam blocked with upgrade CTA", async ({ page }) => {
+  test("MOCK-007: second mock exam blocked with quote CTA", async ({ page }) => {
     const admin = createAdminClient();
     const { data: profile } = await admin
       .from("profiles")
@@ -47,7 +47,10 @@ test.describe("FREE — Paywall & limits", () => {
 
     await page.goto("/mock-exam");
     await expect(page.getByText(/mock exam limit reached/i)).toBeVisible();
-    await expect(page.getByRole("button", { name: /upgrade to pro/i })).toBeVisible();
+    // The limit page now routes to the quote hub (/plan/quote), not a Pro checkout.
+    const quoteCta = page.getByRole("link", { name: /see my quote/i });
+    await expect(quoteCta).toBeVisible();
+    await expect(quoteCta).toHaveAttribute("href", "/plan/quote");
   });
 
   test("MOCK-FREE-001: first mock exam allowed", async ({ page }) => {

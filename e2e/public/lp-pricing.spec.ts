@@ -1,0 +1,46 @@
+import { test, expect } from "@playwright/test";
+
+test.use({ storageState: { cookies: [], origins: [] } });
+
+test.describe("LP — Pricing page (three-service, buy-once)", () => {
+  test("LP-PRC-001: pricing page shows buy-once coach packs, no subscription copy", async ({
+    page,
+  }) => {
+    await page.goto("/pricing");
+
+    await expect(page.getByText("$13")).toBeVisible();
+    await expect(page.getByText("$26")).toBeVisible();
+    await expect(page.getByText("$39")).toBeVisible();
+
+    await expect(page.getByText(/per month|\/month|yearly/i)).toHaveCount(0);
+
+    await expect(page.getByText(/sample day/i)).toBeVisible();
+  });
+
+  test("LP-PRC-002: pricing page names all three services", async ({ page }) => {
+    await page.goto("/pricing");
+
+    await expect(
+      page.getByRole("heading", { name: /coach packages/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /custom exam plan/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /emergency sprint/i }),
+    ).toBeVisible();
+  });
+
+  test("LP-PRC-003: anonymous service CTA funnels to signup, not checkout", async ({
+    page,
+  }) => {
+    await page.goto("/pricing");
+
+    const serviceCta = page.getByRole("link", { name: /^start free$/i }).first();
+    await expect(serviceCta).toBeVisible();
+    await expect(serviceCta).toHaveAttribute(
+      "href",
+      /\/login\?next=%2Fonboarding/,
+    );
+  });
+});

@@ -11,7 +11,7 @@ test.describe("MKT — Marketing & public pages", () => {
       page.getByRole("heading", { name: /Built for your first real HSK/i }),
     ).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: /Free Week 1\. Pro for the rest/i }),
+      page.getByRole("heading", { name: /Free diagnosis\. Pay once for the rest of the journey/i }),
     ).toBeVisible();
     await expect(page.getByText(/GF0025-2021/i).first()).toBeVisible();
     await expect(
@@ -29,7 +29,9 @@ test.describe("MKT — Marketing & public pages", () => {
   test("MKT-004: pricing page", async ({ page }) => {
     await page.goto("/pricing");
     await expect(page.getByText(/free/i).first()).toBeVisible();
-    await expect(page.getByText(/pro/i).first()).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /coach packages/i }),
+    ).toBeVisible();
   });
 
   test("AUTH-005: dashboard redirects when logged out", async ({ page }) => {

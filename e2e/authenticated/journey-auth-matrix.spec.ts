@@ -27,7 +27,7 @@ async function passwordSignIn(
 }
 
 test.describe("JOURNEY — auth matrix", () => {
-  test("JNY-AUTH-004: onboarding “I'm not sure” → /diagnosis", async ({
+  test("JNY-AUTH-004: onboarding “I'm not sure” (coach) → /diagnosis", async ({
     browser,
     baseURL,
   }) => {
@@ -45,6 +45,9 @@ test.describe("JOURNEY — auth matrix", () => {
     await passwordSignIn(page, baseURL!, email, password);
 
     await page.goto(`${baseURL}/onboarding`);
+    // Step 1: service-intent selection. "I'm not sure" only exists for coach.
+    await page.getByRole("button", { name: /coach package/i }).click();
+    // Step 2: exam-date form.
     await page.getByRole("button", { name: /I.m not sure/i }).click();
     await expect(page).toHaveURL(/\/diagnosis/, { timeout: 20_000 });
     await expect(
@@ -70,7 +73,7 @@ test.describe("JOURNEY — auth matrix", () => {
     await passwordSignIn(page, baseURL!, PRO_EMAIL, PRO_PASSWORD);
 
     await page.goto(`${baseURL}/`);
-    await page.getByRole("link", { name: /Start free Week 1/i }).first().click();
+    await page.getByRole("link", { name: /start with a free diagnosis/i }).first().click();
 
     await expect(page).not.toHaveURL(/\/login/);
     await expect(page).toHaveURL(/\/dashboard/);
@@ -143,7 +146,7 @@ test.describe("JOURNEY — auth matrix", () => {
     await expect(page.getByText(/Server Error/i)).toHaveCount(0);
     await expect(page).toHaveURL(/\/onboarding/, { timeout: 20_000 });
     await expect(
-      page.getByRole("heading", { name: /HSK Level 3 exam/i }),
+      page.getByRole("heading", { name: /how do you want to prepare/i }),
     ).toBeVisible();
 
     await context.close();
