@@ -11,7 +11,7 @@ export const PRO_BENEFITS = [
   "No urgency premium, even for near exams",
   "Unused work credited when you replan",
   "Pay once for a defined amount of work",
-  "Same price whether you finish in 4 or 12 weeks",
+  "One transparent rate per unit of work — no urgency premium",
 ] as const;
 
 export function getAppUrl(): string {

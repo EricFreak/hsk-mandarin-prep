@@ -26,7 +26,7 @@ export default function LandingPage() {
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <ContinueCta className="btn-primary px-6 py-3 text-base">
-                Start free Week 1
+                Start with a free diagnosis
               </ContinueCta>
               <a href="#how-it-works" className="btn-secondary px-6 py-3 text-base">
                 See how it works
@@ -69,12 +69,12 @@ export default function LandingPage() {
       <section>
         <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 sm:py-14">
           <h2 className="font-display text-3xl font-semibold text-ink">
-            Start free Week 1
+            Get your free diagnosis
           </h2>
           <p className="mt-3 text-sm text-ink-muted">No credit card required.</p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
             <ContinueCta className="btn-primary px-8 py-3 text-base">
-              Start free Week 1
+              Start with a free diagnosis
             </ContinueCta>
             <a href="#pricing" className="btn-secondary px-6 py-3 text-base">
               See pricing
