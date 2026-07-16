@@ -1,5 +1,3 @@
-import type { Plan } from "@/lib/entitlements";
-import { canExecuteWeek } from "@/lib/coach/journey/week-unlock";
 import type { CoachPlanTaskRow } from "./types";
 
 /**
@@ -26,30 +24,24 @@ export function orderWeekTasks(
   });
 }
 
+/**
+ * Week-level display gate for the dashboard task list. A non-current week is
+ * hidden (executionLocked). The current week is shown in full; per-task
+ * execution for free users is enforced server-side by `canExecuteTask` on the
+ * task-status route, so the sample day (week 1, day 0) remains actionable
+ * while later days are not completable via API.
+ */
 export function gateOrderedWeekTasks(
   tasks: CoachPlanTaskRow[],
   topGapSkill: string | null,
-  plan: Plan,
   journey?: {
     weekIndex: number;
     currentWeekIndex: number;
-    w1ClearedAt?: string | null;
   },
 ): { tasks: CoachPlanTaskRow[]; hiddenTaskCount: number; executionLocked: boolean } {
   const ordered = orderWeekTasks(tasks, topGapSkill);
-  if (
-    journey &&
-    !canExecuteWeek({
-      weekIndex: journey.weekIndex,
-      currentWeekIndex: journey.currentWeekIndex,
-      plan,
-      w1ClearedAt: journey.w1ClearedAt,
-    })
-  ) {
+  if (journey && journey.weekIndex !== journey.currentWeekIndex) {
     return { tasks: [], hiddenTaskCount: ordered.length, executionLocked: true };
-  }
-  if (plan === "free") {
-    return { tasks: ordered, hiddenTaskCount: 0, executionLocked: false };
   }
   return { tasks: ordered, hiddenTaskCount: 0, executionLocked: false };
 }

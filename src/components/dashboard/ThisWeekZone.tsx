@@ -245,13 +245,17 @@ export default function ThisWeekZone({
         })}
       </ol>
 
-      {data.shouldShowWeek1ProCta ? (
-        <div className="mt-4">
-          <UpgradeCTA
-            title="Week 1 complete — unlock your full journey"
-            description="Upgrade to Pro to continue into Week 2 and beyond with sequential unlock and full plan execution."
-            className="text-left"
-          />
+      {data.shouldShowQuoteCta ? (
+        <div className="mt-4 rounded-lg border-2 border-jade/40 bg-jade/5 p-4">
+          <p className="text-sm font-semibold text-ink">
+            Sample day complete — continue your full journey
+          </p>
+          <p className="mt-1 text-sm text-ink-muted">
+            Get a plan quote to unlock the rest of your weeks and full plan execution.
+          </p>
+          <Link href="/plan/quote" className="btn-primary mt-3 inline-flex">
+            Get plan quote
+          </Link>
         </div>
       ) : null}
 

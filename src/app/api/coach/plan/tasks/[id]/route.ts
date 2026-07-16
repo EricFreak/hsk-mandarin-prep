@@ -1,5 +1,7 @@
 import { getAuthenticatedCoachUser } from "@/lib/coach/api-auth";
 import { clearWeekAndUnlockNext } from "@/lib/coach/journey/persist-journey";
+import { canExecuteTask } from "@/lib/lp/access";
+import { fetchAccess } from "@/lib/lp/access-server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -105,7 +107,7 @@ export async function PATCH(request: Request, context: RouteContext) {
   const { data: existing, error: loadError } = await supabase
     .from("coach_plan_tasks")
     .select(
-      "id, title, skill, task_type, status, target_count, completed_at, mastery_status, mastery_score",
+      "id, title, skill, task_type, status, target_count, completed_at, mastery_status, mastery_score, plan_id, day_offset",
     )
     .eq("id", taskId)
     .eq("user_id", user.id)
@@ -118,6 +120,30 @@ export async function PATCH(request: Request, context: RouteContext) {
 
   if (!existing) {
     return NextResponse.json({ error: "Task not found" }, { status: 404 });
+  }
+
+  // Gate execution by access: free users may only update the sample day
+  // (week 1, day_offset 0). Enforced server-side so locked tasks cannot be
+  // completed via API.
+  const existingRow = existing as Record<string, unknown>;
+  const dayOffset =
+    typeof existingRow.day_offset === "number" ? existingRow.day_offset : 0;
+  const planId = existingRow.plan_id as string;
+  let weekIndex = 1;
+  try {
+    const { data: planRow } = await supabase
+      .from("coach_study_plans")
+      .select("week_index")
+      .eq("id", planId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (typeof planRow?.week_index === "number") weekIndex = planRow.week_index;
+  } catch {
+    // Default to week 1 if the plan lookup fails (canExecuteTask still gates day_offset).
+  }
+  const access = await fetchAccess(supabase, user.id);
+  if (!canExecuteTask({ access, weekIndex, dayOffset })) {
+    return NextResponse.json({ error: "quote_required" }, { status: 402 });
   }
 
   const { data: progressRow } = await supabase

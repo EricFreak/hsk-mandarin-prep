@@ -1,5 +1,7 @@
-import { getAuthenticatedCoachUser, getUserPlan } from "@/lib/coach/api-auth";
+import { getAuthenticatedCoachUser } from "@/lib/coach/api-auth";
 import { runCoach } from "@/lib/coach/run-coach";
+import { fetchAccess } from "@/lib/lp/access-server";
+import { hasFullAccess } from "@/lib/lp/access";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -31,8 +33,8 @@ export async function POST(request: Request) {
   }
 
   if (parsed.data.trigger === "manual_refresh") {
-    const plan = await getUserPlan(supabase, user.id);
-    if (plan !== "pro") {
+    const access = await fetchAccess(supabase, user.id);
+    if (!hasFullAccess(access)) {
       return NextResponse.json({ error: "pro_required", upgrade: true }, { status: 402 });
     }
   }

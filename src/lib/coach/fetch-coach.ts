@@ -1,5 +1,6 @@
 import type { Plan } from "@/lib/entitlements";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { fetchAccess } from "@/lib/lp/access-server";
 import {
   applyFreemiumReport,
   pickTodayTask,
@@ -10,7 +11,7 @@ import {
 } from "./journey/journey-summary";
 import { isWeekCleared, type PlanTaskForClearance } from "./journey/persist-journey";
 import type { JourneyStageId, StageWindow, WeekOutlineRow } from "./journey/types";
-import { shouldShowWeek1ProCta } from "./journey/week-unlock";
+import { shouldShowQuoteCta } from "./journey/week-unlock";
 import { isCoachLLMConfigured } from "./llm";
 import type {
   CoachPlanTaskRow,
@@ -46,7 +47,7 @@ export type CoachDashboardPayload = {
   weekIndex: number;
   currentWeekIndex: number;
   stageCalendar: StageWindow[];
-  shouldShowWeek1ProCta: boolean;
+  shouldShowQuoteCta: boolean;
   weekCleared: boolean;
 };
 
@@ -165,7 +166,7 @@ export async function fetchCoachJourney(
     supabase
       .from("learner_profiles")
       .select(
-        "target_exam_date, current_week_index, current_stage, stage_calendar, w1_cleared_at",
+        "target_exam_date, current_week_index, current_stage, stage_calendar",
       )
       .eq("user_id", userId)
       .maybeSingle(),
@@ -226,7 +227,7 @@ export async function fetchCoachDashboard(
       supabase
         .from("learner_profiles")
         .select(
-          "current_week_index, current_stage, target_exam_date, stage_calendar, w1_cleared_at",
+          "current_week_index, current_stage, target_exam_date, stage_calendar",
         )
         .eq("user_id", userId)
         .maybeSingle(),
@@ -238,6 +239,7 @@ export async function fetchCoachDashboard(
 
   let tasks: CoachPlanTaskRow[] = [];
   let clearanceTasks: PlanTaskForClearance[] = [];
+  let sampleDayTasks: { dayOffset: number; required: boolean; status: string }[] = [];
   if (planRow?.id) {
     const { data: taskRows } = await supabase
       .from("coach_plan_tasks")
@@ -253,6 +255,13 @@ export async function fetchCoachDashboard(
       mastery_status: (row.mastery_status as string | null) ?? null,
       required: typeof row.required === "boolean" ? row.required : true,
     }));
+    sampleDayTasks = rows
+      .filter((row) => (row.day_offset as number) === 0)
+      .map((row) => ({
+        dayOffset: 0,
+        required: typeof row.required === "boolean" ? row.required : true,
+        status: row.status as string,
+      }));
   }
 
   const report = reportRow ? applyFreemiumReport(mapReport(reportRow), userPlan) : null;
@@ -277,17 +286,12 @@ export async function fetchCoachDashboard(
       : null);
   const daysToExam = computeDaysToExam(targetExamDate, stageCalendar);
   const weekCleared = clearanceTasks.length > 0 && isWeekCleared(clearanceTasks);
-  const showWeek1ProCta = shouldShowWeek1ProCta({
-    plan: userPlan,
-    currentWeekIndex,
-    weekCleared,
-    w1ClearedAt: (learnerProfile?.w1_cleared_at as string | null) ?? null,
-  });
+  const access = await fetchAccess(supabase, userId);
+  const showQuoteCta = shouldShowQuoteCta({ access, sampleDayTasks });
   const { tasks: gatedTasks, hiddenTaskCount, executionLocked } =
-    gateOrderedWeekTasks(tasks, topGapSkill, userPlan, {
+    gateOrderedWeekTasks(tasks, topGapSkill, {
       weekIndex,
       currentWeekIndex,
-      w1ClearedAt: (learnerProfile?.w1_cleared_at as string | null) ?? null,
     });
   const todayTask = studyPlan ? pickTodayTask(gatedTasks, studyPlan.week_start) : null;
 
@@ -322,7 +326,7 @@ export async function fetchCoachDashboard(
     weekIndex,
     currentWeekIndex,
     stageCalendar,
-    shouldShowWeek1ProCta: showWeek1ProCta,
+    shouldShowQuoteCta: showQuoteCta,
     weekCleared,
   };
 }

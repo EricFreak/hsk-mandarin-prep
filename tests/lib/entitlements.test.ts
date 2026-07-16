@@ -3,6 +3,7 @@ import {
   FREE_DAILY_PRACTICE_LIMIT,
   canTakeMockExam,
   canStartPractice,
+  canViewWeaknessDetail,
   planLabel,
 } from "@/lib/entitlements";
 
@@ -29,5 +30,10 @@ describe("entitlements", () => {
   it("labels plans for UI", () => {
     expect(planLabel("free")).toBe("Free");
     expect(planLabel("pro")).toBe("Pro");
+  });
+
+  it("shows weakness detail for every plan (free report is complete)", () => {
+    expect(canViewWeaknessDetail("free")).toBe(true);
+    expect(canViewWeaknessDetail("pro")).toBe(true);
   });
 });

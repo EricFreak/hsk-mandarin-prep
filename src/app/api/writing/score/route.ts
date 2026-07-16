@@ -1,4 +1,5 @@
-import { canUseAiWritingScore, type Plan } from "@/lib/entitlements";
+import { fetchAccess } from "@/lib/lp/access-server";
+import { hasFullAccess } from "@/lib/lp/access";
 import { scoreWriting } from "@/lib/openai/writing-score";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
@@ -38,23 +39,6 @@ async function getAuthenticatedUser() {
   return { supabase, user };
 }
 
-async function getUserPlan(
-  supabase: ReturnType<typeof createClient>,
-  userId: string,
-): Promise<Plan> {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("plan")
-    .eq("id", userId)
-    .maybeSingle();
-
-  if (error || !data?.plan) {
-    return "free";
-  }
-
-  return data.plan === "pro" ? "pro" : "free";
-}
-
 const requestSchema = z.object({
   prompt: z.string().min(1),
   userText: z.string(),
@@ -79,9 +63,9 @@ export async function POST(request: Request) {
   }
 
   try {
-    const plan = await getUserPlan(supabase, user.id);
+    const access = await fetchAccess(supabase, user.id);
 
-    if (!canUseAiWritingScore(plan)) {
+    if (!hasFullAccess(access)) {
       return NextResponse.json({ upgrade: true }, { status: 403 });
     }
 

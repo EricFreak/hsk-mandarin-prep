@@ -50,18 +50,18 @@ describe("orderWeekTasks", () => {
 });
 
 describe("gateOrderedWeekTasks", () => {
-  it("locks free week 2 execution", () => {
-    const result = gateOrderedWeekTasks(fourTasks, "listening", "free", {
+  it("locks a non-current week", () => {
+    const result = gateOrderedWeekTasks(fourTasks, "listening", {
       weekIndex: 2,
-      currentWeekIndex: 2,
+      currentWeekIndex: 3,
     });
     expect(result.executionLocked).toBe(true);
     expect(result.tasks).toHaveLength(0);
     expect(result.hiddenTaskCount).toBe(4);
   });
 
-  it("shows all tasks for free week 1", () => {
-    const result = gateOrderedWeekTasks(fourTasks, "listening", "free", {
+  it("shows all tasks for the current week", () => {
+    const result = gateOrderedWeekTasks(fourTasks, "listening", {
       weekIndex: 1,
       currentWeekIndex: 1,
     });
@@ -70,13 +70,9 @@ describe("gateOrderedWeekTasks", () => {
     expect(result.hiddenTaskCount).toBe(0);
   });
 
-  it("shows all tasks for pro on current week", () => {
-    const result = gateOrderedWeekTasks(fourTasks, "listening", "pro", {
-      weekIndex: 2,
-      currentWeekIndex: 2,
-    });
+  it("shows all tasks when no journey context is provided", () => {
+    const result = gateOrderedWeekTasks(fourTasks, "listening");
     expect(result.executionLocked).toBe(false);
     expect(result.tasks).toHaveLength(4);
-    expect(result.hiddenTaskCount).toBe(0);
   });
 });

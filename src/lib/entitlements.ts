@@ -17,8 +17,9 @@ export function canUseAiWritingScore(plan: Plan): boolean {
   return plan === "pro";
 }
 
-export function canViewWeaknessDetail(plan: Plan): boolean {
-  return plan === "pro";
+export function canViewWeaknessDetail(_plan: Plan): boolean {
+  void _plan;
+  return true;
 }
 
 export function planLabel(plan: Plan): string {

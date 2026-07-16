@@ -1,31 +1,25 @@
-import type { Plan } from "@/lib/entitlements";
+import type { AccessSource } from "@/lib/lp/access";
 
 export function canExecuteWeek(input: {
   weekIndex: number;
   currentWeekIndex: number;
-  plan: Plan;
-  w1ClearedAt?: string | null;
+  access: AccessSource | null;
 }): boolean {
   if (input.weekIndex !== input.currentWeekIndex) return false;
-  if (input.plan === "free" && input.weekIndex > 1) return false;
-  // Free users who cleared W1 stay parked for conversion (W2 exec locked).
-  if (input.plan === "free" && input.weekIndex === 1 && input.w1ClearedAt) {
-    return false;
-  }
-  return true;
+  return input.access !== null;
+}
+
+/** Conversion moment moved to quote confirmation: CTA after the free sample day. */
+export function shouldShowQuoteCta(input: {
+  access: AccessSource | null;
+  sampleDayTasks: { dayOffset: number; required: boolean; status: string }[];
+}): boolean {
+  if (input.access) return false;
+  const day0 = input.sampleDayTasks.filter((t) => t.dayOffset === 0 && t.required);
+  if (day0.length === 0) return false;
+  return day0.every((t) => t.status === "done" || t.status === "skipped");
 }
 
 export function nextWeekAfterClear(currentWeekIndex: number): number {
   return currentWeekIndex + 1;
-}
-
-export function shouldShowWeek1ProCta(input: {
-  plan: Plan;
-  currentWeekIndex: number;
-  weekCleared: boolean;
-  w1ClearedAt?: string | null;
-}): boolean {
-  if (input.plan !== "free") return false;
-  if (input.w1ClearedAt) return true;
-  return input.currentWeekIndex === 1 && input.weekCleared;
 }
