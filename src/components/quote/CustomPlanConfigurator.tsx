@@ -63,7 +63,7 @@ export function CustomPlanConfigurator(props: {
       const data = await quoteRes.json();
       if (quoteRes.status === 422 && data.error === "not_feasible") {
         setError(
-          `This volume needs ${data.requiredMinutesPerDay} min/day before your exam. Reduce volume or move your exam date — we never trim your plan silently.`,
+          `This plan needs ~${data.requiredMinutesPerDay} min/day — beyond your available time before the exam (about ${data.capacityMinutes} min total). Reduce the volume or change your exam date — we never trim your plan silently.`,
         );
         return;
       }

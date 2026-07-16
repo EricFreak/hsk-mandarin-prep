@@ -44,7 +44,7 @@ export default async function QuotePage() {
       </div>
 
       <a
-        href="/onboarding"
+        href="/onboarding?edit=service"
         className="mt-6 inline-block text-sm text-link"
       >
         Switch service type

@@ -7,7 +7,7 @@ import {
   type ServiceIntent,
 } from "@/components/onboarding/ServiceIntentStep";
 
-export default function OnboardingForm() {
+export default function OnboardingForm({ returnHref }: { returnHref?: string }) {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
   const [serviceIntent, setServiceIntent] = useState<ServiceIntent | null>(null);
@@ -50,7 +50,7 @@ export default function OnboardingForm() {
         return;
       }
 
-      router.push(data.next ?? "/diagnosis");
+      router.push(returnHref ?? data.next ?? "/diagnosis");
       router.refresh();
     } catch {
       setError("Failed to save your exam date");
