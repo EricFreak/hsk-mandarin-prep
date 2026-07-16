@@ -39,16 +39,27 @@ function baseProfile(overrides: Partial<StubProfile> = {}): StubProfile {
 
 /** Chainable thenable supabase stub: returns the given profile for the
  *  learner_profiles maybeSingle() read, empty outlines (forces init), and
- *  succeeds on upsert/update. Mirrors the style in fulfill-order.test.ts. */
+ *  succeeds on upsert/update. Records upsert rows and update payloads per
+ *  table in `writes` so callers can assert persisted writes. Mirrors the
+ *  style in fulfill-order.test.ts. */
 function stubClient(profile: StubProfile) {
+  const writes: Record<string, { upsert?: unknown; update?: Record<string, unknown> }> = {};
+  const record = (table: string) => {
+    if (!writes[table]) writes[table] = {};
+    return writes[table];
+  };
   const from = (table: string) => {
     const state: { update?: Record<string, unknown> } = {};
     const chain: any = {
       select: () => chain,
       order: () => chain,
-      upsert: () => chain,
+      upsert: (rows: unknown) => {
+        record(table).upsert = rows;
+        return chain;
+      },
       update: (values: Record<string, unknown>) => {
         state.update = values;
+        record(table).update = values;
         return chain;
       },
       eq: () => chain,
@@ -68,7 +79,7 @@ function stubClient(profile: StubProfile) {
     };
     return chain;
   };
-  return { from } as any;
+  return { from, writes } as any;
 }
 
 describe("isTaskCleared", () => {
@@ -131,7 +142,8 @@ describe("ensureJourney sprint branch", () => {
       target_exam_date: "2026-07-19", // today stub = 2026-07-16
       stage_calendar: {},
     });
-    const result = await ensureJourney(stubClient(profile), "u1", {
+    const client = stubClient(profile);
+    const result = await ensureJourney(client, "u1", {
       gaps: [],
       today: "2026-07-16",
     });
@@ -144,5 +156,31 @@ describe("ensureJourney sprint branch", () => {
       stage: "sprint",
       status: "available",
     });
+
+    // Persisted writes: one sprint outline row upserted, profile advanced to sprint.
+    const outlineRows = client.writes["journey_week_outlines"].upsert as Record<
+      string,
+      unknown
+    >[];
+    expect(outlineRows).toHaveLength(1);
+    expect(outlineRows[0]).toMatchObject({
+      user_id: "u1",
+      week_index: 1,
+      stage: "sprint",
+      status: "available",
+    });
+
+    const profileUpdate = client.writes["learner_profiles"].update as Record<
+      string,
+      unknown
+    >;
+    expect(profileUpdate).toMatchObject({
+      current_stage: "sprint",
+      current_week_index: 1,
+      stage_calendar: [
+        { stage: "sprint", startDate: "2026-07-16", endDate: "2026-07-19" },
+      ],
+    });
+    expect(profileUpdate.journey_started_at).toBeTruthy();
   });
 });

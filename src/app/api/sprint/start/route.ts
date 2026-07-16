@@ -1,3 +1,4 @@
+import { fulfillLpOrder } from "@/lib/lp/fulfill-order";
 import { computeQuote } from "@/lib/lp/pricing";
 import {
   canUseFreeSprint,
@@ -44,9 +45,10 @@ export async function POST() {
   const now = new Date().toISOString();
 
   if (canUseFreeSprint(learner!.free_sprint_used_at ?? null)) {
-    // Lifetime-free first sprint: insert a paid $0 order and burn the flag.
-    // RLS only lets users insert status='quoted', so both writes use the
-    // admin client (same helper as webhook/checkout fulfillment).
+    // Lifetime-free first sprint. Insert as `quoted`, then flip to `paid` via
+    // fulfillLpOrder, which supersedes any prior paid order for this user
+    // before paying this one — so a user with an existing paid coach order
+    // doesn't trip the `idx_lp_orders_one_paid_per_user` unique index.
     const admin = createAdminClient();
     if (!admin) {
       return NextResponse.json(
@@ -55,23 +57,38 @@ export async function POST() {
       );
     }
 
-    const { error: orderErr } = await admin.from("lp_orders").insert({
-      user_id: user.id,
-      service_type: "sprint",
-      composition,
-      lp_total: quote.lpTotal,
-      price_cents: 0,
-      status: "paid",
-      paid_at: now,
-    });
-    if (orderErr) {
+    const { data: order, error: orderErr } = await admin
+      .from("lp_orders")
+      .insert({
+        user_id: user.id,
+        service_type: "sprint",
+        composition,
+        lp_total: quote.lpTotal,
+        price_cents: 0,
+        status: "quoted",
+      })
+      .select("id")
+      .single();
+    if (orderErr || !order) {
       return NextResponse.json({ error: "sprint_failed" }, { status: 500 });
     }
 
-    await admin
+    const { ok } = await fulfillLpOrder(admin, { orderId: order.id });
+    if (!ok) {
+      return NextResponse.json({ error: "sprint_failed" }, { status: 500 });
+    }
+
+    // Burn the free-sprint flag last and check the error. If this write fails,
+    // the next retry still sees canUseFreeSprint=true, inserts a fresh quoted
+    // $0 order, and fulfillLpOrder supersedes the earlier paid $0 order — no
+    // unique-index collision and no permanently stuck state.
+    const { error: flagErr } = await admin
       .from("learner_profiles")
       .update({ free_sprint_used_at: now, updated_at: now })
       .eq("user_id", user.id);
+    if (flagErr) {
+      return NextResponse.json({ error: "sprint_failed" }, { status: 500 });
+    }
 
     return NextResponse.json({ started: true });
   }
