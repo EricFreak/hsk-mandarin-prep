@@ -1,5 +1,8 @@
-import { getAppUrl, type PriceType } from "@/lib/payments/types";
+import { getAppUrl } from "@/lib/payments/types";
 import { createHmac, timingSafeEqual } from "crypto";
+
+/** Local billing-period union — kept so legacy Creem subscription checkout stays compilable and dormant (webhook compat). */
+type CreemBillingPeriod = "monthly" | "yearly";
 
 type CreemCheckoutResponse = {
   checkout_url?: string;
@@ -19,7 +22,7 @@ function getCreemApiBaseUrl(): string {
   return testMode ? "https://test-api.creem.io" : "https://api.creem.io";
 }
 
-function getCreemProductId(priceType: PriceType): string | null {
+function getCreemProductId(priceType: CreemBillingPeriod): string | null {
   if (priceType === "monthly") {
     return process.env.CREEM_PRODUCT_PRO_MONTHLY || null;
   }
@@ -49,7 +52,7 @@ export function verifyCreemWebhookSignature(
 }
 
 export async function createCreemCheckout(params: {
-  priceType: PriceType;
+  priceType: CreemBillingPeriod;
   userId: string;
   userEmail?: string | null;
 }): Promise<{ url: string }> {

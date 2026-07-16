@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { FREE_TIER_BENEFITS, PRO_BENEFITS, type PriceType } from "@/lib/payments";
+import { FREE_TIER_BENEFITS, PRO_BENEFITS } from "@/lib/payments";
+
+/** Legacy billing-period toggle state — kept visual until Task 16 redoes the pricing UI. */
+type BillingPeriod = "monthly" | "yearly";
 
 function CheckIcon() {
   return (
@@ -61,16 +64,16 @@ const PRO_BILLING_OPTIONS = [
 ];
 
 function ProBillingOptions({
-  priceType,
+  billingPeriod,
   onChange,
 }: {
-  priceType: PriceType;
-  onChange: (type: PriceType) => void;
+  billingPeriod: BillingPeriod;
+  onChange: (type: BillingPeriod) => void;
 }) {
   return (
     <div className="mt-4 grid grid-cols-2 gap-2" role="radiogroup" aria-label="Pro billing period">
       {PRO_BILLING_OPTIONS.map((option) => {
-        const selected = priceType === option.id;
+        const selected = billingPeriod === option.id;
         return (
           <button
             key={option.id}
@@ -113,7 +116,7 @@ function ProBillingOptions({
 type PricingPlansProps = {
   /** marketing: Pro CTA links to /pricing; checkout: Pro button starts payment */
   mode?: "marketing" | "checkout";
-  defaultBilling?: PriceType;
+  defaultBilling?: BillingPeriod;
   /** Auth-aware Free CTA (resolved on the server). */
   freeCtaHref?: string;
 };
@@ -123,48 +126,10 @@ export default function PricingPlans({
   defaultBilling = "monthly",
   freeCtaHref = "/login?next=%2Fonboarding",
 }: PricingPlansProps) {
-  const [priceType, setPriceType] = useState<PriceType>(defaultBilling);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>(defaultBilling);
 
   const pricingHref =
-    priceType === "yearly" ? "/pricing?billing=yearly" : "/pricing";
-
-  async function handleCheckout() {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceType }),
-      });
-
-      const data = (await response.json()) as { url?: string; error?: string };
-
-      if (response.status === 401) {
-        window.location.href = `/login?next=${encodeURIComponent("/pricing")}`;
-        return;
-      }
-
-      if (!response.ok) {
-        setError(data.error ?? "Checkout failed");
-        return;
-      }
-
-      if (data.url) {
-        window.location.href = data.url;
-        return;
-      }
-
-      setError("Checkout failed");
-    } catch {
-      setError("Checkout failed");
-    } finally {
-      setLoading(false);
-    }
-  }
+    billingPeriod === "yearly" ? "/pricing?billing=yearly" : "/pricing";
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -190,24 +155,14 @@ export default function PricingPlans({
           <h3 className="mt-1 font-display text-xl font-semibold text-ink">Pro</h3>
           <p className="mt-1 text-sm text-ink-muted">Same features — pick how you pay.</p>
 
-          <ProBillingOptions priceType={priceType} onChange={setPriceType} />
+          <ProBillingOptions billingPeriod={billingPeriod} onChange={setBillingPeriod} />
 
           <FeatureList features={PRO_BENEFITS} />
-          {error ? (
-            <p className="mt-4 text-sm text-seal" role="alert">
-              {error}
-            </p>
-          ) : null}
           <CardCtaFooter>
             {mode === "checkout" ? (
-              <button
-                type="button"
-                className={pricingCtaClass.pro}
-                disabled={loading}
-                onClick={() => void handleCheckout()}
-              >
-                {loading ? "Redirecting…" : "Upgrade to Pro"}
-              </button>
+              <Link href="/pricing" className={pricingCtaClass.pro}>
+                Upgrade to Pro
+              </Link>
             ) : (
               <Link href={pricingHref} className={pricingCtaClass.pro}>
                 Upgrade to Pro

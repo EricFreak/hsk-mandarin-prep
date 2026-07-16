@@ -1,5 +1,3 @@
-export type PriceType = "monthly" | "yearly";
-
 export type PaymentProvider = "creem" | "stripe";
 
 export const FREE_TIER_BENEFITS = [

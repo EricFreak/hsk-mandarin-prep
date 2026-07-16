@@ -1,32 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { PRO_BENEFITS, type PriceType } from "@/lib/payments";
+import { useEffect, useRef, useState } from "react";
+import { PRO_BENEFITS } from "@/lib/payments";
+
+/** Legacy billing-period toggle state — kept visual until Task 16 redoes the pricing UI. */
+type BillingPeriod = "monthly" | "yearly";
 
 type UpgradeModalProps = {
   open: boolean;
   onClose: () => void;
-  defaultPriceType?: PriceType;
+  defaultBilling?: BillingPeriod;
 };
 
 export default function UpgradeModal({
   open,
   onClose,
-  defaultPriceType = "monthly",
+  defaultBilling = "monthly",
 }: UpgradeModalProps) {
-  const [priceType, setPriceType] = useState<PriceType>(defaultPriceType);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>(defaultBilling);
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (open) {
-      setPriceType(defaultPriceType);
-      setError(null);
+      setBillingPeriod(defaultBilling);
       panelRef.current?.focus();
     }
-  }, [open, defaultPriceType]);
+  }, [open, defaultBilling]);
 
   useEffect(() => {
     if (!open) {
@@ -42,37 +42,6 @@ export default function UpgradeModal({
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [open, onClose]);
-
-  const handleUpgrade = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceType }),
-      });
-
-      const data = (await response.json()) as { url?: string; error?: string };
-
-      if (!response.ok) {
-        setError(data.error ?? "Checkout failed");
-        return;
-      }
-
-      if (data.url) {
-        window.location.href = data.url;
-        return;
-      }
-
-      setError("Checkout failed");
-    } catch {
-      setError("Checkout failed");
-    } finally {
-      setLoading(false);
-    }
-  }, [priceType]);
 
   if (!open) {
     return null;
@@ -146,41 +115,33 @@ export default function UpgradeModal({
           <button
             type="button"
             className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition ${
-              priceType === "monthly"
+              billingPeriod === "monthly"
                 ? "bg-jade text-white"
                 : "text-ink-muted hover:text-ink"
             }`}
-            onClick={() => setPriceType("monthly")}
+            onClick={() => setBillingPeriod("monthly")}
           >
             Monthly — $9.99
           </button>
           <button
             type="button"
             className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition ${
-              priceType === "yearly"
+              billingPeriod === "yearly"
                 ? "bg-jade text-white"
                 : "text-ink-muted hover:text-ink"
             }`}
-            onClick={() => setPriceType("yearly")}
+            onClick={() => setBillingPeriod("yearly")}
           >
             Yearly — $69
           </button>
         </div>
 
-        {error ? (
-          <p className="mt-4 text-sm text-seal" role="alert">
-            {error}
-          </p>
-        ) : null}
-
-        <button
-          type="button"
-          className="mt-4 w-full btn-primary disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={loading}
-          onClick={() => void handleUpgrade()}
+        <Link
+          href="/pricing"
+          className="mt-4 w-full btn-primary"
         >
-          {loading ? "Redirecting…" : "Upgrade to Pro"}
-        </button>
+          Upgrade to Pro
+        </Link>
 
         <p className="mt-4 text-center text-sm text-ink-muted">
           <Link href="/pricing" className="text-link">

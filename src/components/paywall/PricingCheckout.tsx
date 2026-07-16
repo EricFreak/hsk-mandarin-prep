@@ -3,11 +3,10 @@
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import PricingPlans from "@/components/marketing/PricingPlans";
-import type { PriceType } from "@/lib/payments";
 
 function PricingCheckoutInner({ freeCtaHref }: { freeCtaHref?: string }) {
   const searchParams = useSearchParams();
-  const defaultBilling: PriceType =
+  const defaultBilling: "monthly" | "yearly" =
     searchParams.get("billing") === "yearly" ? "yearly" : "monthly";
 
   return (
