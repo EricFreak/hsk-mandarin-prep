@@ -22,7 +22,7 @@ const POINTS = [
 export default function ProblemFrame() {
   return (
     <section id="why-coach" aria-labelledby="why-coach-heading">
-      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24">
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
         <h2
           id="why-coach-heading"
           className="mx-auto max-w-2xl text-center font-display text-3xl font-semibold text-ink"

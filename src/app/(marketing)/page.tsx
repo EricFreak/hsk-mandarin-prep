@@ -45,7 +45,7 @@ export default function LandingPage() {
 
       <JadeDotDivider />
       <section id="plans" aria-labelledby="plans-heading">
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
           <h2
             id="plans-heading"
             className="text-center font-display text-3xl font-semibold text-ink"
