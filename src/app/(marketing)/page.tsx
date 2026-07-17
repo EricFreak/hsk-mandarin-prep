@@ -20,12 +20,12 @@ export default function LandingPage() {
               Your AI coach for HSK Level 3
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-muted">
-              See your gaps and a full plan for free — then pay once for the work you
-              choose. No subscription.
+              Built for your first real HSK — diagnose the gaps, aim at exam day, and
+              practice what still matters. Not another endless word bank.
             </p>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-muted">
-              Before you pay: full report, outline and quote, a multi-skill sample
-              (including one AI writing review), and locked previews.
+              One track. Current Level 3 syllabus. A coach that plans the journey —
+              then walks it with you week by week.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <ContinueCta className="btn-primary px-6 py-3 text-base">
