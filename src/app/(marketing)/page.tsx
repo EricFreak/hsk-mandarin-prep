@@ -2,14 +2,13 @@ import ContinueCta from "@/components/marketing/ContinueCta";
 import HeroBrandVisual from "@/components/marketing/HeroBrandVisual";
 import ProblemFrame from "@/components/marketing/ProblemFrame";
 import HowItWorksShowcase from "@/components/marketing/HowItWorksShowcase";
-import PricingTable from "@/components/marketing/PricingTable";
+import HomeServiceCards from "@/components/marketing/HomeServiceCards";
 import MarketingFaq from "@/components/marketing/MarketingFaq";
 import JadeDotDivider from "@/components/marketing/JadeDotDivider";
 
 /**
- * IA · Chapter ownership (A)
- * Hero = promise + CTA · Problem = why-us · How it works = mechanism via preview
- * Pricing = freemium · FAQ = operational detail · CTA = action only
+ * IA · Trust funnel (2026-07-17)
+ * Hero → Before you pay → Plans → Why-us → FAQ → CTA
  */
 export default function LandingPage() {
   return (
@@ -21,14 +20,18 @@ export default function LandingPage() {
               Your AI coach for HSK Level 3
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-muted">
-              Set your exam date, take a short diagnosis, and follow a weekly plan aimed at
-              your gaps — through exam day.
+              See your gaps and a full plan for free — then pay once for the work you
+              choose. No subscription.
+            </p>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-muted">
+              Before you pay: full report, outline and quote, a multi-skill sample
+              (including one AI writing review), and locked previews.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <ContinueCta className="btn-primary px-6 py-3 text-base">
                 Start with a free diagnosis
               </ContinueCta>
-              <a href="#how-it-works" className="btn-secondary px-6 py-3 text-base">
+              <a href="#before-you-pay" className="btn-secondary px-6 py-3 text-base">
                 See how it works
               </a>
             </div>
@@ -38,29 +41,29 @@ export default function LandingPage() {
       </section>
 
       <JadeDotDivider />
-      <ProblemFrame />
-
-      <JadeDotDivider />
       <HowItWorksShowcase />
 
       <JadeDotDivider />
-      <section>
+      <section id="plans" aria-labelledby="plans-heading">
         <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24">
           <h2
-            id="pricing"
+            id="plans-heading"
             className="text-center font-display text-3xl font-semibold text-ink"
           >
-            Free diagnosis. Pay once for the rest of the journey.
+            Choose how you want to prepare
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-center text-sm text-ink-muted">
-            Start with a full, free diagnosis. Then pick a coach package, a custom exam
-            plan, or an emergency sprint — one transparent rate, no subscriptions.
+          <p className="mx-auto mt-4 max-w-2xl text-center text-sm text-ink-muted">
+            Same rate for every plan. You pick the outcome — system-led, you-led, or
+            emergency.
           </p>
           <div className="mt-10">
-            <PricingTable />
+            <HomeServiceCards />
           </div>
         </div>
       </section>
+
+      <JadeDotDivider />
+      <ProblemFrame />
 
       <JadeDotDivider />
       <MarketingFaq />
@@ -71,13 +74,16 @@ export default function LandingPage() {
           <h2 className="font-display text-3xl font-semibold text-ink">
             Get your free diagnosis
           </h2>
-          <p className="mt-3 text-sm text-ink-muted">No credit card required.</p>
+          <p className="mx-auto mt-3 max-w-xl text-sm text-ink-muted">
+            No credit card. See your report, outline, and a real sample — including one
+            AI writing review — before you pay.
+          </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
             <ContinueCta className="btn-primary px-8 py-3 text-base">
               Start with a free diagnosis
             </ContinueCta>
-            <a href="#pricing" className="btn-secondary px-6 py-3 text-base">
-              See pricing
+            <a href="#plans" className="btn-secondary px-6 py-3 text-base">
+              See plans
             </a>
           </div>
         </div>

@@ -261,7 +261,7 @@ export default function Hsk2Vs3Page() {
           <ContinueCta className="btn-primary px-5 py-2.5 text-sm">
             Start free Week 1
           </ContinueCta>
-          <Link href="/#how-it-works" className="btn-secondary px-5 py-2.5 text-sm">
+          <Link href="/#before-you-pay" className="btn-secondary px-5 py-2.5 text-sm">
             See the AI coach loop
           </Link>
         </div>

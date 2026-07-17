@@ -6,40 +6,34 @@ const STEP_MS = 6500;
 
 const STEPS = [
   {
-    id: "mock",
+    id: "diagnosis",
     step: "1",
-    title: "Take a mock exam",
-    short: "Mock exam",
+    title: "Free diagnosis",
+    short: "Diagnosis",
   },
   {
     id: "report",
     step: "2",
-    title: "Get your score & skill breakdown",
-    short: "Score & skills",
+    title: "Full AI report",
+    short: "Full report",
   },
   {
-    id: "summary",
+    id: "outline",
     step: "3",
-    title: "Read your AI summary",
-    short: "AI summary",
+    title: "Outline + one quote",
+    short: "Outline & quote",
   },
   {
-    id: "plan",
+    id: "sample",
     step: "4",
-    title: "See your journey roadmap",
-    short: "Roadmap",
+    title: "Sample taste",
+    short: "Sample taste",
   },
   {
-    id: "practice",
+    id: "locked",
     step: "5",
-    title: "Do this week's tasks",
-    short: "This week",
-  },
-  {
-    id: "track",
-    step: "6",
-    title: "Track and re-test",
-    short: "Progress",
+    title: "Locked previews",
+    short: "Previews",
   },
 ] as const;
 
@@ -219,123 +213,10 @@ function MockExamPreview({ active }: { active: boolean }) {
                 submit
               </li>
               <li>
-                <span className="font-medium text-ink">Week 1 plan</span> — weighted to your
-                top gaps
+                <span className="font-medium text-ink">Full outline + quote</span> — before
+                you pay
               </li>
             </ul>
-          </FadeIn>
-        </div>
-      </div>
-    </PreviewChrome>
-  );
-}
-
-function ReportPreview({ active }: { active: boolean }) {
-  const score = active ? 72 : 0;
-  const dash = (score / 100) * 264;
-  const skills = [
-    { label: "Listening", value: 58, tag: "Focus area", color: "bg-seal", text: "text-seal" },
-    { label: "Reading", value: 78, tag: "Solid", color: "bg-jade", text: "text-jade" },
-    { label: "Vocabulary", value: 85, tag: "Strong", color: "bg-jade", text: "text-jade" },
-    { label: "Grammar", value: 70, tag: "OK", color: "bg-jade/70", text: "text-jade" },
-  ];
-  const misses = [
-    { q: "Q3 Listening", note: "Time expression · 几点" },
-    { q: "Q5 Listening", note: "Transport · 车票 / 地铁" },
-    { q: "Q7 Listening", note: "Schedule · 明天 / 周末" },
-  ];
-
-  return (
-    <PreviewChrome title="Mock Exam Result" badge="Preview">
-      <div className="grid flex-1 gap-6 lg:grid-cols-[200px_1fr]">
-        <div className="flex flex-col text-center">
-          <div className="relative mx-auto flex h-36 w-36 items-center justify-center">
-            <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="42" fill="none" stroke="#E8E4DF" strokeWidth="8" />
-              <circle
-                cx="50"
-                cy="50"
-                r="42"
-                fill="none"
-                stroke="#2D6A6A"
-                strokeWidth="8"
-                strokeDasharray={`${dash} 264`}
-                strokeLinecap="round"
-                className="transition-all duration-1000 ease-out"
-              />
-            </svg>
-            <div>
-              <p className="font-display text-4xl font-semibold text-ink">{score}%</p>
-              <p className="text-xs text-ink-muted">HSK 3</p>
-            </div>
-          </div>
-          <FadeIn active={active} delay={200} className="mt-3">
-            <p className="text-sm text-ink-muted">
-              <span className="font-semibold text-ink">58</span>/80 MCQ correct
-            </p>
-            <p className="mt-1 text-xs text-ink-muted">Writing submitted · AI score pending</p>
-          </FadeIn>
-          <FadeIn
-            active={active}
-            delay={350}
-            className="mt-auto rounded-xl border border-mist bg-paper-dark px-3 py-3 text-left"
-          >
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
-              Vs last attempt
-            </p>
-            <p className="mt-1 text-sm font-semibold text-jade">+6% overall</p>
-            <p className="mt-0.5 text-[11px] text-ink-muted">Listening still the limiter</p>
-          </FadeIn>
-        </div>
-
-        <div className="flex flex-col">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-            Skill breakdown
-          </p>
-          <div className="mt-3 space-y-3">
-            {skills.map((item, index) => (
-              <div key={item.label}>
-                <div className="mb-1 flex justify-between text-sm">
-                  <span className="font-medium text-ink">{item.label}</span>
-                  <span className={`text-xs font-semibold ${item.text}`}>{item.tag}</span>
-                </div>
-                <div className="h-2 overflow-hidden rounded-full bg-paper-dark">
-                  <div
-                    className={`h-full rounded-full ${item.color} transition-all duration-1000 ease-out`}
-                    style={{
-                      width: active ? `${item.value}%` : "0%",
-                      transitionDelay: active ? `${250 + index * 150}ms` : "0ms",
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <FadeIn active={active} delay={500} className="mt-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-              Listening misses
-            </p>
-            <ul className="mt-2 space-y-2">
-              {misses.map((row) => (
-                <li
-                  key={row.q}
-                  className="flex items-center justify-between rounded-lg border border-mist bg-white px-3 py-2 text-xs"
-                >
-                  <span className="font-medium text-ink">{row.q}</span>
-                  <span className="text-ink-muted">{row.note}</span>
-                </li>
-              ))}
-            </ul>
-          </FadeIn>
-
-          <FadeIn
-            active={active}
-            delay={700}
-            className="mt-auto rounded-xl border border-seal/20 bg-seal/5 px-4 py-3 text-sm text-ink-muted"
-          >
-            Top gap: <span className="font-semibold text-seal">Listening</span> — time
-            expressions and transport phrases need work before your next attempt.
           </FadeIn>
         </div>
       </div>
@@ -443,9 +324,9 @@ function SummaryPreview({ active }: { active: boolean }) {
               </p>
             </div>
             <div>
-              <p className="text-xs font-semibold text-ink">Next unlock</p>
+              <p className="text-xs font-semibold text-ink">Next</p>
               <p className="mt-2 text-xs leading-relaxed text-ink-muted">
-                Roadmap calendar · Week 1 weighted to listening gaps
+                Outline + one-time quote · then a multi-skill sample
               </p>
             </div>
           </div>
@@ -486,11 +367,12 @@ function PlanPreview({ active }: { active: boolean }) {
               42 days · calibrated from your HSK 3 mock (72%)
             </p>
           </div>
-          <div className="rounded-xl border border-mist bg-paper-dark px-4 py-3 text-right">
+          <div className="rounded-xl border border-jade/30 bg-jade/5 px-4 py-3 text-right">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-muted">
-              You are here
+              One-time quote
             </p>
-            <p className="mt-1 font-display text-lg font-semibold text-jade">Foundation</p>
+            <p className="mt-1 font-display text-lg font-semibold text-jade">$26 once</p>
+            <p className="mt-0.5 text-[11px] text-ink-muted">8-week coach pack</p>
           </div>
         </FadeIn>
 
@@ -562,10 +444,8 @@ function PlanPreview({ active }: { active: boolean }) {
         >
           <p className="text-xs font-semibold uppercase tracking-wide text-jade">Map only</p>
           <p className="mt-1 text-sm leading-relaxed text-ink-muted">
-            The roadmap shows <span className="font-medium text-ink">when</span> and{" "}
-            <span className="font-medium text-ink">what themes</span> — not the drills themselves.
-            Exam date sets the calendar; mock gaps set the weights. You train on Dashboard in the
-            next step.
+            Full outline plus a one-time quote — you see the work and the price before
+            the multi-skill sample.
           </p>
         </FadeIn>
       </div>
@@ -573,232 +453,96 @@ function PlanPreview({ active }: { active: boolean }) {
   );
 }
 
-function PracticePreview({ active }: { active: boolean }) {
-  const weekTasks = [
-    { title: "Listening drills", rank: 1, active: true },
-    { title: "Vocabulary review", rank: 2, active: false },
-    { title: "Grammar practice", rank: 3, active: false },
+function SampleTastePreview({ active }: { active: boolean }) {
+  const items = [
+    { skill: "Vocabulary", detail: "12 words · tone drill", done: true },
+    { skill: "Listening", detail: "4 short audio items", done: true },
+    { skill: "Grammar", detail: "3 pattern checks", done: false },
+    { skill: "Writing + AI", detail: "1 essay · full DeepSeek review", done: false },
   ];
 
   return (
-    <PreviewChrome title="Dashboard → Practice · Week 1 task" badge="Preview">
+    <PreviewChrome title="Sample taste · not calendar Day 1" badge="Free once">
       <div className="flex flex-1 flex-col">
-        <FadeIn
-          active={active}
-          className="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-ink-muted"
-        >
-          <span className="rounded-full bg-jade/15 px-2.5 py-1 text-jade">1 · Dashboard</span>
-          <span aria-hidden="true">→</span>
-          <span className="rounded-full bg-jade/15 px-2.5 py-1 text-jade">2 · Practice</span>
-          <span aria-hidden="true">→</span>
-          <span className="rounded-full border border-mist px-2.5 py-1">3 · Mastery gate</span>
+        <FadeIn active={active}>
+          <p className="text-sm text-ink-muted">
+            A cross-skill taster (~35 min) — vocab, listening, grammar, and one writing
+            review — so you feel the course, not only the first unit.
+          </p>
         </FadeIn>
-
-        <div className="mt-5 grid flex-1 gap-5 lg:grid-cols-[minmax(0,240px)_1fr]">
-          <FadeIn
-            active={active}
-            delay={100}
-            className="flex flex-col rounded-xl border border-jade/40 bg-jade/5 p-4"
-          >
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-jade">
-              Dashboard · This week
-            </p>
-            <p className="mt-2 text-sm font-semibold text-ink">Problem: Listening</p>
-            <p className="mt-1 text-[11px] text-ink-muted">Suggested order — start at the top</p>
-            <ul className="mt-3 space-y-2">
-              {weekTasks.map((task) => (
-                <li
-                  key={task.title}
-                  className={`rounded-lg border px-2.5 py-2 text-xs ${
-                    task.active
-                      ? "border-jade bg-white font-semibold text-ink shadow-sm"
-                      : "border-mist/80 bg-white/60 text-ink-muted"
-                  }`}
-                >
-                  <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-jade/10 text-[10px] font-semibold text-jade">
-                    {task.rank}
-                  </span>
-                  {task.title}
-                </li>
-              ))}
-            </ul>
-            <p className="mt-auto pt-4 text-[10px] leading-relaxed text-ink-muted">
-              Tap task #1 → opens plan-driven practice
-            </p>
-          </FadeIn>
-
-          <div className="flex flex-col">
-            <FadeIn active={active} delay={180}>
-              <p className="text-xs font-semibold uppercase tracking-wide text-jade">
-                Plan task · Listening
-              </p>
-              <p className="mt-3 font-display text-xl font-semibold text-ink sm:text-2xl">
-                他想买一张去上海的____。
-              </p>
-              <p className="mt-2 text-xs text-ink-muted">
-                AI question tagged to your top gap — not a random drill.
-              </p>
-            </FadeIn>
-
-            <div className="mt-4 grid gap-2 sm:grid-cols-2">
-              {["车票", "水果", "电脑", "书包"].map((choice, index) => (
-                <div
-                  key={choice}
-                  className={`rounded-xl border px-4 py-3 text-sm transition-all duration-500 ${
-                    active && index === 0
-                      ? "border-jade bg-jade/10 font-medium text-jade"
-                      : "border-mist text-ink-muted"
-                  }`}
-                  style={{ transitionDelay: active ? `${240 + index * 60}ms` : "0ms" }}
-                >
-                  {choice}
-                </div>
-              ))}
-            </div>
-
+        <ul className="mt-5 space-y-3">
+          {items.map((item, index) => (
             <FadeIn
+              key={item.skill}
               active={active}
-              delay={450}
-              className="mt-4 rounded-xl border border-mist bg-paper-dark/50 px-4 py-3"
+              delay={120 + index * 80}
+              className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 ${
+                item.done ? "border-jade/30 bg-jade/5" : "border-mist bg-white"
+              }`}
             >
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
-                Why this item
-              </p>
-              <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
-                Tagged to transport vocabulary — the same cluster that dragged listening down on
-                your mock.
-              </p>
-            </FadeIn>
-
-            <FadeIn
-              active={active}
-              delay={520}
-              className="mt-auto rounded-xl border border-jade/30 bg-jade/5 px-4 py-3"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-jade">
-                    Mastery gate
-                  </p>
-                  <p className="mt-1 font-display text-2xl font-semibold text-ink">
-                    8 <span className="text-base font-normal text-ink-muted">/ 10</span>
-                  </p>
-                  <p className="mt-1 text-xs text-ink-muted">Passed · locked into Week 1</p>
-                </div>
-                <span className="rounded-lg bg-jade px-4 py-2 text-sm font-semibold text-white">
-                  Continue week
-                </span>
+              <div>
+                <p className="text-sm font-semibold text-ink">{item.skill}</p>
+                <p className="mt-0.5 text-xs text-ink-muted">{item.detail}</p>
               </div>
+              <span
+                className={`text-xs font-semibold ${
+                  item.done ? "text-jade" : "text-ink-muted"
+                }`}
+              >
+                {item.done ? "Done" : "Next"}
+              </span>
             </FadeIn>
-          </div>
-        </div>
+          ))}
+        </ul>
       </div>
     </PreviewChrome>
   );
 }
 
-function DashboardPreview({ active }: { active: boolean }) {
-  const stats = [
-    { label: "Readiness", value: "68%", sub: "Up from 61% last mock" },
-    { label: "Days to exam", value: "42", sub: "Sep 12, 2026 target" },
-    { label: "Week 1 tasks", value: "2/3", sub: "passed this week" },
-    { label: "Listening gap", value: "−12%", sub: "wrong vs last mock" },
+function LockedPreviewsPreview({ active }: { active: boolean }) {
+  const cards = [
+    {
+      title: "Your listening · Numbers & time",
+      body: "Week 3 · 24 high-miss items",
+    },
+    {
+      title: "Writing critique (sample)",
+      body: "See how AI marks grammar & vocabulary",
+    },
+    {
+      title: "Included in your 8-week pack",
+      body: "Tap any lock → back to quote",
+    },
   ];
 
   return (
-    <PreviewChrome title="Dashboard · Progress & re-test" badge="Preview">
-      <div className="grid flex-1 gap-6 lg:grid-cols-[1.2fr_1fr]">
-        <div className="flex flex-col">
-          <FadeIn active={active}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-jade">
-              Progress glance
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-              After a week of plan-driven practice, listening accuracy is trending up. Ready
-              for a follow-up mock to refresh your coach report.
-            </p>
-          </FadeIn>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {stats.map((stat, index) => (
-              <div
-                key={stat.label}
-                className={`rounded-xl border border-mist bg-paper-dark px-4 py-3 transition-all duration-500 ${
-                  active ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
-                }`}
-                style={{ transitionDelay: active ? `${120 + index * 80}ms` : "0ms" }}
-              >
-                <p className="text-[11px] font-medium text-ink-muted">{stat.label}</p>
-                <p className="mt-1 font-display text-2xl font-semibold text-ink">{stat.value}</p>
-                <p className="text-[11px] text-ink-muted">{stat.sub}</p>
-              </div>
-            ))}
-          </div>
-
-          <FadeIn
-            active={active}
-            delay={400}
-            className="mt-auto rounded-xl border border-mist bg-white px-4 py-3"
-          >
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
-              Readiness trend
-            </p>
-            <div className="mt-3 flex h-16 items-end gap-1.5">
-              {[42, 48, 55, 61, 68].map((h, i) => (
-                <div
-                  key={h}
-                  className="flex-1 rounded-t bg-jade/25 transition-all duration-700"
-                  style={{
-                    height: active ? `${h}%` : "8%",
-                    transitionDelay: active ? `${450 + i * 60}ms` : "0ms",
-                    backgroundColor:
-                      i === 4 ? "rgb(45 106 106 / 0.85)" : "rgb(45 106 106 / 0.25)",
-                  }}
-                />
-              ))}
-            </div>
-            <p className="mt-2 text-[11px] text-ink-muted">Mock → practice week → today</p>
-          </FadeIn>
-        </div>
-
-        <FadeIn
-          active={active}
-          delay={250}
-          className="flex flex-col rounded-xl border border-mist bg-paper-dark p-5"
-        >
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-            Close the loop
+    <PreviewChrome title="Locked previews · personalized" badge="Preview">
+      <div className="flex flex-1 flex-col gap-3">
+        <FadeIn active={active}>
+          <p className="text-sm text-ink-muted">
+            Later tasks stay visible against your diagnosis — look, don&apos;t run — until
+            you buy.
           </p>
-          <ul className="mt-4 space-y-3 text-sm text-ink-muted">
-            <li className="flex gap-2">
-              <span className="text-jade" aria-hidden="true">
-                ✓
-              </span>
-              Week 1 tasks cleared — Week 2 unlocked on roadmap
-            </li>
-            <li className="flex gap-2">
-              <span className="text-jade" aria-hidden="true">
-                ✓
-              </span>
-              Listening accuracy +9% since last report
-            </li>
-            <li className="flex gap-2">
-              <span className="text-ink-muted" aria-hidden="true">
-                →
-              </span>
-              Take another mock to re-weight the journey
-            </li>
-          </ul>
-          <div className="mt-auto pt-6">
-            <span className="inline-block rounded-lg bg-jade px-4 py-2.5 text-sm font-semibold text-white">
-              Take follow-up mock
-            </span>
-            <p className="mt-3 text-[11px] leading-relaxed text-ink-muted">
-              New mock → updated report → roadmap adjusts. Then back to This week on
-              Dashboard.
-            </p>
-          </div>
         </FadeIn>
+        {cards.map((card, index) => (
+          <FadeIn
+            key={card.title}
+            active={active}
+            delay={140 + index * 90}
+            className="relative rounded-xl border border-mist bg-white px-4 py-3"
+          >
+            <div className="pointer-events-none absolute inset-0 rounded-xl bg-paper/50 backdrop-blur-[1px]" />
+            <div className="relative flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-ink">{card.title}</p>
+                <p className="mt-1 text-xs text-ink-muted">{card.body}</p>
+              </div>
+              <span className="shrink-0 rounded-full bg-paper-dark px-2 py-0.5 text-[10px] font-semibold uppercase text-ink-muted">
+                Locked
+              </span>
+            </div>
+          </FadeIn>
+        ))}
       </div>
     </PreviewChrome>
   );
@@ -806,18 +550,16 @@ function DashboardPreview({ active }: { active: boolean }) {
 
 function StepPreview({ stepId, active }: { stepId: StepId; active: boolean }) {
   switch (stepId) {
-    case "mock":
+    case "diagnosis":
       return <MockExamPreview active={active} />;
     case "report":
-      return <ReportPreview active={active} />;
-    case "summary":
       return <SummaryPreview active={active} />;
-    case "plan":
+    case "outline":
       return <PlanPreview active={active} />;
-    case "practice":
-      return <PracticePreview active={active} />;
-    case "track":
-      return <DashboardPreview active={active} />;
+    case "sample":
+      return <SampleTastePreview active={active} />;
+    case "locked":
+      return <LockedPreviewsPreview active={active} />;
   }
 }
 
@@ -856,11 +598,18 @@ export default function HowItWorksShowcase() {
   const activeStep = STEPS[activeIndex];
 
   return (
-    <section id="how-it-works">
+    <section id="before-you-pay" aria-labelledby="before-you-pay-heading">
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24">
-        <h2 className="text-center font-display text-3xl font-semibold text-ink">
-          How it works
+        <h2
+          id="before-you-pay-heading"
+          className="text-center font-display text-3xl font-semibold text-ink"
+        >
+          What you get before you pay
         </h2>
+        <p className="mx-auto mt-4 max-w-2xl text-center text-sm text-ink-muted">
+          Full diagnosis, a clear quote, and a real multi-skill sample — including one AI
+          writing review.
+        </p>
 
         <div
           className="mt-10"
@@ -870,8 +619,8 @@ export default function HowItWorksShowcase() {
           onBlurCapture={() => setPaused(false)}
         >
           <ol
-            className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1 lg:grid lg:grid-cols-6 lg:overflow-visible lg:pb-0"
-            aria-label="How it works steps"
+            className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1 lg:grid lg:grid-cols-5 lg:overflow-visible lg:pb-0"
+            aria-label="Before you pay steps"
           >
             {STEPS.map((step, index) => {
               const isActive = index === activeIndex;
@@ -889,7 +638,7 @@ export default function HowItWorksShowcase() {
                         : "border-mist bg-white hover:border-jade/20 hover:bg-paper-dark/50"
                     }`}
                     aria-current={isActive ? "step" : undefined}
-                    aria-controls="how-it-works-preview"
+                    aria-controls="before-you-pay-preview"
                     aria-label={step.title}
                   >
                     <div className="flex items-center gap-2">
@@ -927,7 +676,7 @@ export default function HowItWorksShowcase() {
             No fixed height / overflow-y — no inner scrollbars, no page jump on autoplay.
           */}
           <div
-            id="how-it-works-preview"
+            id="before-you-pay-preview"
             className="relative mt-8 grid"
             aria-live="polite"
             aria-label={`Step ${activeStep.step}: ${activeStep.title}`}

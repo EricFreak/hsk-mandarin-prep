@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 /**
- * FAQ — sole owner of operational detail (duration, writing AI, Free/Pro edge cases).
- * No section eyebrowse — questions are the interface.
+ * FAQ — operational boundaries only.
+ * Free-chain content lives in Before you pay; do not restate the full list here.
  */
 const FAQ_ITEMS = [
   {
@@ -25,9 +25,25 @@ const FAQ_ITEMS = [
     a: (
       <>
         One sit-down Level 3 diagnosis with{" "}
-        <span className="font-medium text-ink">listening and reading MCQs</span>
-        . It is sized for a first check — shorter than a full official HSK Level 3
-        paper — so you can open your coach report and Week 1 without a multi-hour session.
+        <span className="font-medium text-ink">listening and reading MCQs</span>. It is
+        shorter than a full official paper — sized to open your coach report and plan,
+        not to burn a free mock-exam quota.
+      </>
+    ),
+  },
+  {
+    q: "Is the free sample limited?",
+    a: (
+      <>
+        Yes. Each account gets{" "}
+        <span className="font-medium text-ink">
+          one multi-skill taste
+        </span>{" "}
+        (including one AI writing review) — not unlimited free practice. See{" "}
+        <a href="#before-you-pay" className="font-medium text-jade hover:text-jade-light">
+          What you get before you pay
+        </a>{" "}
+        above for the full free chain.
       </>
     ),
   },
@@ -35,32 +51,32 @@ const FAQ_ITEMS = [
     q: "Is writing scored by AI?",
     a: (
       <>
-        You can <span className="font-medium text-ink">submit writing on Free</span> with a
-        full mock. <span className="font-medium text-ink">AI writing score and feedback</span> is
-        part of the paid services. Free still gets MCQ scoring and a complete coach report.
+        Your free sample includes{" "}
+        <span className="font-medium text-ink">one full AI writing review</span> (DeepSeek).
+        More writing reviews come with the package you buy — not unlimited free scoring.
       </>
     ),
   },
   {
-    q: "What is free, and when do I pay?",
+    q: "What are the three plans?",
     a: (
       <>
-        Free includes the full diagnosis and your complete coach report — no truncation, no
-        quotas. You only pay when you want more work: a{" "}
-        <span className="font-medium text-ink">coach package</span>, a{" "}
-        <span className="font-medium text-ink">custom exam plan</span>, or an{" "}
-        <span className="font-medium text-ink">emergency sprint</span>. See the pricing cards
-        above — one rate for all three.
+        <span className="font-medium text-ink">Coach package</span> (system-led, 4/8/12
+        weeks at a fixed price),{" "}
+        <span className="font-medium text-ink">Custom exam plan</span> (you set the
+        workload; one quote after diagnosis), and{" "}
+        <span className="font-medium text-ink">Emergency sprint</span> (exam in ≤6 days;
+        first sprint free once per account).
       </>
     ),
   },
   {
-    q: "When should I buy a plan?",
+    q: "Do you charge more when the exam is soon?",
     a: (
       <>
-        After your <span className="font-medium text-ink">diagnosis</span> — that is when you
-        get a transparent quote for exactly the work you want to schedule. Diagnosis itself is
-        never interrupted by a paywall.
+        No.{" "}
+        <span className="font-medium text-ink">One rate for every plan</span> — no urgency
+        premium, even days before the exam.
       </>
     ),
   },
@@ -69,8 +85,8 @@ const FAQ_ITEMS = [
     a: (
       <>
         No level picker for now — the product is a single-track{" "}
-        <span className="font-medium text-ink">HSK Level 3</span> coach so the journey stays
-        focused through exam day.
+        <span className="font-medium text-ink">HSK Level 3</span> coach so the journey
+        stays focused through exam day.
       </>
     ),
   },

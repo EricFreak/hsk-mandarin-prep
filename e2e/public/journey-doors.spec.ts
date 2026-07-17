@@ -36,10 +36,10 @@ test.describe("JOURNEY — public CTA & diagnosis door", () => {
     }
   });
 
-  test("JNY-PUB-003: pricing free CTA uses journey door", async ({ page }) => {
-    await page.goto("/#pricing");
-    const freeCta = page.getByRole("link", { name: /start free diagnosis/i }).first();
-    await expect(freeCta).toHaveAttribute(
+  test("JNY-PUB-003: plans CTA uses journey door", async ({ page }) => {
+    await page.goto("/#plans");
+    const planCta = page.getByRole("link", { name: /start with diagnosis/i }).first();
+    await expect(planCta).toHaveAttribute(
       "href",
       /\/login\?next=%2Fonboarding|\/onboarding|\/dashboard|\/diagnosis/,
     );

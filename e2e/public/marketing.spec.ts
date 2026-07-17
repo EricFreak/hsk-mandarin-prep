@@ -11,13 +11,16 @@ test.describe("MKT — Marketing & public pages", () => {
       page.getByRole("heading", { name: /Built for your first real HSK/i }),
     ).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: /Free diagnosis\. Pay once for the rest of the journey/i }),
+      page.getByRole("heading", { name: /What you get before you pay/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Choose how you want to prepare/i }),
     ).toBeVisible();
     await expect(page.getByText(/GF0025-2021/i).first()).toBeVisible();
     await expect(
       page.getByRole("heading", { name: /Questions before you start/i }),
     ).toBeVisible();
-    await expect(page.getByText(/How long is the free diagnosis/i)).toBeVisible();
+    await expect(page.getByText(/Is the free sample limited/i)).toBeVisible();
   });
 
   test("MKT-003: HSK exam guide page", async ({ page }) => {

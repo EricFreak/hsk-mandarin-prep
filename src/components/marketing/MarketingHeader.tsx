@@ -6,7 +6,7 @@ import { useState } from "react";
 import BrandLogo from "@/components/marketing/BrandLogo";
 
 const NAV_LINKS = [
-  { href: "/#how-it-works", label: "How it works" },
+  { href: "/#before-you-pay", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
 ] as const;
 
@@ -20,8 +20,8 @@ export default function MarketingHeader({ accountHref, accountLabel }: Props) {
   const pathname = usePathname();
 
   function resolveHref(href: string) {
-    if (href === "/#how-it-works" && pathname === "/") {
-      return "#how-it-works";
+    if (href === "/#before-you-pay" && pathname === "/") {
+      return "#before-you-pay";
     }
     return href;
   }

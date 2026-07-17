@@ -4,7 +4,7 @@ import LearnerAvatars from "@/components/marketing/LearnerAvatars";
 import { resolveVisitorContinueHref } from "@/lib/auth/continue-destination";
 
 const FOOTER_LINKS = [
-  { href: "/#how-it-works", label: "How it works" },
+  { href: "/#before-you-pay", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
   { href: "/hsk-2-vs-3", label: "HSK exam guide" },
 ] as const;

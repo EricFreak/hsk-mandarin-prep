@@ -1,27 +1,24 @@
 import Link from "next/link";
 
+const POINTS = [
+  {
+    title: "Exam-dated, not endless",
+    body: "Your plan aims at your exam date — or a fixed coach cycle — not an infinite streak.",
+  },
+  {
+    title: "HSK Level 3 syllabus (GF0025-2021)",
+    body: "Aligned to the current Level 3 map, not older HSK 2.0 word lists.",
+  },
+  {
+    title: "Diagnosis → plan → practice",
+    body: "Weaknesses drive what you do next. You see the full outline and quote before you pay.",
+  },
+] as const;
+
 /**
- * Problem framing — sole owner of “why us vs glued tools.”
- * Syllabus authority lives here as a foot note (not a separate skim band).
+ * Why-us — compressed single column (trust-funnel IA).
+ * No mastery-gate / week-unlock freemium language.
  */
-const WITHOUT = {
-  label: "Most self-study apps",
-  points: [
-    "Random drills with no exam date on the calendar",
-    "Word lists that still track older HSK 2.0 maps",
-    "No weekly bar — easy to skip hard skills",
-  ],
-} as const;
-
-const WITH = {
-  label: "HSK Prep coach",
-  points: [
-    "Journey mapped from your mock to your exam day",
-    "HSK Level 3 syllabus (GF0025-2021)",
-    "Weekly tasks + mastery gate before the next week unlocks",
-  ],
-} as const;
-
 export default function ProblemFrame() {
   return (
     <section id="why-coach" aria-labelledby="why-coach-heading">
@@ -33,49 +30,16 @@ export default function ProblemFrame() {
           Built for your first real HSK — not another endless word bank
         </h2>
 
-        <div className="mx-auto mt-12 grid max-w-4xl items-stretch gap-4 md:grid-cols-2 md:gap-6">
-          <div className="flex flex-col rounded-2xl border border-dashed border-ink/15 bg-paper-dark/50 p-6 sm:p-8">
-            <h3 className="font-display text-lg font-semibold text-ink/55">{WITHOUT.label}</h3>
-            <ul className="mt-5 flex-1 space-y-3.5">
-              {WITHOUT.points.map((point) => (
-                <li
-                  key={point}
-                  className="flex items-start gap-2.5 text-sm leading-relaxed text-ink-muted/90"
-                >
-                  <span
-                    className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-seal/15 text-xs font-semibold text-seal"
-                    aria-hidden
-                  >
-                    ×
-                  </span>
-                  {point}
-                </li>
-              ))}
-            </ul>
-          </div>
+        <ul className="mx-auto mt-12 max-w-2xl space-y-8">
+          {POINTS.map((point) => (
+            <li key={point.title}>
+              <h3 className="font-display text-lg font-semibold text-ink">{point.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-ink-muted">{point.body}</p>
+            </li>
+          ))}
+        </ul>
 
-          <div className="relative flex flex-col rounded-2xl border-2 border-jade bg-jade/8 p-6 sm:p-8 md:-my-1 md:px-8">
-            <h3 className="font-display text-lg font-semibold text-ink">{WITH.label}</h3>
-            <ul className="mt-5 flex-1 space-y-3.5">
-              {WITH.points.map((point) => (
-                <li
-                  key={point}
-                  className="flex items-start gap-2.5 text-sm leading-relaxed text-ink-muted"
-                >
-                  <span
-                    className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-jade/15 text-xs font-bold text-jade"
-                    aria-hidden
-                  >
-                    ✓
-                  </span>
-                  {point}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-relaxed text-ink-muted">
+        <p className="mx-auto mt-10 max-w-2xl text-center text-xs leading-relaxed text-ink-muted">
           Aligned to HSK Level 3 (GF0025-2021). Not affiliated with Hanban.{" "}
           <Link href="/hsk-2-vs-3" className="font-medium text-jade hover:text-jade-light">
             Exam guide
