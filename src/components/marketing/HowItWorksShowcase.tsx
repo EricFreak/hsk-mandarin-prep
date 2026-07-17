@@ -92,7 +92,7 @@ function FadeIn({
 
 function MockExamPreview({ active }: { active: boolean }) {
   return (
-    <PreviewChrome title="HSK 3 Mock Exam · Live session" badge="Preview">
+    <PreviewChrome title="HSK 3 Diagnosis · Listening & reading" badge="Free">
       <div className="grid flex-1 gap-6 lg:grid-cols-[1fr_280px]">
         <div className="flex flex-col">
           <div className="flex flex-wrap items-center gap-2">
