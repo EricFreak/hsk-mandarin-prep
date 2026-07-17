@@ -398,25 +398,17 @@ function PlanPreview({ active }: { active: boolean }) {
   return (
     <PreviewChrome title="Journey Roadmap · Exam Sep 12, 2026" badge="Preview">
       <div className="flex flex-col gap-5">
-        <FadeIn active={active} className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-jade">
-              Target exam date
-            </p>
-            <h3 className="mt-1 font-display text-xl font-semibold text-ink">
-              September 12, 2026
-            </h3>
-            <p className="mt-1 text-sm text-ink-muted">
-              42 days · calibrated from your HSK 3 mock (72%)
-            </p>
-          </div>
-          <div className="rounded-xl border border-jade/30 bg-jade/5 px-4 py-3 text-right">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-muted">
-              One-time quote
-            </p>
-            <p className="mt-1 font-display text-lg font-semibold text-jade">$26 once</p>
-            <p className="mt-0.5 text-[11px] text-ink-muted">8-week coach pack</p>
-          </div>
+        <FadeIn active={active}>
+          <p className="text-xs font-semibold uppercase tracking-wide text-jade">
+            Target exam date
+          </p>
+          <h3 className="mt-1 font-display text-xl font-semibold text-ink">
+            September 12, 2026
+          </h3>
+          <p className="mt-1 text-sm text-ink-muted">
+            42 days · calibrated from your HSK 3 mock (72%) · same rate, three shapes to
+            choose
+          </p>
         </FadeIn>
 
         <FadeIn
@@ -451,7 +443,7 @@ function PlanPreview({ active }: { active: boolean }) {
           <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
             Full journey outline — theme per week
           </p>
-          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {outlineWeeks.map((row, index) => (
               <li
                 key={row.week}
@@ -477,49 +469,65 @@ function PlanPreview({ active }: { active: boolean }) {
                 </span>
               </li>
             ))}
+            <li className="flex items-center rounded-xl border border-dashed border-mist bg-paper-dark/40 px-3 py-2 text-[11px] leading-relaxed text-ink-muted">
+              Weeks 6–8 continue the locked plan after you pick a shape below.
+            </li>
           </ul>
         </FadeIn>
 
         <FadeIn active={active} delay={480}>
           <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-            Quoted three ways — same single rate, you pick the shape
+            One quote, three shapes — same rate, you pick the shape
           </p>
           <div className="mt-3 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl border border-jade/40 bg-jade/5 px-4 py-3">
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-jade">
+            <div className="rounded-xl border border-mist bg-white px-4 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
                 Coach pack · system-led
               </p>
               <p className="mt-1 font-display text-lg font-semibold text-ink">
                 $13 / $26 / $39
               </p>
-              <p className="mt-1 text-[11px] leading-relaxed text-ink-muted">
-                4 / 8 / 12 weeks fixed. This example: 8 weeks — 96 drills · 8 AI writing
-                reviews · 4 mini mocks.
-              </p>
+              <p className="mt-0.5 text-[11px] text-ink-muted">4 / 8 / 12 weeks · pay once</p>
+              <ul className="mt-2 space-y-1 text-[11px] leading-relaxed text-ink-muted">
+                <li>
+                  Example · 8 weeks: <span className="font-medium text-ink">$26</span>
+                </li>
+                <li>96 drills · 8 AI writing · 4 mini mocks</li>
+                <li>System builds the weeks. You follow.</li>
+              </ul>
             </div>
             <div className="rounded-xl border border-mist bg-white px-4 py-3">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
                 Exam custom · you-led
               </p>
               <p className="mt-1 font-display text-lg font-semibold text-ink">
-                Your mix → one quote
+                Mix → live quote
               </p>
-              <p className="mt-1 text-[11px] leading-relaxed text-ink-muted">
-                Set listening-heavy, fewer essays — price updates live. Cut volume, price
-                drops. We check it fits before Sep 12.
-              </p>
+              <p className="mt-0.5 text-[11px] text-ink-muted">Workload priced · one quote</p>
+              <ul className="mt-2 space-y-1 text-[11px] leading-relaxed text-ink-muted">
+                <li>
+                  Example for this gap:{" "}
+                  <span className="font-medium text-ink">listening-heavy → ~$22</span>
+                </li>
+                <li>Cut essays, price drops · add mocks, price rises</li>
+                <li>We check it still fits before Sep 12</li>
+              </ul>
             </div>
             <div className="rounded-xl border border-mist bg-white px-4 py-3">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
                 Emergency sprint · ≤ 6 days
               </p>
-              <p className="mt-1 font-display text-lg font-semibold text-jade">
+              <p className="mt-1 font-display text-lg font-semibold text-ink">
                 First one free
               </p>
-              <p className="mt-1 text-[11px] leading-relaxed text-ink-muted">
-                Exam almost here? One full sprint free per account — before any payment. No
-                urgency premium after.
-              </p>
+              <p className="mt-0.5 text-[11px] text-ink-muted">Once per account · before pay</p>
+              <ul className="mt-2 space-y-1 text-[11px] leading-relaxed text-ink-muted">
+                <li>
+                  This account: <span className="font-medium text-jade">$0 first sprint</span>
+                </li>
+                <li>After that: same rate (~$13 for a 6-day push)</li>
+                <li>No urgency premium — short window, full push</li>
+              </ul>
             </div>
           </div>
         </FadeIn>
