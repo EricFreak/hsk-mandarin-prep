@@ -26,14 +26,14 @@ const STEPS = [
   {
     id: "sample",
     step: "4",
-    title: "Sample taste",
-    short: "Sample taste",
+    title: "Sample taste + writing AI",
+    short: "Sample + AI",
   },
   {
     id: "locked",
     step: "5",
-    title: "Locked previews",
-    short: "Previews",
+    title: "Locked task previews",
+    short: "Task peeks",
   },
 ] as const;
 
@@ -201,20 +201,20 @@ function MockExamPreview({ active }: { active: boolean }) {
             className="flex-1 rounded-xl border border-mist bg-white p-4"
           >
             <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-              What this mock feeds
+              What diagnosis unlocks
             </p>
-            <ul className="mt-3 space-y-2 text-xs leading-relaxed text-ink-muted">
+            <ul className="mt-3 space-y-2.5 text-xs leading-relaxed text-ink-muted">
               <li>
-                <span className="font-medium text-ink">Score + skills</span> — breakdown for
-                listening, reading, vocabulary, grammar
+                <span className="font-medium text-ink">Skill heatmap</span> — listening 58 ·
+                reading 78 · vocab 85
               </li>
               <li>
-                <span className="font-medium text-ink">AI coach report</span> — ready after
-                submit
+                <span className="font-medium text-ink">Full coach report</span> — DeepSeek,
+                not truncated
               </li>
               <li>
-                <span className="font-medium text-ink">Full outline + quote</span> — before
-                you pay
+                <span className="font-medium text-ink">Sample writing AI</span> — one free
+                red-line review after the taste
               </li>
             </ul>
           </FadeIn>
@@ -345,11 +345,11 @@ function PlanPreview({ active }: { active: boolean }) {
   ];
 
   const outlineWeeks = [
-    { week: 1, theme: "Vocabulary focus", stage: "Foundation", status: "Available" },
-    { week: 2, theme: "Grammar focus", stage: "Foundation", status: "Locked" },
-    { week: 3, theme: "Listening focus", stage: "Skills", status: "Locked" },
-    { week: 4, theme: "Reading & writing", stage: "Skills", status: "Locked" },
-    { week: 5, theme: "Mock review", stage: "Sprint", status: "Locked" },
+    { week: 1, theme: "Vocab + grammar base", detail: "40 drills · 1 writing", status: "Sample" },
+    { week: 2, theme: "Grammar patterns", detail: "因为…所以… · particles", status: "Locked" },
+    { week: 3, theme: "Listening · time/travel", detail: "24 miss-type items", status: "Locked" },
+    { week: 4, theme: "Reading + writing", detail: "passages · AI review", status: "Locked" },
+    { week: 5, theme: "Mini mocks", detail: "2 sections · score check", status: "Locked" },
   ];
 
   return (
@@ -421,11 +421,11 @@ function PlanPreview({ active }: { active: boolean }) {
                   <p className="text-sm font-semibold text-ink">
                     Week {row.week} · {row.theme}
                   </p>
-                  <p className="mt-0.5 text-[11px] text-ink-muted">{row.stage}</p>
+                  <p className="mt-0.5 text-[11px] text-ink-muted">{row.detail}</p>
                 </div>
                 <span
                   className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${
-                    row.status === "Available"
+                    row.status === "Sample"
                       ? "bg-jade/15 text-jade"
                       : "bg-paper-dark text-ink-muted"
                   }`}
@@ -440,13 +440,23 @@ function PlanPreview({ active }: { active: boolean }) {
         <FadeIn
           active={active}
           delay={480}
-          className="mt-5 rounded-xl border border-mist bg-paper-dark px-4 py-3"
+          className="mt-5 grid gap-3 sm:grid-cols-3"
         >
-          <p className="text-xs font-semibold uppercase tracking-wide text-jade">Map only</p>
-          <p className="mt-1 text-sm leading-relaxed text-ink-muted">
-            Full outline plus a one-time quote — you see the work and the price before
-            the multi-skill sample.
-          </p>
+          {[
+            { label: "Listening drills", value: "96 items" },
+            { label: "Writing + AI", value: "8 reviews" },
+            { label: "Mini mocks", value: "4 sections" },
+          ].map((row) => (
+            <div
+              key={row.label}
+              className="rounded-xl border border-mist bg-paper-dark px-4 py-3"
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+                {row.label}
+              </p>
+              <p className="mt-1 font-display text-lg font-semibold text-ink">{row.value}</p>
+            </div>
+          ))}
         </FadeIn>
       </div>
     </PreviewChrome>
@@ -454,95 +464,238 @@ function PlanPreview({ active }: { active: boolean }) {
 }
 
 function SampleTastePreview({ active }: { active: boolean }) {
-  const items = [
-    { skill: "Vocabulary", detail: "12 words · tone drill", done: true },
-    { skill: "Listening", detail: "4 short audio items", done: true },
-    { skill: "Grammar", detail: "3 pattern checks", done: false },
-    { skill: "Writing + AI", detail: "1 essay · full DeepSeek review", done: false },
+  const tasteStrip = [
+    { skill: "Vocab", detail: "12 words", done: true },
+    { skill: "Listen", detail: "4 clips", done: true },
+    { skill: "Grammar", detail: "3 checks", done: true },
+    { skill: "Writing", detail: "AI review", done: true, highlight: true },
   ];
 
   return (
-    <PreviewChrome title="Sample taste · not calendar Day 1" badge="Free once">
-      <div className="flex flex-1 flex-col">
-        <FadeIn active={active}>
-          <p className="text-sm text-ink-muted">
-            A cross-skill taster (~35 min) — vocab, listening, grammar, and one writing
-            review — so you feel the course, not only the first unit.
+    <PreviewChrome title="Sample taste · Writing AI review included" badge="Free once">
+      <div className="grid flex-1 gap-6 lg:grid-cols-[200px_1fr]">
+        <div className="flex flex-col gap-2">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+            Cross-skill taster
           </p>
-        </FadeIn>
-        <ul className="mt-5 space-y-3">
-          {items.map((item, index) => (
+          {tasteStrip.map((item, index) => (
             <FadeIn
               key={item.skill}
               active={active}
-              delay={120 + index * 80}
-              className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 ${
-                item.done ? "border-jade/30 bg-jade/5" : "border-mist bg-white"
+              delay={80 + index * 60}
+              className={`rounded-xl border px-3 py-2.5 ${
+                item.highlight
+                  ? "border-jade bg-jade/10"
+                  : item.done
+                    ? "border-jade/25 bg-jade/5"
+                    : "border-mist bg-white"
               }`}
             >
-              <div>
+              <div className="flex items-center justify-between gap-2">
                 <p className="text-sm font-semibold text-ink">{item.skill}</p>
-                <p className="mt-0.5 text-xs text-ink-muted">{item.detail}</p>
+                <span className="text-[10px] font-semibold text-jade">✓</span>
               </div>
-              <span
-                className={`text-xs font-semibold ${
-                  item.done ? "text-jade" : "text-ink-muted"
-                }`}
-              >
-                {item.done ? "Done" : "Next"}
-              </span>
+              <p className="mt-0.5 text-[11px] text-ink-muted">{item.detail}</p>
             </FadeIn>
           ))}
-        </ul>
+        </div>
+
+        <FadeIn
+          active={active}
+          delay={180}
+          className="flex flex-col rounded-xl border border-jade/30 bg-white p-4 sm:p-5"
+        >
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-jade">
+                DeepSeek writing review · free sample
+              </p>
+              <p className="mt-1 text-sm text-ink-muted">
+                Prompt: 介绍你喜欢的运动，并说明原因（约 80 字）
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="font-display text-3xl font-semibold text-jade">72</p>
+              <p className="text-[10px] font-semibold uppercase text-ink-muted">/ 100</p>
+            </div>
+          </div>
+
+          <div className="mt-4 rounded-lg border border-mist bg-paper-dark/50 px-3 py-3">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+              Your draft
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-ink">
+              我喜欢打篮球。因为篮球很有意思，我每个周末和朋友一起打。运动以后我觉得很开心，
+              身体也<span className="bg-seal/15 text-seal line-through decoration-seal/60">健康的</span>
+              <span className="ml-1 rounded bg-jade/15 px-1 font-medium text-jade">更健康了</span>。
+            </p>
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-lg border border-seal/20 bg-seal/5 px-3 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-seal">
+                Grammar
+              </p>
+              <ul className="mt-2 space-y-1.5 text-xs leading-relaxed text-ink-muted">
+                <li>
+                  <span className="font-medium text-ink">了</span> after result: 更健康了
+                  marks change-of-state better than 健康的.
+                </li>
+                <li>
+                  Add <span className="font-medium text-ink">因为…所以…</span> to link reason
+                  and feeling in one sentence.
+                </li>
+              </ul>
+            </div>
+            <div className="rounded-lg border border-jade/25 bg-jade/5 px-3 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-jade">
+                Vocabulary · Next
+              </p>
+              <ul className="mt-2 space-y-1.5 text-xs leading-relaxed text-ink-muted">
+                <li>
+                  Strong: 周末、朋友、开心 — on-level HSK 3.
+                </li>
+                <li>
+                  Try: <span className="font-medium text-ink">锻炼身体</span> /{" "}
+                  <span className="font-medium text-ink">团队合作</span> for richer sport talk.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <p className="mt-4 border-t border-mist pt-3 text-xs leading-relaxed text-ink-muted">
+            One full AI review in the free sample. More writing reviews come with your
+            package — same DeepSeek examiner, same red-line detail.
+          </p>
+        </FadeIn>
       </div>
     </PreviewChrome>
   );
 }
 
 function LockedPreviewsPreview({ active }: { active: boolean }) {
-  const cards = [
-    {
-      title: "Your listening · Numbers & time",
-      body: "Week 3 · 24 high-miss items",
-    },
-    {
-      title: "Writing critique (sample)",
-      body: "See how AI marks grammar & vocabulary",
-    },
-    {
-      title: "Included in your 8-week pack",
-      body: "Tap any lock → back to quote",
-    },
-  ];
-
   return (
-    <PreviewChrome title="Locked previews · personalized" badge="Preview">
-      <div className="flex flex-1 flex-col gap-3">
+    <PreviewChrome title="Locked previews · your diagnosis, still visible" badge="Look only">
+      <div className="flex flex-1 flex-col gap-4">
         <FadeIn active={active}>
           <p className="text-sm text-ink-muted">
-            Later tasks stay visible against your diagnosis — look, don&apos;t run — until
-            you buy.
+            Paid tasks show real content from your gaps — you can read what you&apos;d
+            unlock, but Start stays locked until you buy.
           </p>
         </FadeIn>
-        {cards.map((card, index) => (
+
+        <FadeIn
+          active={active}
+          delay={120}
+          className="relative overflow-hidden rounded-xl border border-mist bg-white"
+        >
+          <div className="absolute right-3 top-3 z-10 rounded-full bg-ink/80 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+            Locked · Week 3
+          </div>
+          <div className="border-b border-mist bg-seal/5 px-4 py-3 pr-28">
+            <p className="text-xs font-semibold uppercase tracking-wide text-seal">
+              Built from your misses
+            </p>
+            <p className="mt-1 font-display text-lg font-semibold text-ink">
+              Listening · Numbers &amp; time
+            </p>
+            <p className="mt-1 text-xs text-ink-muted">
+              24 items · same error cluster as your diagnosis (几点 / 明天 / 周末)
+            </p>
+          </div>
+          <ul className="divide-y divide-mist/80 px-4">
+            {[
+              {
+                q: "Q1 · Audio",
+                line: "男的明天几点开会？",
+                tag: "Time · 几点",
+              },
+              {
+                q: "Q2 · Audio",
+                line: "他们周末去哪儿？",
+                tag: "Schedule · 周末",
+              },
+              {
+                q: "Q3 · Audio",
+                line: "车票多少钱？",
+                tag: "Travel · 车票",
+              },
+            ].map((row) => (
+              <li key={row.q} className="flex items-start justify-between gap-3 py-2.5">
+                <div>
+                  <p className="text-[11px] font-semibold text-ink-muted">{row.q}</p>
+                  <p className="mt-0.5 text-sm text-ink">{row.line}</p>
+                </div>
+                <span className="shrink-0 rounded-full bg-paper-dark px-2 py-0.5 text-[10px] font-medium text-ink-muted">
+                  {row.tag}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <div className="border-t border-dashed border-mist bg-paper-dark/40 px-4 py-2.5 text-center text-xs font-medium text-ink-muted">
+            Included in your 8-week pack · tap to open quote
+          </div>
+        </FadeIn>
+
+        <div className="grid gap-4 sm:grid-cols-2">
           <FadeIn
-            key={card.title}
             active={active}
-            delay={140 + index * 90}
-            className="relative rounded-xl border border-mist bg-white px-4 py-3"
+            delay={220}
+            className="relative rounded-xl border border-mist bg-white p-4"
           >
-            <div className="pointer-events-none absolute inset-0 rounded-xl bg-paper/50 backdrop-blur-[1px]" />
-            <div className="relative flex items-start justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold text-ink">{card.title}</p>
-                <p className="mt-1 text-xs text-ink-muted">{card.body}</p>
-              </div>
-              <span className="shrink-0 rounded-full bg-paper-dark px-2 py-0.5 text-[10px] font-semibold uppercase text-ink-muted">
-                Locked
-              </span>
+            <div className="absolute right-3 top-3 rounded-full bg-ink/80 px-2 py-0.5 text-[10px] font-semibold uppercase text-white">
+              Locked
+            </div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-jade">
+              Week 5 · Writing + AI
+            </p>
+            <p className="mt-1 pr-14 text-sm font-semibold text-ink">
+              Essay: 我的假期计划
+            </p>
+            <div className="mt-3 space-y-2 text-xs leading-relaxed text-ink-muted">
+              <p>
+                <span className="font-medium text-seal">Grammar flag:</span> 了 / 过 tense mix
+                on travel sentences
+              </p>
+              <p>
+                <span className="font-medium text-jade">Vocab stretch:</span> 打算、安排、特别
+              </p>
+              <p className="rounded-lg bg-paper-dark/60 px-2.5 py-2">
+                Preview only — full red-line review unlocks with the pack (7 more after your
+                free sample).
+              </p>
             </div>
           </FadeIn>
-        ))}
+
+          <FadeIn
+            active={active}
+            delay={300}
+            className="relative rounded-xl border border-mist bg-white p-4"
+          >
+            <div className="absolute right-3 top-3 rounded-full bg-ink/80 px-2 py-0.5 text-[10px] font-semibold uppercase text-white">
+              Locked
+            </div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-jade">
+              Week 4 · This week&apos;s map
+            </p>
+            <p className="mt-1 pr-14 text-sm font-semibold text-ink">Reading + writing mix</p>
+            <ul className="mt-3 space-y-2 text-xs text-ink-muted">
+              {[
+                "Mon · 2 short passages (商店 / 天气)",
+                "Tue · Grammar: 因为…所以… drills ×10",
+                "Thu · Writing draft + AI review",
+                "Sat · Mini mock · reading section",
+              ].map((line) => (
+                <li key={line} className="flex gap-2">
+                  <span className="text-jade" aria-hidden>
+                    ·
+                  </span>
+                  <span>{line}</span>
+                </li>
+              ))}
+            </ul>
+          </FadeIn>
+        </div>
       </div>
     </PreviewChrome>
   );
