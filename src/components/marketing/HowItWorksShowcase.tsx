@@ -146,8 +146,29 @@ function MockExamPreview({ active }: { active: boolean }) {
 
           <FadeIn
             active={active}
-            delay={500}
-            className="mt-6 rounded-xl border border-mist bg-paper-dark/60 px-4 py-3"
+            delay={420}
+            className="mt-5 grid gap-2 sm:grid-cols-2"
+          >
+            <div className="rounded-xl border border-mist bg-white px-3 py-2.5">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+                Up next · Reading
+              </p>
+              <p className="mt-1 text-sm text-ink">他常常坐地铁去公司，因为___很方便。</p>
+              <p className="mt-1 text-[11px] text-ink-muted">Cloze · pick one of 4</p>
+            </div>
+            <div className="rounded-xl border border-mist bg-white px-3 py-2.5">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+                Up next · Writing
+              </p>
+              <p className="mt-1 text-sm text-ink">介绍你喜欢的运动（约 80 字）</p>
+              <p className="mt-1 text-[11px] text-ink-muted">Submit now · AI review in sample</p>
+            </div>
+          </FadeIn>
+
+          <FadeIn
+            active={active}
+            delay={520}
+            className="mt-auto rounded-xl border border-mist bg-paper-dark/60 px-4 py-3"
           >
             <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
               Session notes
@@ -155,7 +176,7 @@ function MockExamPreview({ active }: { active: boolean }) {
             <ul className="mt-2 space-y-1.5 text-xs text-ink-muted">
               <li>· Listening audio plays once — same as the official format</li>
               <li>· Sections unlock in order: Listening → Reading → Writing</li>
-              <li>· Timer runs continuously across all sections</li>
+              <li>· Doesn&apos;t count against any mock-exam quota — diagnosis is free</li>
             </ul>
           </FadeIn>
         </div>
@@ -299,6 +320,32 @@ function SummaryPreview({ active }: { active: boolean }) {
               </ul>
             </FadeIn>
           </div>
+
+          <FadeIn
+            active={active}
+            delay={550}
+            className="mt-auto pt-4"
+          >
+            <div className="rounded-xl border border-mist bg-paper-dark/60 px-4 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+                Your mistake bank · started automatically
+              </p>
+              <ul className="mt-2 grid gap-x-4 gap-y-1.5 text-xs text-ink-muted sm:grid-cols-3">
+                <li>
+                  <span className="font-medium text-ink">Q3</span> 几点 — time misheard
+                </li>
+                <li>
+                  <span className="font-medium text-ink">Q5</span> 车票 — travel phrase
+                </li>
+                <li>
+                  <span className="font-medium text-ink">Q7</span> 周末 — schedule context
+                </li>
+              </ul>
+              <p className="mt-2 text-[11px] text-ink-muted">
+                These exact misses seed your plan — Week 3 drills below target them by name.
+              </p>
+            </div>
+          </FadeIn>
         </div>
 
         <FadeIn
@@ -437,26 +484,48 @@ function PlanPreview({ active }: { active: boolean }) {
           </ul>
         </FadeIn>
 
-        <FadeIn
-          active={active}
-          delay={480}
-          className="mt-5 grid gap-3 sm:grid-cols-3"
-        >
-          {[
-            { label: "Listening drills", value: "96 items" },
-            { label: "Writing + AI", value: "8 reviews" },
-            { label: "Mini mocks", value: "4 sections" },
-          ].map((row) => (
-            <div
-              key={row.label}
-              className="rounded-xl border border-mist bg-paper-dark px-4 py-3"
-            >
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
-                {row.label}
+        <FadeIn active={active} delay={480} className="mt-5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
+            Quoted three ways — same single rate, you pick the shape
+          </p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-xl border border-jade/40 bg-jade/5 px-4 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-jade">
+                Coach pack · system-led
               </p>
-              <p className="mt-1 font-display text-lg font-semibold text-ink">{row.value}</p>
+              <p className="mt-1 font-display text-lg font-semibold text-ink">
+                $13 / $26 / $39
+              </p>
+              <p className="mt-1 text-[11px] leading-relaxed text-ink-muted">
+                4 / 8 / 12 weeks fixed. This example: 8 weeks — 96 drills · 8 AI writing
+                reviews · 4 mini mocks.
+              </p>
             </div>
-          ))}
+            <div className="rounded-xl border border-mist bg-white px-4 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+                Exam custom · you-led
+              </p>
+              <p className="mt-1 font-display text-lg font-semibold text-ink">
+                Your mix → one quote
+              </p>
+              <p className="mt-1 text-[11px] leading-relaxed text-ink-muted">
+                Set listening-heavy, fewer essays — price updates live. Cut volume, price
+                drops. We check it fits before Sep 12.
+              </p>
+            </div>
+            <div className="rounded-xl border border-mist bg-white px-4 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+                Emergency sprint · ≤ 6 days
+              </p>
+              <p className="mt-1 font-display text-lg font-semibold text-jade">
+                First one free
+              </p>
+              <p className="mt-1 text-[11px] leading-relaxed text-ink-muted">
+                Exam almost here? One full sprint free per account — before any payment. No
+                urgency premium after.
+              </p>
+            </div>
+          </div>
         </FadeIn>
       </div>
     </PreviewChrome>
@@ -498,6 +567,22 @@ function SampleTastePreview({ active }: { active: boolean }) {
               <p className="mt-0.5 text-[11px] text-ink-muted">{item.detail}</p>
             </FadeIn>
           ))}
+
+          <FadeIn
+            active={active}
+            delay={360}
+            className="mt-auto rounded-xl border border-mist bg-paper-dark/60 px-3 py-2.5"
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+              This taster
+            </p>
+            <ul className="mt-1.5 space-y-1 text-[11px] leading-relaxed text-ink-muted">
+              <li>· ~35 min, one sitting</li>
+              <li>· Pulled from your real plan</li>
+              <li>· No card needed</li>
+              <li>· Finish → quote unlocks</li>
+            </ul>
+          </FadeIn>
         </div>
 
         <FadeIn
@@ -518,6 +603,23 @@ function SampleTastePreview({ active }: { active: boolean }) {
               <p className="font-display text-3xl font-semibold text-jade">72</p>
               <p className="text-[10px] font-semibold uppercase text-ink-muted">/ 100</p>
             </div>
+          </div>
+
+          <div className="mt-3 grid grid-cols-4 gap-2">
+            {[
+              { label: "Grammar", score: 70 },
+              { label: "Vocab", score: 78 },
+              { label: "Task", score: 68 },
+              { label: "Flow", score: 74 },
+            ].map((row) => (
+              <div
+                key={row.label}
+                className="rounded-lg border border-mist bg-paper-dark/40 px-2 py-1.5 text-center"
+              >
+                <p className="font-display text-sm font-semibold text-ink">{row.score}</p>
+                <p className="text-[10px] text-ink-muted">{row.label}</p>
+              </div>
+            ))}
           </div>
 
           <div className="mt-4 rounded-lg border border-mist bg-paper-dark/50 px-3 py-3">
@@ -563,7 +665,20 @@ function SampleTastePreview({ active }: { active: boolean }) {
             </div>
           </div>
 
-          <p className="mt-4 border-t border-mist pt-3 text-xs leading-relaxed text-ink-muted">
+          <div className="mt-4 flex-1 rounded-lg border border-jade/25 bg-white px-3 py-3">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-jade">
+              Rewrite to try — model sentence
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-ink">
+              因为打篮球既有意思又能锻炼身体，<span className="rounded bg-jade/15 px-1 font-medium text-jade">所以</span>我每个周末都和朋友一起打。
+            </p>
+            <p className="mt-1.5 text-[11px] leading-relaxed text-ink-muted">
+              Combines your reason + habit into one 因为…所以… sentence and upgrades 有意思 →
+              既有意思又能锻炼身体.
+            </p>
+          </div>
+
+          <p className="mt-auto border-t border-mist pt-3 text-xs leading-relaxed text-ink-muted">
             One full AI review in the free sample. More writing reviews come with your
             package — same DeepSeek examiner, same red-line detail.
           </p>
@@ -840,7 +955,9 @@ export default function HowItWorksShowcase() {
                 className={`col-start-1 row-start-1 transition-opacity duration-500 ${
                   index === activeIndex
                     ? "z-10 opacity-100"
-                    : "pointer-events-none z-0 opacity-0"
+                    : // Below lg, take inactive slides out of flow so the active slide sets
+                      // the height (slides differ a lot when stacked on small screens).
+                      "pointer-events-none z-0 opacity-0 absolute inset-x-0 top-0 lg:static"
                 }`}
                 aria-hidden={index !== activeIndex}
               >
