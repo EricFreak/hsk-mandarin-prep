@@ -9,15 +9,15 @@ export function canExecuteWeek(input: {
   return input.access !== null;
 }
 
-/** Conversion moment moved to quote confirmation: CTA after the free sample day. */
+/** Conversion CTA after the free cross-skill sample taste is finished. */
 export function shouldShowQuoteCta(input: {
   access: AccessSource | null;
-  sampleDayTasks: { dayOffset: number; required: boolean; status: string }[];
+  tasterTasks: { required: boolean; status: string }[];
 }): boolean {
   if (input.access) return false;
-  const day0 = input.sampleDayTasks.filter((t) => t.dayOffset === 0 && t.required);
-  if (day0.length === 0) return false;
-  return day0.every((t) => t.status === "done" || t.status === "skipped");
+  const required = input.tasterTasks.filter((t) => t.required);
+  if (required.length === 0) return false;
+  return required.every((t) => t.status === "done" || t.status === "skipped");
 }
 
 export function nextWeekAfterClear(currentWeekIndex: number): number {

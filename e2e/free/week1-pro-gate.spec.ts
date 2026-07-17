@@ -28,7 +28,7 @@ test.describe("FREE-JNY — Sample-day gate & quote CTA", () => {
     await resetCoachJourney(admin, profile.id);
   });
 
-  test("FREE-JNY-001: Week 1 — sample day is the only executable task, later days are locked preview cards", async ({
+  test("FREE-JNY-001: Week 1 — cross-skill taster is executable, later skills are locked preview cards", async ({
     page,
   }) => {
     const admin = createAdminClient();
@@ -41,22 +41,28 @@ test.describe("FREE-JNY — Sample-day gate & quote CTA", () => {
     await seedJourneyCoachState(admin, profile!.id, {
       currentWeekIndex: 1,
       planWeekIndex: 1,
-      taskCount: 4,
+      taskCount: 5,
     });
 
     await page.goto("/dashboard");
     await expect(page.getByText(/this week · week 1/i)).toBeVisible({ timeout: 45_000 });
 
-    // Day 0 (sample day) is executable — renders as a task row with a Start link.
-    const sampleDay = page.locator("li").filter({ hasText: /listening drills/i });
-    await expect(sampleDay).toBeVisible();
-    await expect(sampleDay.getByRole("link", { name: /^start$/i })).toBeVisible();
+    // Taster skills (vocab/listen/grammar/writing) are executable.
+    const listening = page.locator("li").filter({ hasText: /listening drills/i });
+    await expect(listening).toBeVisible();
+    await expect(listening.getByRole("link", { name: /^start$/i })).toBeVisible();
 
-    // Day 1+ render as locked preview cards linking to /plan/quote, not task rows.
-    const lockedDay = page.locator("li").filter({ hasText: /vocabulary review/i });
-    await expect(lockedDay).toBeVisible();
-    await expect(lockedDay.getByRole("link", { name: /included in your package/i })).toBeVisible();
-    await expect(lockedDay.getByRole("link", { name: /^start$|^open$/i })).toHaveCount(0);
+    const writing = page.locator("li").filter({ hasText: /writing sample/i });
+    await expect(writing).toBeVisible();
+    await expect(writing.getByRole("link", { name: /^start$/i })).toBeVisible();
+
+    // Reading is not in the taster set → locked preview.
+    const lockedReading = page.locator("li").filter({ hasText: /reading passage/i });
+    await expect(lockedReading).toBeVisible();
+    await expect(
+      lockedReading.getByRole("link", { name: /included in your package/i }),
+    ).toBeVisible();
+    await expect(lockedReading.getByRole("link", { name: /^start$|^open$/i })).toHaveCount(0);
 
     // No week-level lock message while on the current week.
     await expect(page.getByText(/week 1 is locked/i)).toHaveCount(0);

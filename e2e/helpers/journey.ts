@@ -130,25 +130,33 @@ export async function seedJourneyCoachState(
     throw new Error(`coach_study_plans insert: ${planError?.message ?? "no row"}`);
   }
 
-  const taskTitles = [
-    "Listening drills",
-    "Vocabulary review",
-    "Grammar practice",
-    "Flashcard sprint",
-    "Mock section warmup",
-  ];
+  const taskDefs = [
+    { title: "Vocabulary review", skill: "vocabulary", task_type: "practice" },
+    { title: "Listening drills", skill: "listening", task_type: "practice" },
+    { title: "Grammar practice", skill: "grammar", task_type: "practice" },
+    { title: "Writing sample", skill: "writing", task_type: "practice" },
+    { title: "Reading passage", skill: "reading", task_type: "practice" },
+    { title: "Flashcard sprint", skill: "vocabulary", task_type: "flashcards" },
+  ] as const;
 
-  const tasks = Array.from({ length: taskCount }, (_, index) => ({
-    plan_id: plan.id,
-    user_id: userId,
-    day_offset: index,
-    task_type: index === 3 ? "flashcards" : "practice",
-    skill: index % 2 === 0 ? "listening" : "vocabulary",
-    title: taskTitles[index] ?? `Task ${index + 1}`,
-    status:
-      options.allTasksDone && planWeekIndex === 1 ? "done" : ("pending" as const),
-    required: true,
-  }));
+  const tasks = Array.from({ length: taskCount }, (_, index) => {
+    const def = taskDefs[index] ?? {
+      title: `Task ${index + 1}`,
+      skill: "listening",
+      task_type: "practice" as const,
+    };
+    return {
+      plan_id: plan.id,
+      user_id: userId,
+      day_offset: index,
+      task_type: def.task_type,
+      skill: def.skill,
+      title: def.title,
+      status:
+        options.allTasksDone && planWeekIndex === 1 ? "done" : ("pending" as const),
+      required: true,
+    };
+  });
 
   const { error: taskError } = await admin.from("coach_plan_tasks").insert(tasks);
   if (taskError) throw new Error(`coach_plan_tasks insert: ${taskError.message}`);

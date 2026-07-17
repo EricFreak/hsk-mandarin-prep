@@ -48,7 +48,7 @@ export default async function MockExamPage() {
   const { userId } = await requireJourneyRoute({ intent: "/mock-exam" });
   const supabase = createClient();
 
-  const [plan, { count }, access] = await Promise.all([
+  const [plan, { count }, access, learner] = await Promise.all([
     getUserPlan(supabase, userId),
     supabase
       .from("mock_exam_attempts")
@@ -56,11 +56,18 @@ export default async function MockExamPage() {
       .eq("user_id", userId)
       .not("template_id", "in", '("hsk3-diagnosis","hsk3-placement")'),
     fetchAccess(supabase, userId),
+    supabase
+      .from("learner_profiles")
+      .select("free_writing_review_used_at")
+      .eq("user_id", userId)
+      .maybeSingle()
+      .then((r) => r.data),
   ]);
 
   const completedExams = count ?? 0;
   const canTake = canTakeMockExam(plan, hasFullAccess(access), completedExams);
-  const canScoreWriting = hasFullAccess(access);
+  const canScoreWriting =
+    hasFullAccess(access) || !learner?.free_writing_review_used_at;
 
   return (
     <div>

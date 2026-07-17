@@ -17,12 +17,10 @@ export function hasFullAccess(source: AccessSource | null): boolean {
   return source !== null;
 }
 
-/** Free users get exactly the sample day: week 1, day_offset 0. */
-export function canExecuteTask(input: {
-  access: AccessSource | null;
-  weekIndex: number;
-  dayOffset: number;
-}): boolean {
-  if (input.access) return true;
-  return input.weekIndex === 1 && input.dayOffset === 0;
-}
+// Re-export sample taste gate so existing `@/lib/lp/access` imports keep working.
+export {
+  canExecuteTask,
+  selectTasterTaskIds,
+  TASTER_SKILLS,
+  type TasterTaskLike,
+} from "./sample-taste";

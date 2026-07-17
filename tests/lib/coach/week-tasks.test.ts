@@ -80,14 +80,15 @@ describe("gateOrderedWeekTasks", () => {
     expect(result.tasks).toHaveLength(4);
   });
 
-  it("surfaces executable sample-day task before locked previews for free users", () => {
+  it("surfaces cross-skill taster tasks before locked previews for free users", () => {
     const tasks = [
-      task({ id: "locked-a", title: "Listening day 1", skill: "listening", day_offset: 1 }),
-      task({ id: "locked-b", title: "Listening day 2", skill: "listening", day_offset: 2 }),
-      task({ id: "sample", title: "Reading day 0", skill: "reading", day_offset: 0 }),
+      task({ id: "locked-listen-2", title: "Listening day 2", skill: "listening", day_offset: 2 }),
+      task({ id: "locked-extra", title: "Reading", skill: "reading", day_offset: 4 }),
+      task({ id: "vocab", title: "Vocab day 0", skill: "vocabulary", day_offset: 0 }),
+      task({ id: "listen", title: "Listening day 1", skill: "listening", day_offset: 1 }),
+      task({ id: "grammar", title: "Grammar day 3", skill: "grammar", day_offset: 3 }),
+      task({ id: "writing", title: "Writing day 5", skill: "writing", day_offset: 5 }),
     ];
-    const withoutPartition = orderWeekTasks(tasks, "listening");
-    expect(withoutPartition.map((t) => t.id)).toEqual(["locked-a", "locked-b", "sample"]);
 
     const result = gateOrderedWeekTasks(
       tasks,
@@ -95,7 +96,11 @@ describe("gateOrderedWeekTasks", () => {
       { weekIndex: 1, currentWeekIndex: 1 },
       { access: null },
     );
-    expect(result.tasks.map((t) => t.id)).toEqual(["sample", "locked-a", "locked-b"]);
+    // Taster = vocab, listen, grammar, writing; reading locked. Listening gap ordered first among pending.
+    expect(result.tasks.slice(0, 4).map((t) => t.id).sort()).toEqual(
+      ["grammar", "listen", "vocab", "writing"].sort(),
+    );
+    expect(result.tasks[result.tasks.length - 1].id).toBe("locked-extra");
   });
 
   it("leaves paid-user ordering unchanged", () => {
@@ -111,15 +116,17 @@ describe("gateOrderedWeekTasks", () => {
 });
 
 describe("partitionTasksByExecutability", () => {
-  it("puts unlocked tasks first while preserving relative order", () => {
+  it("puts unlocked taster tasks first while preserving relative order", () => {
     const tasks = [
-      task({ id: "locked-a", title: "Listening day 1", skill: "listening", day_offset: 1 }),
-      task({ id: "unlocked", title: "Reading day 0", skill: "reading", day_offset: 0 }),
-      task({ id: "locked-b", title: "Listening day 2", skill: "listening", day_offset: 2 }),
+      task({ id: "locked-a", title: "Listening day 2", skill: "listening", day_offset: 2 }),
+      task({ id: "unlocked", title: "Listening day 1", skill: "listening", day_offset: 1 }),
+      task({ id: "locked-b", title: "Reading", skill: "reading", day_offset: 0 }),
     ];
+    const tasterTaskIds = new Set(["unlocked"]);
     const partitioned = partitionTasksByExecutability(tasks, {
       access: null,
       weekIndex: 1,
+      tasterTaskIds,
     });
     expect(partitioned.map((t) => t.id)).toEqual(["unlocked", "locked-a", "locked-b"]);
   });
@@ -128,6 +135,7 @@ describe("partitionTasksByExecutability", () => {
     const partitioned = partitionTasksByExecutability(fourTasks, {
       access: "legacy_pro",
       weekIndex: 3,
+      tasterTaskIds: new Set(),
     });
     expect(partitioned.map((t) => t.id)).toEqual(fourTasks.map((t) => t.id));
   });

@@ -1,6 +1,7 @@
 import { fetchAccess } from "@/lib/lp/access-server";
 import { hasFullAccess } from "@/lib/lp/access";
 import { scoreWriting } from "@/lib/openai/writing-score";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -64,12 +65,45 @@ export async function POST(request: Request) {
 
   try {
     const access = await fetchAccess(supabase, user.id);
+    const paid = hasFullAccess(access);
 
-    if (!hasFullAccess(access)) {
-      return NextResponse.json({ upgrade: true }, { status: 403 });
+    let consumeFreeWriting = false;
+    if (!paid) {
+      const { data: learner } = await supabase
+        .from("learner_profiles")
+        .select("free_writing_review_used_at")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (learner?.free_writing_review_used_at) {
+        return NextResponse.json(
+          { upgrade: true, reason: "free_writing_used" },
+          { status: 403 },
+        );
+      }
+      consumeFreeWriting = true;
     }
 
     const result = await scoreWriting(parsed.data.prompt, parsed.data.userText);
+
+    if (consumeFreeWriting) {
+      const now = new Date().toISOString();
+      const admin = createAdminClient();
+      if (!admin) {
+        console.error("Admin client unavailable; free writing stamp skipped");
+      } else {
+        const { error: stampError } = await admin
+          .from("learner_profiles")
+          .update({ free_writing_review_used_at: now, updated_at: now })
+          .eq("user_id", user.id)
+          .is("free_writing_review_used_at", null);
+
+        if (stampError) {
+          console.error("Failed to stamp free writing review:", stampError);
+        }
+      }
+    }
+
     return NextResponse.json(result);
   } catch (err) {
     console.error("Writing score failed:", err);

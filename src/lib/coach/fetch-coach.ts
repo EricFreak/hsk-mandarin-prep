@@ -2,6 +2,7 @@ import type { Plan } from "@/lib/entitlements";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { fetchAccess } from "@/lib/lp/access-server";
 import type { AccessSource } from "@/lib/lp/access";
+import { selectTasterTaskIds } from "@/lib/lp/sample-taste";
 import {
   applyFreemiumReport,
   pickTodayTask,
@@ -51,6 +52,8 @@ export type CoachDashboardPayload = {
   stageCalendar: StageWindow[];
   shouldShowQuoteCta: boolean;
   weekCleared: boolean;
+  /** Week-1 free cross-skill taster task ids (empty when paid). */
+  tasterTaskIds: string[];
 };
 
 export type CoachReportsPayload = {
@@ -241,7 +244,8 @@ export async function fetchCoachDashboard(
 
   let tasks: CoachPlanTaskRow[] = [];
   let clearanceTasks: PlanTaskForClearance[] = [];
-  let sampleDayTasks: { dayOffset: number; required: boolean; status: string }[] = [];
+  let tasterTaskIds = new Set<string>();
+  let tasterTasks: { required: boolean; status: string }[] = [];
   if (planRow?.id) {
     const { data: taskRows } = await supabase
       .from("coach_plan_tasks")
@@ -257,12 +261,12 @@ export async function fetchCoachDashboard(
       mastery_status: (row.mastery_status as string | null) ?? null,
       required: typeof row.required === "boolean" ? row.required : true,
     }));
-    sampleDayTasks = rows
-      .filter((row) => (row.day_offset as number) === 0)
-      .map((row) => ({
-        dayOffset: 0,
-        required: typeof row.required === "boolean" ? row.required : true,
-        status: row.status as string,
+    tasterTaskIds = selectTasterTaskIds(tasks);
+    tasterTasks = tasks
+      .filter((t) => tasterTaskIds.has(t.id))
+      .map((t) => ({
+        required: true,
+        status: t.status,
       }));
   }
 
@@ -289,7 +293,7 @@ export async function fetchCoachDashboard(
   const daysToExam = computeDaysToExam(targetExamDate, stageCalendar);
   const weekCleared = clearanceTasks.length > 0 && isWeekCleared(clearanceTasks);
   const access = await fetchAccess(supabase, userId);
-  const showQuoteCta = shouldShowQuoteCta({ access, sampleDayTasks });
+  const showQuoteCta = shouldShowQuoteCta({ access, tasterTasks });
   const { tasks: gatedTasks, hiddenTaskCount, executionLocked } =
     gateOrderedWeekTasks(
       tasks,
@@ -336,6 +340,7 @@ export async function fetchCoachDashboard(
     stageCalendar,
     shouldShowQuoteCta: showQuoteCta,
     weekCleared,
+    tasterTaskIds: Array.from(tasterTaskIds),
   };
 }
 

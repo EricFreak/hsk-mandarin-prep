@@ -3,6 +3,7 @@ import {
   resolveAccessSource,
   hasFullAccess,
   canExecuteTask,
+  selectTasterTaskIds,
 } from "@/lib/lp/access";
 
 describe("access resolution", () => {
@@ -26,15 +27,73 @@ describe("access resolution", () => {
   });
 });
 
-describe("task-level gate (sample day)", () => {
-  it("any access source executes everything", () => {
-    expect(canExecuteTask({ access: "legacy_pro", weekIndex: 5, dayOffset: 3 })).toBe(true);
-    expect(canExecuteTask({ access: "free_sprint", weekIndex: 1, dayOffset: 2 })).toBe(true);
+describe("selectTasterTaskIds", () => {
+  it("picks earliest task per taster skill across days", () => {
+    const ids = selectTasterTaskIds([
+      { id: "v1", skill: "vocabulary", day_offset: 0, task_type: "practice" },
+      { id: "l1", skill: "listening", day_offset: 1, task_type: "practice" },
+      { id: "g1", skill: "grammar", day_offset: 2, task_type: "practice" },
+      { id: "w1", skill: "writing", day_offset: 3, task_type: "practice" },
+      { id: "l2", skill: "listening", day_offset: 4, task_type: "practice" },
+    ]);
+    expect(Array.from(ids).sort()).toEqual(["g1", "l1", "v1", "w1"]);
   });
 
-  it("no access → only week 1 day 0 (the free sample day)", () => {
-    expect(canExecuteTask({ access: null, weekIndex: 1, dayOffset: 0 })).toBe(true);
-    expect(canExecuteTask({ access: null, weekIndex: 1, dayOffset: 1 })).toBe(false);
-    expect(canExecuteTask({ access: null, weekIndex: 2, dayOffset: 0 })).toBe(false);
+  it("falls back to day 0 when no skill tags", () => {
+    const ids = selectTasterTaskIds([
+      { id: "d0", skill: null, day_offset: 0, task_type: "practice" },
+      { id: "d1", skill: null, day_offset: 1, task_type: "practice" },
+    ]);
+    expect(Array.from(ids)).toEqual(["d0"]);
+  });
+});
+
+describe("task-level gate (sample taste)", () => {
+  const taster = new Set(["taster-a", "taster-b"]);
+
+  it("any access source executes everything", () => {
+    expect(
+      canExecuteTask({
+        access: "legacy_pro",
+        weekIndex: 5,
+        taskId: "x",
+        tasterTaskIds: taster,
+      }),
+    ).toBe(true);
+    expect(
+      canExecuteTask({
+        access: "free_sprint",
+        weekIndex: 1,
+        taskId: "x",
+        tasterTaskIds: taster,
+      }),
+    ).toBe(true);
+  });
+
+  it("no access → only week 1 taster task ids", () => {
+    expect(
+      canExecuteTask({
+        access: null,
+        weekIndex: 1,
+        taskId: "taster-a",
+        tasterTaskIds: taster,
+      }),
+    ).toBe(true);
+    expect(
+      canExecuteTask({
+        access: null,
+        weekIndex: 1,
+        taskId: "locked",
+        tasterTaskIds: taster,
+      }),
+    ).toBe(false);
+    expect(
+      canExecuteTask({
+        access: null,
+        weekIndex: 2,
+        taskId: "taster-a",
+        tasterTaskIds: taster,
+      }),
+    ).toBe(false);
   });
 });

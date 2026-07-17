@@ -1,6 +1,7 @@
 import { getAuthenticatedCoachUser } from "@/lib/coach/api-auth";
 import { clearWeekAndUnlockNext } from "@/lib/coach/journey/persist-journey";
 import { canExecuteTask } from "@/lib/lp/access";
+import { selectTasterTaskIds } from "@/lib/lp/sample-taste";
 import { fetchAccess } from "@/lib/lp/access-server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -122,12 +123,10 @@ export async function PATCH(request: Request, context: RouteContext) {
     return NextResponse.json({ error: "Task not found" }, { status: 404 });
   }
 
-  // Gate execution by access: free users may only update the sample day
-  // (week 1, day_offset 0). Enforced server-side so locked tasks cannot be
-  // completed via API.
+  // Gate execution by access: free users may only update taster tasks
+  // (cross-skill sample in week 1). Enforced server-side so locked tasks
+  // cannot be completed via API.
   const existingRow = existing as Record<string, unknown>;
-  const dayOffset =
-    typeof existingRow.day_offset === "number" ? existingRow.day_offset : 0;
   const planId = existingRow.plan_id as string;
   let weekIndex = 1;
   try {
@@ -139,10 +138,38 @@ export async function PATCH(request: Request, context: RouteContext) {
       .maybeSingle();
     if (typeof planRow?.week_index === "number") weekIndex = planRow.week_index;
   } catch {
-    // Default to week 1 if the plan lookup fails (canExecuteTask still gates day_offset).
+    // Default to week 1 if the plan lookup fails.
   }
+
+  const { data: weekTaskRows } = await supabase
+    .from("coach_plan_tasks")
+    .select("id, skill, day_offset, task_type")
+    .eq("plan_id", planId)
+    .eq("user_id", user.id);
+
+  const tasterTaskIds = selectTasterTaskIds(
+    ((weekTaskRows ?? []) as {
+      id: string;
+      skill: string | null;
+      day_offset: number;
+      task_type: string;
+    }[]).map((row) => ({
+      id: row.id,
+      skill: row.skill,
+      day_offset: row.day_offset,
+      task_type: row.task_type,
+    })),
+  );
+
   const access = await fetchAccess(supabase, user.id);
-  if (!canExecuteTask({ access, weekIndex, dayOffset })) {
+  if (
+    !canExecuteTask({
+      access,
+      weekIndex,
+      taskId,
+      tasterTaskIds,
+    })
+  ) {
     return NextResponse.json({ error: "quote_required" }, { status: 402 });
   }
 

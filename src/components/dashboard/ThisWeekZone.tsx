@@ -96,7 +96,8 @@ export default function ThisWeekZone({
       canExecuteTask({
         access: data.access,
         weekIndex: data.weekIndex,
-        dayOffset: task.day_offset,
+        taskId: task.id,
+        tasterTaskIds: new Set(data.tasterTaskIds ?? []),
       }),
   );
   const allPassed = tasks.length > 0 && tasks.every((task) => task.status === "done");
@@ -119,7 +120,7 @@ export default function ThisWeekZone({
         </h2>
         <p className="mt-2 text-sm text-ink-muted">
           {free
-            ? "Free includes the sample day (the first day) plus a preview of every task. Get a plan quote to unlock the full week and beyond."
+            ? "Free includes a multi-skill sample taste plus a preview of every task. Get a plan quote to unlock the full week and beyond."
             : "Complete your current week with mastery before this week unlocks."}
         </p>
         {free ? (
@@ -204,7 +205,8 @@ export default function ThisWeekZone({
           const executable = canExecuteTask({
             access: data.access,
             weekIndex: data.weekIndex,
-            dayOffset: task.day_offset,
+            taskId: task.id,
+            tasterTaskIds: new Set(data.tasterTaskIds ?? []),
           });
 
           if (!executable) {

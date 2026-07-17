@@ -12,28 +12,27 @@ describe("canExecuteWeek (access-based)", () => {
   it("never executes a non-current week", () => {
     expect(canExecuteWeek({ weekIndex: 2, currentWeekIndex: 3, access: "paid_order" })).toBe(false);
   });
-  it("no access → cannot execute any full week (sample day is task-level)", () => {
+  it("no access → cannot execute any full week (sample taste is task-level)", () => {
     expect(canExecuteWeek({ weekIndex: 1, currentWeekIndex: 1, access: null })).toBe(false);
   });
 });
 
 describe("shouldShowQuoteCta", () => {
-  const doneDay0 = [
-    { dayOffset: 0, required: true, status: "done" },
-    { dayOffset: 0, required: true, status: "skipped" },
-    { dayOffset: 1, required: true, status: "pending" },
+  const doneTaster = [
+    { required: true, status: "done" },
+    { required: true, status: "skipped" },
   ];
-  it("fires when free user finishes the sample day", () => {
-    expect(shouldShowQuoteCta({ access: null, sampleDayTasks: doneDay0 })).toBe(true);
+  it("fires when free user finishes the taster set", () => {
+    expect(shouldShowQuoteCta({ access: null, tasterTasks: doneTaster })).toBe(true);
   });
-  it("silent while sample day incomplete or when user has access", () => {
+  it("silent while taster incomplete or when user has access", () => {
     expect(
       shouldShowQuoteCta({
         access: null,
-        sampleDayTasks: [{ dayOffset: 0, required: true, status: "pending" }],
-      })
+        tasterTasks: [{ required: true, status: "pending" }],
+      }),
     ).toBe(false);
-    expect(shouldShowQuoteCta({ access: "paid_order", sampleDayTasks: doneDay0 })).toBe(false);
+    expect(shouldShowQuoteCta({ access: "paid_order", tasterTasks: doneTaster })).toBe(false);
   });
 });
 

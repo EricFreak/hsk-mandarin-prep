@@ -1,4 +1,5 @@
 import { canExecuteTask, type AccessSource } from "@/lib/lp/access";
+import { selectTasterTaskIds } from "@/lib/lp/sample-taste";
 import type { CoachPlanTaskRow } from "./types";
 
 /**
@@ -31,7 +32,11 @@ export function orderWeekTasks(
  */
 export function partitionTasksByExecutability(
   tasks: CoachPlanTaskRow[],
-  input: { access: AccessSource | null; weekIndex: number },
+  input: {
+    access: AccessSource | null;
+    weekIndex: number;
+    tasterTaskIds: ReadonlySet<string>;
+  },
 ): CoachPlanTaskRow[] {
   const executable: CoachPlanTaskRow[] = [];
   const locked: CoachPlanTaskRow[] = [];
@@ -40,7 +45,8 @@ export function partitionTasksByExecutability(
       canExecuteTask({
         access: input.access,
         weekIndex: input.weekIndex,
-        dayOffset: task.day_offset,
+        taskId: task.id,
+        tasterTaskIds: input.tasterTaskIds,
       })
     ) {
       executable.push(task);
@@ -54,9 +60,7 @@ export function partitionTasksByExecutability(
 /**
  * Week-level display gate for the dashboard task list. A non-current week is
  * hidden (executionLocked). The current week is shown in full; per-task
- * execution for free users is enforced server-side by `canExecuteTask` on the
- * task-status route, so the sample day (week 1, day 0) remains actionable
- * while later days are not completable via API.
+ * execution for free users is the cross-skill taster set (not calendar Day 1).
  */
 export function gateOrderedWeekTasks(
   tasks: CoachPlanTaskRow[],
@@ -73,11 +77,14 @@ export function gateOrderedWeekTasks(
   if (journey && journey.weekIndex !== journey.currentWeekIndex) {
     return { tasks: [], hiddenTaskCount: ordered.length, executionLocked: true };
   }
+  const weekIndex = journey?.weekIndex ?? 1;
+  const tasterTaskIds = selectTasterTaskIds(ordered);
   const displayTasks =
     options != null
       ? partitionTasksByExecutability(ordered, {
           access: options.access,
-          weekIndex: journey?.weekIndex ?? 1,
+          weekIndex,
+          tasterTaskIds,
         })
       : ordered;
   return { tasks: displayTasks, hiddenTaskCount: 0, executionLocked: false };
