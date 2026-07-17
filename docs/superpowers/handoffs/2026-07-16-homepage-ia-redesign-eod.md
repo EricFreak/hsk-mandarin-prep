@@ -1,16 +1,17 @@
 # Handoff — 2026-07-16 首页 IA 重梳（EOD）
 
-**Status:** 头脑风暴进行中 · **未写正式 design spec · 未改代码**  
+**Status:** Design **Approved 2026-07-17** · Spec 已写 · **未改代码**  
 **Branch:** `feature/mvp-implementation`  
 **Worktree:** `/Users/eric/cursor_projects/hsk-mandarin-prep/.worktrees/mvp-implementation`  
 **PR（三服务 LP 已实现）：** https://github.com/EricFreak/hsk-mandarin-prep/pull/2  
-**权威产品方案：** `docs/superpowers/specs/2026-07-16-three-service-lp-pricing-design.md`
+**权威产品方案：** `docs/superpowers/specs/2026-07-16-three-service-lp-pricing-design.md`  
+**首页 IA Spec：** `docs/superpowers/specs/2026-07-17-homepage-ia-design.md`
 
 ---
 
 ## 开口第一句（下次续）
 
-> 首页按**方案 1 · 信任漏斗**重梳；第 1 节（章节地图 + Hero）已写好，等你回 **OK** 后继续第 2 节「可信度链」步骤文案。不要直接改代码，先把 design 节节确认完再写 spec。
+> 首页 IA design 已写入 `2026-07-17-homepage-ia-design.md`。请你审完 spec；确认后写实现计划（writing-plans），未下令不改代码。
 
 ---
 
@@ -68,14 +69,14 @@ Hero
 
 ---
 
-## 尚未写的设计节（明天顺序）
+## 设计节状态
 
-1. ~~章节地图 + Hero~~ → **等 OK**
-2. **可信度链** — 步骤标题、每步一句、预览形态（是否保留现有 showcase 动效壳）
-3. **三服务中等卡** — 三卡文案字段（主导方 / 适合谁 / 价格形态）；Coach 是否露出 4/8/12 起价数字
-4. **Why-us 压缩** — 3 点单列 vs 极简对比；大纲权威脚注是否保留
-5. **FAQ + 终 CTA** — 删 Week 1 残留；Sprint 一生一次免费是否进 FAQ
-6. 整份写入 `docs/superpowers/specs/2026-07-17-homepage-ia-design.md`（日期按实写）→ 用户审 spec → 再 `writing-plans`
+1. ~~章节地图 + Hero~~ ✅  
+2. ~~可信度链~~ ✅（含 A 拼盘 + DeepSeek 1× 精批）  
+3. ~~三服务中等卡~~ ✅  
+4. ~~Why-us 压缩~~ ✅  
+5. ~~FAQ + 终 CTA~~ ✅（FAQ#3 = 样例有限，不复述信任链）  
+6. ~~Spec 已写~~ → `2026-07-17-homepage-ia-design.md` → **等用户审 spec** → `writing-plans`
 
 ---
 
