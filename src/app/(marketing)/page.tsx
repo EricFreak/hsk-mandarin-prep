@@ -17,15 +17,16 @@ export default function LandingPage() {
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:py-24">
           <div>
             <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight text-ink sm:text-5xl">
-              Your weak spots. Official syllabus. Real score.
+              Stop guessing what still matters.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-muted">
-              An AI coach for HSK Level 3 — mapped to the current syllabus, aimed at
-              exam day, drilling only what still holds you back.
+              HSK Level 3 prep for people who want a real score, not another word
+              list. Diagnose your gaps, get an exam-dated plan, and practice
+              what&apos;s still in the way — mapped to the current syllabus.
             </p>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-muted">
-              Start free: see your gaps and a full plan before you pay. No
-              subscription.
+              Full diagnosis first — your gaps, a plan outline, and a real sample
+              of the work.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <ContinueCta className="btn-primary px-6 py-3 text-base">
