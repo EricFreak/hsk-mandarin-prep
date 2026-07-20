@@ -1,14 +1,14 @@
 import ContinueCta from "@/components/marketing/ContinueCta";
 import ProblemFrame from "@/components/marketing/ProblemFrame";
-import HowItWorksShowcase from "@/components/marketing/HowItWorksShowcase";
+import BeforeYouPaySection from "@/components/marketing/BeforeYouPaySection";
 import HomeServiceCards from "@/components/marketing/HomeServiceCards";
 import MarketingFaq from "@/components/marketing/MarketingFaq";
 import JadeDotDivider from "@/components/marketing/JadeDotDivider";
 
 /**
- * IA · Trust funnel (2026-07-17)
- * Hero → Before you pay → Plans → Why-us → FAQ → CTA
- * Hero is copy-only (no right-column brand art).
+ * IA · Trust funnel (2026-07-17) + cross-review fixes (2026-07-20)
+ * Hero → Before you pay → Plans (orientation) → Why-us → FAQ → CTA
+ * Hero is copy + one proof card; plans are not a chooser.
  */
 export default function LandingPage() {
   return (
@@ -16,30 +16,63 @@ export default function LandingPage() {
       <section>
         <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:py-24">
           <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight text-ink sm:text-5xl">
-            Stop Guessing What Still Matters.
+            See what&apos;s still between you and HSK Level 3
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-muted">
-            HSK Level 3 prep for people who want a real score, not another word
-            list. Diagnose your gaps, get an exam-dated plan, and practice
-            what&apos;s still in the way — mapped to the current syllabus.
+            About 20 minutes. Free diagnosis with listening and reading — then your
+            gaps, an exam-dated outline, and a real sample of the work. Pay once only
+            if you continue.
           </p>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-muted">
-            Full diagnosis first — your gaps, a plan outline, and a real sample
-            of the work.
+            No credit card. Mapped to the current Level 3 syllabus — not another word
+            list.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <ContinueCta className="btn-primary px-6 py-3 text-base">
               Start with a free diagnosis
             </ContinueCta>
             <a href="#before-you-pay" className="btn-secondary px-6 py-3 text-base">
-              See how it works
+              See what&apos;s free
             </a>
+          </div>
+
+          <div className="mt-12 max-w-md overflow-hidden rounded-2xl border border-mist bg-white shadow-card">
+            <div className="border-b border-mist bg-paper-dark/60 px-4 py-2.5">
+              <p className="text-xs font-medium text-ink-muted">
+                Sample diagnosis · what you&apos;ll see
+              </p>
+            </div>
+            <div className="space-y-3 p-5">
+              <div className="flex items-baseline justify-between">
+                <p className="text-sm font-medium text-ink">Readiness</p>
+                <p className="font-display text-xl font-semibold tabular-nums text-jade">
+                  72
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-center text-xs text-ink-muted">
+                <div className="rounded-lg bg-paper-dark/50 px-2 py-2">
+                  <p className="font-medium text-ink">62%</p>
+                  <p>Listening</p>
+                </div>
+                <div className="rounded-lg bg-paper-dark/50 px-2 py-2">
+                  <p className="font-medium text-ink">81%</p>
+                  <p>Reading</p>
+                </div>
+                <div className="rounded-lg bg-seal/10 px-2 py-2">
+                  <p className="font-medium text-seal">54%</p>
+                  <p>Writing</p>
+                </div>
+              </div>
+              <p className="text-xs text-ink-muted">
+                Top gap highlighted — your plan aims here first.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       <JadeDotDivider />
-      <HowItWorksShowcase />
+      <BeforeYouPaySection />
 
       <JadeDotDivider />
       <section id="plans" aria-labelledby="plans-heading">
@@ -48,11 +81,10 @@ export default function LandingPage() {
             id="plans-heading"
             className="text-center font-display text-3xl font-semibold text-ink"
           >
-            Choose How You Want To Prepare
+            How paid work is shaped
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-center text-sm text-ink-muted">
-            Same rate for every plan. You pick the outcome — system-led, you-led, or
-            emergency.
+            After diagnosis you pick an outcome. Until then, one path: free diagnosis.
           </p>
           <div className="mt-10">
             <HomeServiceCards />
@@ -70,7 +102,7 @@ export default function LandingPage() {
       <section>
         <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 sm:py-14">
           <h2 className="font-display text-3xl font-semibold text-ink">
-            Get Your Free Diagnosis
+            Get your free diagnosis
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-ink-muted">
             No credit card. See your report, outline, and a real sample — including one
@@ -80,9 +112,6 @@ export default function LandingPage() {
             <ContinueCta className="btn-primary px-8 py-3 text-base">
               Start with a free diagnosis
             </ContinueCta>
-            <a href="#plans" className="btn-secondary px-6 py-3 text-base">
-              See plans
-            </a>
           </div>
         </div>
       </section>

@@ -3,6 +3,7 @@ import Link from "next/link";
 /**
  * FAQ — operational boundaries only.
  * Free-chain content lives in Before you pay; do not restate the full list here.
+ * Plan taxonomy lives on /pricing — do not re-own it here.
  */
 const FAQ_ITEMS = [
   {
@@ -24,10 +25,10 @@ const FAQ_ITEMS = [
     q: "How long is the free diagnosis?",
     a: (
       <>
-        One sit-down Level 3 diagnosis with{" "}
-        <span className="font-medium text-ink">listening and reading MCQs</span>. It is
-        shorter than a full official paper — sized to open your coach report and plan,
-        not to burn a free mock-exam quota.
+        About{" "}
+        <span className="font-medium text-ink">20 minutes</span> — one sit-down Level 3
+        diagnosis with listening and reading MCQs. Shorter than a full official paper;
+        sized to open your coach report and plan, not to burn a free mock-exam quota.
       </>
     ),
   },
@@ -36,12 +37,10 @@ const FAQ_ITEMS = [
     a: (
       <>
         Yes. Each account gets{" "}
-        <span className="font-medium text-ink">
-          one multi-skill taste
-        </span>{" "}
-        (including one AI writing review) — not unlimited free practice. See{" "}
+        <span className="font-medium text-ink">one multi-skill taste</span> (including one
+        AI writing review) — not unlimited free practice. See{" "}
         <a href="#before-you-pay" className="font-medium text-jade hover:text-jade-light">
-          What You Get Before You Pay
+          what you get before you pay
         </a>{" "}
         above for the full free chain.
       </>
@@ -58,25 +57,16 @@ const FAQ_ITEMS = [
     ),
   },
   {
-    q: "What are the three plans?",
-    a: (
-      <>
-        <span className="font-medium text-ink">Coach package</span> (system-led, 4/8/12
-        weeks at a fixed price),{" "}
-        <span className="font-medium text-ink">Custom exam plan</span> (you set the
-        workload; one quote after diagnosis), and{" "}
-        <span className="font-medium text-ink">Emergency sprint</span> (exam in ≤6 days;
-        first sprint free once per account).
-      </>
-    ),
-  },
-  {
     q: "Do you charge more when the exam is soon?",
     a: (
       <>
-        No.{" "}
-        <span className="font-medium text-ink">One rate for every plan</span> — no urgency
-        premium, even days before the exam.
+        No. Every plan uses the{" "}
+        <span className="font-medium text-ink">same unit rate</span> — no urgency premium,
+        even days before the exam. See{" "}
+        <Link href="/pricing" className="font-medium text-jade hover:text-jade-light">
+          full pricing
+        </Link>
+        .
       </>
     ),
   },
@@ -100,7 +90,7 @@ export default function MarketingFaq() {
           id="faq-heading"
           className="text-center font-display text-3xl font-semibold text-ink"
         >
-          Questions Before You Start
+          Questions before you start
         </h2>
 
         <div className="mt-10 divide-y divide-mist/70">

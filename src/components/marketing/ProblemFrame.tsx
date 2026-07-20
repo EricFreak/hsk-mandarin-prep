@@ -2,15 +2,15 @@ import Link from "next/link";
 
 const POINTS = [
   {
-    title: "Exam-Dated, Not Endless",
+    title: "Exam-dated, not endless",
     body: "Your plan aims at your exam date — or a fixed coach cycle — not an infinite streak.",
   },
   {
-    title: "HSK Level 3 Syllabus (GF0025-2021)",
+    title: "HSK Level 3 syllabus (GF0025-2021)",
     body: "Aligned to the current Level 3 map, not older HSK 2.0 word lists.",
   },
   {
-    title: "Diagnosis → Plan → Practice",
+    title: "Diagnosis → plan → practice",
     body: "Weaknesses drive what you do next. You see the full outline and quote before you pay.",
   },
 ] as const;
@@ -27,7 +27,7 @@ export default function ProblemFrame() {
           id="why-coach-heading"
           className="mx-auto max-w-2xl text-center font-display text-3xl font-semibold text-ink"
         >
-          Built For Your First Real HSK — Not Another Endless Word Bank
+          Built for your first real HSK — not another endless word bank
         </h2>
 
         <ul className="mx-auto mt-12 max-w-2xl space-y-8">
