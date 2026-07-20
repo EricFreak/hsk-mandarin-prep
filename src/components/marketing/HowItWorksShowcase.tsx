@@ -63,9 +63,10 @@ function PreviewChrome({
           {badge}
         </span>
       </div>
-      {/* Padding sits outside the overflow clip so bottom cards don't kiss the chrome border */}
-      <div className="flex min-h-0 flex-1 flex-col bg-paper-dark/25 p-3 sm:p-3.5">
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{children}</div>
+      <div className="flex min-h-0 flex-1 flex-col bg-paper-dark/40 p-4">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl bg-paper-dark/20 p-2.5">
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -159,15 +160,16 @@ function MockExamPreview() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-mist bg-white px-2.5 py-2">
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
-              Session notes
-            </p>
-            <ul className="mt-1 space-y-1 text-[11px] leading-snug text-ink-muted">
-              <li>· Audio plays once — same as official format</li>
-              <li>· Sections unlock in order: Listening → Reading → Writing</li>
-              <li>· Free diagnosis — doesn&apos;t burn mock-exam quota</li>
-            </ul>
+          <div className="flex flex-wrap gap-1.5 text-[11px] text-ink-muted">
+            <span className="rounded-full border border-mist bg-white px-2.5 py-1">
+              Audio once · official format
+            </span>
+            <span className="rounded-full border border-mist bg-white px-2.5 py-1">
+              Listening → Reading → Writing
+            </span>
+            <span className="rounded-full border border-mist bg-white px-2.5 py-1">
+              Free · no mock quota
+            </span>
           </div>
         </div>
 
@@ -611,7 +613,7 @@ export default function HowItWorksShowcase() {
                   <button
                     type="button"
                     onClick={() => goTo(index)}
-                    className={`flex h-full w-full flex-col justify-center rounded-xl border px-3 py-2.5 text-left transition-all duration-200 ${
+                    className={`flex h-full w-full flex-col justify-start rounded-xl border px-3 py-3 text-left transition-all duration-200 ${
                       isActive
                         ? "border-jade/40 bg-jade/5 shadow-card"
                         : "border-mist bg-white hover:border-jade/20 hover:bg-paper-dark/50"
