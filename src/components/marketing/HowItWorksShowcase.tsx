@@ -52,8 +52,8 @@ function PreviewChrome({
   children: React.ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-mist bg-white shadow-card">
-      <div className="flex items-center justify-between gap-2 border-b border-mist bg-paper-dark/60 px-4 py-2.5">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-mist bg-white shadow-card">
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-mist bg-paper-dark/60 px-4 py-2.5">
         <div className="flex min-w-0 items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-seal/40" />
           <span className="h-2.5 w-2.5 rounded-full bg-jade/40" />
@@ -64,8 +64,7 @@ function PreviewChrome({
           {badge}
         </span>
       </div>
-      {/* Height follows content — never stretch children to fill a taller sibling slide. */}
-      <div className="p-5 sm:p-8">{children}</div>
+      <div className="min-h-0 flex-1 overflow-y-auto p-5 sm:p-8">{children}</div>
     </div>
   );
 }
@@ -861,16 +860,19 @@ export default function HowItWorksShowcase() {
           writing review. Click a step to preview it.
         </p>
 
-        <div className="mt-10 grid items-start gap-8 lg:grid-cols-[minmax(0,18rem)_1fr] lg:gap-10">
-          <ol className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0" aria-label="Before you pay steps">
+        <div className="mt-10 grid gap-8 lg:h-[40rem] lg:grid-cols-[minmax(0,18rem)_1fr] lg:items-stretch lg:gap-10">
+          <ol
+            className="flex gap-2 overflow-x-auto pb-1 lg:h-full lg:flex-col lg:gap-2 lg:overflow-visible lg:pb-0"
+            aria-label="Before you pay steps"
+          >
             {STEPS.map((step, index) => {
               const isActive = index === activeIndex;
               return (
-                <li key={step.id} className="min-w-[10.5rem] shrink-0 lg:min-w-0">
+                <li key={step.id} className="min-w-[10.5rem] shrink-0 lg:min-h-0 lg:min-w-0 lg:flex-1">
                   <button
                     type="button"
                     onClick={() => goTo(index)}
-                    className={`flex h-full w-full flex-col rounded-xl border px-3 py-3 text-left transition-all duration-200 ${
+                    className={`flex h-full w-full flex-col justify-center rounded-xl border px-3 py-3 text-left transition-all duration-200 ${
                       isActive
                         ? "border-jade/40 bg-jade/5 shadow-card"
                         : "border-mist bg-white hover:border-jade/20 hover:bg-paper-dark/50"
@@ -900,7 +902,7 @@ export default function HowItWorksShowcase() {
 
           <div
             id="before-you-pay-preview"
-            className="min-w-0"
+            className="min-h-[28rem] min-w-0 lg:h-full lg:min-h-0"
             aria-live="polite"
             aria-label={`Step ${activeStep.step}: ${activeStep.title}`}
           >
