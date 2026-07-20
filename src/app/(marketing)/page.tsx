@@ -1,5 +1,4 @@
 import ContinueCta from "@/components/marketing/ContinueCta";
-import HeroBrandVisual from "@/components/marketing/HeroBrandVisual";
 import ProblemFrame from "@/components/marketing/ProblemFrame";
 import HowItWorksShowcase from "@/components/marketing/HowItWorksShowcase";
 import HomeServiceCards from "@/components/marketing/HomeServiceCards";
@@ -9,35 +8,33 @@ import JadeDotDivider from "@/components/marketing/JadeDotDivider";
 /**
  * IA · Trust funnel (2026-07-17)
  * Hero → Before you pay → Plans → Why-us → FAQ → CTA
+ * Hero is copy-only (no right-column brand art).
  */
 export default function LandingPage() {
   return (
     <>
       <section>
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:py-24">
-          <div>
-            <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight text-ink sm:text-5xl">
-              Stop guessing what still matters.
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-muted">
-              HSK Level 3 prep for people who want a real score, not another word
-              list. Diagnose your gaps, get an exam-dated plan, and practice
-              what&apos;s still in the way — mapped to the current syllabus.
-            </p>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-muted">
-              Full diagnosis first — your gaps, a plan outline, and a real sample
-              of the work.
-            </p>
-            <div className="mt-10 flex flex-wrap gap-4">
-              <ContinueCta className="btn-primary px-6 py-3 text-base">
-                Start with a free diagnosis
-              </ContinueCta>
-              <a href="#before-you-pay" className="btn-secondary px-6 py-3 text-base">
-                See how it works
-              </a>
-            </div>
+        <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:py-24">
+          <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight text-ink sm:text-5xl">
+            Stop guessing what still matters.
+          </h1>
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-muted">
+            HSK Level 3 prep for people who want a real score, not another word
+            list. Diagnose your gaps, get an exam-dated plan, and practice
+            what&apos;s still in the way — mapped to the current syllabus.
+          </p>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-muted">
+            Full diagnosis first — your gaps, a plan outline, and a real sample
+            of the work.
+          </p>
+          <div className="mt-10 flex flex-wrap gap-4">
+            <ContinueCta className="btn-primary px-6 py-3 text-base">
+              Start with a free diagnosis
+            </ContinueCta>
+            <a href="#before-you-pay" className="btn-secondary px-6 py-3 text-base">
+              See how it works
+            </a>
           </div>
-          <HeroBrandVisual />
         </div>
       </section>
 
