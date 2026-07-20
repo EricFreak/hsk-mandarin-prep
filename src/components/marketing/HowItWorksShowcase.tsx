@@ -69,7 +69,7 @@ function PreviewChrome({
   );
 }
 
-function MockExamPreview({ active: _active }: { active: boolean }) {
+function MockExamPreview() {
   return (
     <PreviewChrome title="HSK 3 Diagnosis · Listening & reading" badge="Free">
       <div className="grid h-full min-h-0 gap-4 lg:grid-cols-[1fr_11rem]">
@@ -142,7 +142,7 @@ function MockExamPreview({ active: _active }: { active: boolean }) {
   );
 }
 
-function SummaryPreview({ active: _active }: { active: boolean }) {
+function SummaryPreview() {
   return (
     <PreviewChrome title="AI Learning Coach · Assessment report" badge="Preview">
       <div className="grid h-full min-h-0 gap-4 lg:grid-cols-[1fr_10.5rem]">
@@ -188,7 +188,7 @@ function SummaryPreview({ active: _active }: { active: boolean }) {
   );
 }
 
-function PlanPreview({ active: _active }: { active: boolean }) {
+function PlanPreview() {
   const outlineWeeks = [
     { week: 1, theme: "Vocab + grammar", status: "Sample" },
     { week: 2, theme: "Grammar patterns", status: "Locked" },
@@ -257,7 +257,7 @@ function PlanPreview({ active: _active }: { active: boolean }) {
   );
 }
 
-function SampleTastePreview({ active: _active }: { active: boolean }) {
+function SampleTastePreview() {
   return (
     <PreviewChrome title="Sample taste · Writing AI review included" badge="Free once">
       <div className="flex h-full min-h-0 flex-col gap-3">
@@ -324,7 +324,7 @@ function SampleTastePreview({ active: _active }: { active: boolean }) {
   );
 }
 
-function LockedPreviewsPreview({ active: _active }: { active: boolean }) {
+function LockedPreviewsPreview() {
   return (
     <PreviewChrome title="Locked previews · your diagnosis, still visible" badge="Look only">
       <div className="flex h-full min-h-0 flex-col gap-3">
@@ -369,18 +369,18 @@ function LockedPreviewsPreview({ active: _active }: { active: boolean }) {
   );
 }
 
-function StepPreview({ stepId, active }: { stepId: StepId; active: boolean }) {
+function StepPreview({ stepId }: { stepId: StepId }) {
   switch (stepId) {
     case "diagnosis":
-      return <MockExamPreview active={active} />;
+      return <MockExamPreview />;
     case "report":
-      return <SummaryPreview active={active} />;
+      return <SummaryPreview />;
     case "outline":
-      return <PlanPreview active={active} />;
+      return <PlanPreview />;
     case "sample":
-      return <SampleTastePreview active={active} />;
+      return <SampleTastePreview />;
     case "locked":
-      return <LockedPreviewsPreview active={active} />;
+      return <LockedPreviewsPreview />;
   }
 }
 
@@ -453,7 +453,7 @@ export default function HowItWorksShowcase() {
             aria-live="polite"
             aria-label={`Step ${activeStep.step}: ${activeStep.title}`}
           >
-            <StepPreview stepId={activeStep.id} active />
+            <StepPreview stepId={activeStep.id} />
           </div>
         </div>
       </div>
