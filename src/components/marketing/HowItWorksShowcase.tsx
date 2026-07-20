@@ -1,8 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-
-const STEP_MS = 6500;
+import { useCallback, useState } from "react";
 
 const STEPS = [
   {
@@ -10,30 +8,35 @@ const STEPS = [
     step: "1",
     title: "Free Diagnosis",
     short: "Diagnosis",
+    body: "Level 3 listening and reading — sized to open your report, not burn a mock quota.",
   },
   {
     id: "report",
     step: "2",
     title: "Full AI Report",
     short: "Full Report",
+    body: "Complete weakness report — not truncated.",
   },
   {
     id: "outline",
     step: "3",
     title: "Outline + One Quote",
     short: "Outline & Quote",
+    body: "Full outline, total workload, and a one-time quote.",
   },
   {
     id: "sample",
     step: "4",
     title: "Sample Taste + Writing AI",
     short: "Sample + AI",
+    body: "Multi-skill sample including one full AI writing review.",
   },
   {
     id: "locked",
     step: "5",
     title: "Locked Task Previews",
     short: "Task Peeks",
+    body: "See later work you can open after you pay — look, don’t do.",
   },
 ] as const;
 
@@ -837,35 +840,10 @@ function StepPreview({ stepId, active }: { stepId: StepId; active: boolean }) {
 
 export default function HowItWorksShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReducedMotion(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
 
   const goTo = useCallback((index: number) => {
     setActiveIndex(index);
   }, []);
-
-  useEffect(() => {
-    if (paused || reducedMotion) {
-      return;
-    }
-
-    timerRef.current = setInterval(() => {
-      setActiveIndex((current) => (current + 1) % STEPS.length);
-    }, STEP_MS);
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [paused, reducedMotion, activeIndex]);
 
   const activeStep = STEPS[activeIndex];
 
@@ -880,31 +858,19 @@ export default function HowItWorksShowcase() {
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-center text-sm text-ink-muted">
           Full diagnosis, a clear quote, and a real multi-skill sample — including one AI
-          writing review.
+          writing review. Click a step to preview it.
         </p>
 
-        <div
-          className="mt-10"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onFocusCapture={() => setPaused(true)}
-          onBlurCapture={() => setPaused(false)}
-        >
-          <ol
-            className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1 lg:grid lg:grid-cols-5 lg:overflow-visible lg:pb-0"
-            aria-label="Before you pay steps"
-          >
+        <div className="mt-10 grid items-start gap-8 lg:grid-cols-[minmax(0,18rem)_1fr] lg:gap-10">
+          <ol className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0" aria-label="Before you pay steps">
             {STEPS.map((step, index) => {
               const isActive = index === activeIndex;
               return (
-                <li
-                  key={step.id}
-                  className="min-w-[7.5rem] shrink-0 snap-start lg:min-w-0 lg:shrink"
-                >
+                <li key={step.id} className="min-w-[10.5rem] shrink-0 lg:min-w-0">
                   <button
                     type="button"
                     onClick={() => goTo(index)}
-                    className={`flex h-full w-full flex-col rounded-xl border px-2.5 py-2.5 text-left transition-all duration-300 sm:px-3 ${
+                    className={`flex h-full w-full flex-col rounded-xl border px-3 py-3 text-left transition-all duration-200 ${
                       isActive
                         ? "border-jade/40 bg-jade/5 shadow-card"
                         : "border-mist bg-white hover:border-jade/20 hover:bg-paper-dark/50"
@@ -921,51 +887,24 @@ export default function HowItWorksShowcase() {
                       >
                         {step.step}
                       </span>
-                      <h3 className="min-w-0 font-display text-xs font-semibold leading-snug text-ink sm:text-sm">
-                        {step.short}
+                      <h3 className="min-w-0 font-display text-sm font-semibold leading-snug text-ink">
+                        {step.title}
                       </h3>
                     </div>
-                    {isActive && !reducedMotion ? (
-                      <div className="mt-2">
-                        <div className="h-1 overflow-hidden rounded-full bg-mist">
-                          <div
-                            key={`${step.id}-${activeIndex}`}
-                            className="h-full rounded-full bg-jade motion-safe:animate-[showcase-progress_6.5s_linear_forwards]"
-                          />
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="mt-2 h-1" aria-hidden="true" />
-                    )}
+                    <p className="mt-2 text-xs leading-relaxed text-ink-muted">{step.body}</p>
                   </button>
                 </li>
               );
             })}
           </ol>
 
-          {/*
-            Only the active slide is in normal flow, so height = that preview's content.
-            Inactive slides are absolute overlays (fade). Avoids equal-height stretch gaps.
-          */}
           <div
             id="before-you-pay-preview"
-            className="relative mt-8"
+            className="min-w-0"
             aria-live="polite"
             aria-label={`Step ${activeStep.step}: ${activeStep.title}`}
           >
-            {STEPS.map((step, index) => (
-              <div
-                key={step.id}
-                className={`transition-opacity duration-500 ${
-                  index === activeIndex
-                    ? "relative z-10 opacity-100"
-                    : "pointer-events-none absolute inset-x-0 top-0 z-0 opacity-0"
-                }`}
-                aria-hidden={index !== activeIndex}
-              >
-                <StepPreview stepId={step.id} active={index === activeIndex} />
-              </div>
-            ))}
+            <StepPreview stepId={activeStep.id} active />
           </div>
         </div>
       </div>

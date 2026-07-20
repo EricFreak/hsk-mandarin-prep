@@ -1,6 +1,6 @@
 import ContinueCta from "@/components/marketing/ContinueCta";
 import ProblemFrame from "@/components/marketing/ProblemFrame";
-import BeforeYouPaySection from "@/components/marketing/BeforeYouPaySection";
+import HowItWorksShowcase from "@/components/marketing/HowItWorksShowcase";
 import HomeServiceCards from "@/components/marketing/HomeServiceCards";
 import MarketingFaq from "@/components/marketing/MarketingFaq";
 import JadeDotDivider from "@/components/marketing/JadeDotDivider";
@@ -8,7 +8,7 @@ import JadeDotDivider from "@/components/marketing/JadeDotDivider";
 /**
  * IA · Trust funnel (2026-07-17) + cross-review fixes (2026-07-20)
  * Hero → Before you pay → Plans (orientation) → Why-us → FAQ → CTA
- * Hero is copy + one proof card; plans are not a chooser.
+ * Before-you-pay: clickable steps mapped to matching static previews (no autoplay).
  */
 export default function LandingPage() {
   return (
@@ -82,7 +82,7 @@ export default function LandingPage() {
       </section>
 
       <JadeDotDivider />
-      <BeforeYouPaySection />
+      <HowItWorksShowcase />
 
       <JadeDotDivider />
       <section id="plans" aria-labelledby="plans-heading">
