@@ -22,7 +22,7 @@ export default function HomeServiceCards() {
             System-led
           </p>
           <h3 className="mt-1 font-display text-xl font-semibold text-ink">
-            Coach package
+            Coach Package
           </h3>
           <p className="mt-2 font-display text-2xl font-semibold tabular-nums text-ink">
             {coachPrices}
@@ -45,10 +45,10 @@ export default function HomeServiceCards() {
             You-led
           </p>
           <h3 className="mt-1 font-display text-xl font-semibold text-ink">
-            Custom exam plan
+            Custom Exam Plan
           </h3>
           <p className="mt-2 font-display text-2xl font-semibold text-ink">
-            Priced by workload
+            Priced By Workload
           </p>
           <p className="mt-1 text-xs text-ink-muted">One quote after diagnosis</p>
           <p className="mt-4 text-sm leading-relaxed text-ink-muted">
@@ -68,10 +68,10 @@ export default function HomeServiceCards() {
             Emergency
           </p>
           <h3 className="mt-1 font-display text-xl font-semibold text-ink">
-            Emergency sprint
+            Emergency Sprint
           </h3>
           <p className="mt-2 font-display text-2xl font-semibold text-ink">
-            First sprint free
+            First Sprint Free
           </p>
           <p className="mt-1 text-xs text-ink-muted">Exam ≤ 6 days · once per account</p>
           <p className="mt-4 text-sm leading-relaxed text-ink-muted">

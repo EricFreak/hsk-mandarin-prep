@@ -33,7 +33,7 @@ export default function Hsk2Vs3Page() {
       <header>
         <p className="section-eyebrow">HSK exam guide</p>
         <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-          HSK standards, levels &amp; which exam to take
+          HSK Standards, Levels &amp; Which Exam To Take
         </h1>
         <p className="mt-4 text-lg text-ink-muted">
           Compare HSK 2.0 and 3.0, understand level structures and vocabulary
@@ -43,7 +43,7 @@ export default function Hsk2Vs3Page() {
 
       <div className="mt-10 max-w-none">
         <h2 className="font-display text-xl font-semibold text-ink">
-          What is the HSK?
+          What Is The HSK?
         </h2>
         <p className="mt-3 text-ink-muted">
           The HSK (Hànyǔ Shuǐpíng Kǎoshì) is China&apos;s standardized test of
@@ -61,7 +61,7 @@ export default function Hsk2Vs3Page() {
         </p>
 
         <h2 className="mt-10 text-xl font-semibold text-ink">
-          Key differences at a glance
+          Key Differences At A Glance
         </h2>
         <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-muted">
           <li>
@@ -83,7 +83,7 @@ export default function Hsk2Vs3Page() {
         </ul>
 
         <h2 className="mt-10 text-xl font-semibold text-ink">
-          HSK 2.0 level structure
+          HSK 2.0 Level Structure
         </h2>
         <p className="mt-3 text-ink-muted">
           The original HSK had six levels. Vocabulary counts below are cumulative
@@ -119,7 +119,7 @@ export default function Hsk2Vs3Page() {
         </div>
 
         <h2 className="mt-10 text-xl font-semibold text-ink">
-          HSK 3.0 level structure
+          HSK 3.0 Level Structure
         </h2>
         <p className="mt-3 text-ink-muted">
           The new standard, published in 2021 as GF0025-2021, expands to nine
@@ -167,7 +167,7 @@ export default function Hsk2Vs3Page() {
         </div>
 
         <h2 className="mt-10 text-xl font-semibold text-ink">
-          Level mapping: rough equivalents
+          Level Mapping: Rough Equivalents
         </h2>
         <p className="mt-3 text-ink-muted">
           There is no official 1:1 mapping, but these approximations help if
@@ -211,7 +211,7 @@ export default function Hsk2Vs3Page() {
         </div>
 
         <h2 className="mt-10 text-xl font-semibold text-ink">
-          Which exam should you take?
+          Which Exam Should You Take?
         </h2>
         <p className="mt-3 text-ink-muted">
           China is gradually rolling out HSK 3.0 exams, but HSK 2.0 tests are
@@ -250,7 +250,7 @@ export default function Hsk2Vs3Page() {
         </ul>
 
         <h2 className="mt-10 text-xl font-semibold text-ink">
-          Prepare for HSK Level 3 with AI Coach
+          Prepare For HSK Level 3 With AI Coach
         </h2>
         <p className="mt-3 text-ink-muted">
           Most commercial apps still use HSK 2.0 vocabulary lists. HSK Prep is

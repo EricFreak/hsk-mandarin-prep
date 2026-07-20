@@ -24,7 +24,7 @@ export default async function PricingPage() {
         <div className="text-center">
           <p className="section-eyebrow">Pricing</p>
           <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            Three services, one transparent rate
+            Three Services, One Transparent Rate
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-ink-muted">
             Pay once for a defined amount of work. Coach packages, custom exam plans, and

@@ -8,32 +8,32 @@ const STEPS = [
   {
     id: "diagnosis",
     step: "1",
-    title: "Free diagnosis",
+    title: "Free Diagnosis",
     short: "Diagnosis",
   },
   {
     id: "report",
     step: "2",
-    title: "Full AI report",
-    short: "Full report",
+    title: "Full AI Report",
+    short: "Full Report",
   },
   {
     id: "outline",
     step: "3",
-    title: "Outline + one quote",
-    short: "Outline & quote",
+    title: "Outline + One Quote",
+    short: "Outline & Quote",
   },
   {
     id: "sample",
     step: "4",
-    title: "Sample taste + writing AI",
+    title: "Sample Taste + Writing AI",
     short: "Sample + AI",
   },
   {
     id: "locked",
     step: "5",
-    title: "Locked task previews",
-    short: "Task peeks",
+    title: "Locked Task Previews",
+    short: "Task Peeks",
   },
 ] as const;
 
@@ -876,7 +876,7 @@ export default function HowItWorksShowcase() {
           id="before-you-pay-heading"
           className="text-center font-display text-3xl font-semibold text-ink"
         >
-          What you get before you pay
+          What You Get Before You Pay
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-center text-sm text-ink-muted">
           Full diagnosis, a clear quote, and a real multi-skill sample — including one AI

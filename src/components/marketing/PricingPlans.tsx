@@ -74,7 +74,7 @@ export default function PricingPlans({
             Pay once
           </span>
           <h3 className="mt-1 font-display text-xl font-semibold text-ink">
-            Coach packages
+            Coach Packages
           </h3>
           <p className="mt-1 text-sm text-ink-muted">
             One rate for every plan. Custom exam plans and emergency sprints are priced the
@@ -108,11 +108,11 @@ export default function PricingPlans({
       <div className="mt-6 grid gap-6 sm:grid-cols-2">
         <div className="flex h-full flex-col rounded-2xl border border-mist bg-white p-6 shadow-card sm:p-8">
           <h3 className="font-display text-xl font-semibold text-ink">
-            Custom exam plan
+            Custom Exam Plan
           </h3>
           <div className="mt-2 flex items-baseline gap-1">
             <span className="font-display text-2xl font-semibold tabular-nums text-ink">
-              Priced by workload
+              Priced By Workload
             </span>
           </div>
           <p className="mt-3 text-sm text-ink-muted">
@@ -129,11 +129,11 @@ export default function PricingPlans({
 
         <div className="flex h-full flex-col rounded-2xl border border-mist bg-white p-6 shadow-card sm:p-8">
           <h3 className="font-display text-xl font-semibold text-ink">
-            Emergency sprint
+            Emergency Sprint
           </h3>
           <div className="mt-2 flex items-baseline gap-1">
             <span className="font-display text-2xl font-semibold tabular-nums text-ink">
-              First one free
+              First One Free
             </span>
             <span className="text-sm text-ink-muted">Exam ≤ 6 days</span>
           </div>

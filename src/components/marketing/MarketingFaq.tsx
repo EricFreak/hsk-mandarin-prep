@@ -41,7 +41,7 @@ const FAQ_ITEMS = [
         </span>{" "}
         (including one AI writing review) — not unlimited free practice. See{" "}
         <a href="#before-you-pay" className="font-medium text-jade hover:text-jade-light">
-          What you get before you pay
+          What You Get Before You Pay
         </a>{" "}
         above for the full free chain.
       </>
@@ -100,7 +100,7 @@ export default function MarketingFaq() {
           id="faq-heading"
           className="text-center font-display text-3xl font-semibold text-ink"
         >
-          Questions before you start
+          Questions Before You Start
         </h2>
 
         <div className="mt-10 divide-y divide-mist/70">
