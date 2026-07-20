@@ -1,6 +1,7 @@
 "use client";
 
 import BrandLogo from "@/components/marketing/BrandLogo";
+import { FUNNEL_EVENTS, track } from "@/lib/analytics/track";
 import { createClient } from "@/lib/supabase/client";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -60,16 +61,20 @@ export default function LoginForm() {
 
     if (isSignUp) {
       if (data.session) {
+        track(FUNNEL_EVENTS.signupCompleted, { mode: "password" });
         router.push(continuePath(next ?? "/onboarding"));
         router.refresh();
         return;
       }
+      // Do not inflate signup_completed before a usable session exists.
+      track(FUNNEL_EVENTS.signupPending, { mode: "password" });
       setMessage(
         "Account created. If email confirmation is enabled, confirm via email then sign in.",
       );
       return;
     }
 
+    track(FUNNEL_EVENTS.loginCompleted, { mode: "password" });
     setMessage("Signed in successfully.");
     router.push(continuePath(next));
     router.refresh();

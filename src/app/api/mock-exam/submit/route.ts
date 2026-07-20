@@ -276,7 +276,7 @@ export async function POST(request: Request) {
     const isDiagnosis = isDiagnosisTemplateId(templateId);
     if (isDiagnosis && inserted?.id) {
       const stampAt = completedAt;
-      await supabase
+      const { error: stampError } = await supabase
         .from("learner_profiles")
         .update({
           diagnosis_completed_at: stampAt,
@@ -285,6 +285,10 @@ export async function POST(request: Request) {
           updated_at: stampAt,
         })
         .eq("user_id", user.id);
+
+      if (stampError) {
+        console.error("Diagnosis stamp failed:", stampError.message);
+      }
 
       // Server-owned coach trigger (do not rely only on client fire-and-forget).
       void runCoach(supabase, {

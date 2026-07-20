@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SpeakChineseButton from "@/components/audio/SpeakChineseButton";
 import PracticeStem from "@/components/practice/PracticeStem";
 import UpgradeCTA from "@/components/paywall/UpgradeCTA";
+import { FUNNEL_EVENTS, track } from "@/lib/analytics/track";
 import {
   HSK3_MOCK_EXAM,
   HSK3_MOCK_EXAM_MCQ_COUNT,
@@ -78,9 +79,19 @@ export default function MockExamSession({
   const [writingScoreLoading, setWritingScoreLoading] = useState(false);
   const [writingScoreError, setWritingScoreError] = useState<string | null>(null);
   const [coachStatus, setCoachStatus] = useState<"idle" | "running" | "ready" | "error">("idle");
+  const diagnosisStartedRef = useRef(false);
 
   const { questions, templateId, mcqCount } = exam;
   const writingQuestion = questions.find((q) => q.section === "writing");
+
+  useEffect(() => {
+    if (!setupFlow || diagnosisStartedRef.current) return;
+    diagnosisStartedRef.current = true;
+    track(FUNNEL_EVENTS.diagnosisStarted, {
+      template_id: templateId,
+      question_count: questions.length,
+    });
+  }, [setupFlow, templateId, questions.length]);
 
   const writingAnswer = writingQuestion
     ? answers[writingQuestion.id]?.writingText?.trim()
@@ -147,6 +158,16 @@ export default function MockExamSession({
 
       setResult(data);
 
+      if (setupFlow) {
+        track(FUNNEL_EVENTS.diagnosisCompleted, {
+          template_id: templateId,
+          score: data.score ?? null,
+          correct_count: data.correctCount ?? null,
+          total_mcq: data.totalMcq ?? null,
+          duration_seconds: durationSeconds,
+        });
+      }
+
       if (data.coachPending && data.attemptId) {
         setCoachStatus("running");
         void fetch("/api/coach/run", {
@@ -160,12 +181,34 @@ export default function MockExamSession({
           .then(async (response) => {
             if (response.ok) {
               setCoachStatus("ready");
+              if (setupFlow) {
+                track(FUNNEL_EVENTS.coachReady, {
+                  template_id: templateId,
+                  attempt_id: data.attemptId ?? null,
+                  source: "client",
+                });
+              }
               return;
             }
             setCoachStatus("error");
+            if (setupFlow) {
+              track(FUNNEL_EVENTS.coachError, {
+                template_id: templateId,
+                error_kind: "http",
+                status: response.status,
+                source: "client",
+              });
+            }
           })
           .catch(() => {
             setCoachStatus("error");
+            if (setupFlow) {
+              track(FUNNEL_EVENTS.coachError, {
+                template_id: templateId,
+                error_kind: "network",
+                source: "client",
+              });
+            }
           });
       }
     } catch {

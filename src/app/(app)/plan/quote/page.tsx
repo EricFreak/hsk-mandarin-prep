@@ -1,8 +1,10 @@
 import { requireJourneyRoute } from "@/lib/auth/continue-destination";
 import { createClient } from "@/lib/supabase/server";
+import FunnelBeacon from "@/components/analytics/FunnelBeacon";
 import { CoachPackPicker } from "@/components/quote/CoachPackPicker";
 import { CustomPlanConfigurator } from "@/components/quote/CustomPlanConfigurator";
 import { SprintPanel } from "@/components/quote/SprintPanel";
+import { FUNNEL_EVENTS } from "@/lib/analytics/events";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +23,10 @@ export default async function QuotePage() {
 
   return (
     <div className="mx-auto max-w-2xl">
+      <FunnelBeacon
+        event={FUNNEL_EVENTS.quoteViewed}
+        props={{ service_intent: intent }}
+      />
       <p className="section-eyebrow">Plan</p>
       <h1 className="mt-2 font-display text-2xl font-semibold text-ink">
         Your plan, one transparent price

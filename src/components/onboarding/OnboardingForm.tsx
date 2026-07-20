@@ -6,6 +6,7 @@ import {
   ServiceIntentStep,
   type ServiceIntent,
 } from "@/components/onboarding/ServiceIntentStep";
+import { FUNNEL_EVENTS, track } from "@/lib/analytics/track";
 
 export default function OnboardingForm({ returnHref }: { returnHref?: string }) {
   const router = useRouter();
@@ -49,6 +50,11 @@ export default function OnboardingForm({ returnHref }: { returnHref?: string }) 
         setError(data.error ?? "Failed to save your exam date");
         return;
       }
+
+      track(FUNNEL_EVENTS.onboardingSubmitted, {
+        service_intent: payload.serviceIntent,
+        unsure: payload.unsure,
+      });
 
       router.push(returnHref ?? data.next ?? "/diagnosis");
       router.refresh();

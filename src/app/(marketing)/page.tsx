@@ -4,6 +4,8 @@ import HowItWorksShowcase from "@/components/marketing/HowItWorksShowcase";
 import HomeServiceCards from "@/components/marketing/HomeServiceCards";
 import MarketingFaq from "@/components/marketing/MarketingFaq";
 import JadeDotDivider from "@/components/marketing/JadeDotDivider";
+import FunnelBeacon from "@/components/analytics/FunnelBeacon";
+import { FUNNEL_EVENTS } from "@/lib/analytics/events";
 
 /**
  * IA · Trust funnel (2026-07-20 revision toward conversion)
@@ -20,6 +22,7 @@ const PERSONA = {
 export default function LandingPage() {
   return (
     <>
+      <FunnelBeacon event={FUNNEL_EVENTS.lpView} props={{ page: "home" }} />
       <section>
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-14 lg:py-24">
           <div>
@@ -36,7 +39,10 @@ export default function LandingPage() {
               list.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              <ContinueCta className="btn-primary px-6 py-3 text-base">
+              <ContinueCta
+                className="btn-primary px-6 py-3 text-base"
+                placement="hero"
+              >
                 Start with a free diagnosis
               </ContinueCta>
               <a
@@ -134,7 +140,10 @@ export default function LandingPage() {
             AI writing review — before you pay once.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
-            <ContinueCta className="btn-primary px-8 py-3 text-base">
+            <ContinueCta
+              className="btn-primary px-8 py-3 text-base"
+              placement="footer"
+            >
               Start with a free diagnosis
             </ContinueCta>
           </div>
