@@ -340,7 +340,7 @@ function SampleTastePreview() {
   return (
     <PreviewChrome title="Sample taste · Writing AI review included" badge="Free once">
       <div className="grid h-full min-h-0 gap-2.5 lg:grid-cols-[8.5rem_1fr]">
-        <div className="flex flex-col gap-1.5">
+        <div className="flex min-h-0 flex-col gap-1.5">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
             Cross-skill taster
           </p>
@@ -363,8 +363,15 @@ function SampleTastePreview() {
               <p className="text-[10px] text-ink-muted">{item.detail}</p>
             </div>
           ))}
+          <ul className="rounded-lg border border-mist bg-white px-2.5 py-2 text-[10px] leading-snug text-ink-muted">
+            <li>· ~35 min, one sitting</li>
+            <li>· From your real plan</li>
+            <li>· No card needed</li>
+            <li>· Finish → quote unlocks</li>
+          </ul>
         </div>
-        <div className="flex min-h-0 flex-col gap-2 rounded-lg border border-jade/30 bg-white p-2.5">
+
+        <div className="flex min-h-0 flex-col gap-1.5 rounded-lg border border-jade/30 bg-white p-2.5">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-wide text-jade">
@@ -383,6 +390,7 @@ function SampleTastePreview() {
               </p>
             </div>
           </div>
+
           <div className="grid grid-cols-4 gap-1.5">
             {[
               { label: "Grammar", score: 70 },
@@ -399,12 +407,13 @@ function SampleTastePreview() {
               </div>
             ))}
           </div>
+
           <div className="rounded-md border border-mist bg-paper-dark/40 px-2.5 py-2">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
               Your draft
             </p>
             <p className="mt-1 text-xs leading-snug text-ink">
-              我喜欢打篮球。因为篮球很有意思，我每个周末和朋友一起打。身体也
+              我喜欢打篮球。因为篮球很有意思，我每个周末和朋友一起打。运动以后我觉得很开心，身体也
               <span className="bg-seal/15 text-seal line-through decoration-seal/60">
                 健康的
               </span>
@@ -414,23 +423,57 @@ function SampleTastePreview() {
               。
             </p>
           </div>
+
           <div className="grid grid-cols-2 gap-1.5">
             <div className="rounded-md border border-seal/20 bg-seal/5 px-2 py-1.5">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-seal">
                 Grammar
               </p>
-              <p className="mt-1 text-[10px] leading-snug text-ink-muted">
-                Use <span className="font-medium text-ink">更健康了</span> for change-of-state.
-              </p>
+              <ul className="mt-1 space-y-1 text-[10px] leading-snug text-ink-muted">
+                <li>
+                  <span className="font-medium text-ink">更健康了</span> marks
+                  change-of-state better than 健康的.
+                </li>
+                <li>
+                  Link reason + feeling with{" "}
+                  <span className="font-medium text-ink">因为…所以…</span>
+                </li>
+              </ul>
             </div>
             <div className="rounded-md border border-jade/25 bg-jade/5 px-2 py-1.5">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-jade">
-                Try next
+                Vocabulary · Next
               </p>
-              <p className="mt-1 text-[10px] leading-snug text-ink-muted">
-                锻炼身体 · 因为…所以…
-              </p>
+              <ul className="mt-1 space-y-1 text-[10px] leading-snug text-ink-muted">
+                <li>Strong: 周末、朋友、开心</li>
+                <li>
+                  Try: <span className="font-medium text-ink">锻炼身体</span> /{" "}
+                  <span className="font-medium text-ink">团队合作</span>
+                </li>
+              </ul>
             </div>
+          </div>
+
+          <div className="rounded-md border border-jade/25 bg-jade/5 px-2 py-1.5">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-jade">
+              Rewrite to try
+            </p>
+            <p className="mt-1 text-[11px] leading-snug text-ink">
+              因为打篮球既有意思又能锻炼身体，
+              <span className="rounded bg-jade/15 px-0.5 font-medium text-jade">所以</span>
+              我每个周末都和朋友一起打。
+            </p>
+          </div>
+
+          <div className="rounded-md border border-mist bg-paper-dark/40 px-2 py-1.5">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+              Examiner note
+            </p>
+            <p className="mt-1 text-[10px] leading-snug text-ink-muted">
+              Task score (<span className="font-medium text-ink">68</span>) is the soft
+              spot — answer both “what” and “why” in one 因为…所以… chain. Same DeepSeek
+              examiner continues in the pack after this free sample.
+            </p>
           </div>
         </div>
       </div>
