@@ -52,8 +52,8 @@ function PreviewChrome({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-mist bg-white shadow-card">
-      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-mist bg-paper-dark/60 px-3 py-2 sm:px-4">
+    <div className="overflow-hidden rounded-2xl border border-mist bg-white shadow-card">
+      <div className="flex items-center justify-between gap-2 border-b border-mist bg-paper-dark/60 px-3 py-2 sm:px-4">
         <div className="flex min-w-0 items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-seal/40" />
           <span className="h-2.5 w-2.5 rounded-full bg-jade/40" />
@@ -64,7 +64,7 @@ function PreviewChrome({
           {badge}
         </span>
       </div>
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-3 sm:p-4">{children}</div>
+      <div className="p-3 sm:p-4">{children}</div>
     </div>
   );
 }
@@ -72,8 +72,8 @@ function PreviewChrome({
 function MockExamPreview() {
   return (
     <PreviewChrome title="HSK 3 Diagnosis · Listening & reading" badge="Free">
-      <div className="grid h-full min-h-0 gap-3 lg:grid-cols-[1fr_13.5rem]">
-        <div className="flex min-h-0 flex-col gap-2.5">
+      <div className="grid items-start gap-3 lg:grid-cols-[1fr_13.5rem]">
+        <div className="flex flex-col gap-2.5">
           <div className="flex flex-wrap items-center gap-1.5">
             {["Listening", "Reading", "Writing"].map((section, index) => (
               <span
@@ -122,7 +122,7 @@ function MockExamPreview() {
             ))}
           </div>
 
-          <div className="grid min-h-0 flex-1 grid-cols-2 gap-1.5 content-start">
+          <div className="grid grid-cols-2 gap-1.5">
             <div className="rounded-lg border border-mist bg-white px-2.5 py-2">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
                 Up next · Reading
@@ -141,14 +141,14 @@ function MockExamPreview() {
             </div>
           </div>
 
-          <ul className="rounded-lg border border-mist bg-paper-dark/50 px-2.5 py-2 text-[11px] leading-snug text-ink-muted">
-            <li>· Audio once — official format</li>
-            <li>· Listening → Reading → Writing</li>
-            <li>· Free · doesn&apos;t burn mock quota</li>
-          </ul>
+          <div className="flex flex-wrap gap-1.5 rounded-lg border border-mist bg-paper-dark/50 px-2.5 py-2 text-[11px] text-ink-muted">
+            <span className="rounded-full bg-white px-2 py-0.5">Audio once · official format</span>
+            <span className="rounded-full bg-white px-2 py-0.5">Listening → Reading → Writing</span>
+            <span className="rounded-full bg-white px-2 py-0.5">Free · no mock quota</span>
+          </div>
         </div>
 
-        <div className="flex min-h-0 flex-col gap-2">
+        <div className="flex flex-col gap-2">
           <div className="rounded-lg border border-mist bg-paper-dark/50 p-2.5">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
               Exam progress
@@ -177,7 +177,7 @@ function MockExamPreview() {
             </div>
           </div>
 
-          <div className="min-h-0 flex-1 rounded-lg border border-mist bg-white p-2.5">
+          <div className="rounded-lg border border-mist bg-white p-2.5">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
               What diagnosis unlocks
             </p>
@@ -195,6 +195,25 @@ function MockExamPreview() {
               </li>
             </ul>
           </div>
+
+          <div className="rounded-lg border border-seal/20 bg-seal/5 p-2.5">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-seal">
+              Detected so far
+            </p>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {["几点", "明天", "周末"].map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-ink"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <p className="mt-2 text-[10px] leading-snug text-ink-muted">
+              Time / schedule cluster — seeds Week 3 listening drills.
+            </p>
+          </div>
         </div>
       </div>
     </PreviewChrome>
@@ -204,8 +223,8 @@ function MockExamPreview() {
 function SummaryPreview() {
   return (
     <PreviewChrome title="AI Learning Coach · Assessment report" badge="Preview">
-      <div className="grid h-full min-h-0 gap-3 lg:grid-cols-[1fr_12.5rem]">
-        <div className="flex min-h-0 flex-col gap-2.5">
+      <div className="grid items-start gap-3 lg:grid-cols-[1fr_12.5rem]">
+        <div className="flex flex-col gap-2.5">
           <div className="flex flex-wrap items-center gap-2">
             <span className="rounded-full bg-jade/10 px-2.5 py-0.5 text-[11px] font-semibold text-jade">
               DeepSeek coach
@@ -285,7 +304,7 @@ function SummaryPreview() {
           </div>
         </div>
 
-        <div className="flex min-h-0 flex-col rounded-lg border border-mist bg-paper-dark/50 p-3">
+        <div className="flex flex-col rounded-lg border border-mist bg-paper-dark/50 p-3">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
             Exam readiness
           </p>
@@ -337,7 +356,7 @@ function PlanPreview() {
 
   return (
     <PreviewChrome title="Journey Roadmap · Exam Sep 12, 2026" badge="Preview">
-      <div className="flex h-full min-h-0 flex-col gap-2.5">
+      <div className="flex flex-col gap-2.5">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-wide text-jade">
@@ -399,11 +418,11 @@ function PlanPreview() {
           </li>
         </ul>
 
-        <div className="min-h-0 flex-1">
+        <div>
           <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
             One quote · three shapes · same unit rate
           </p>
-          <div className="mt-1.5 grid h-[calc(100%-1rem)] gap-1.5 sm:grid-cols-3">
+          <div className="mt-1.5 grid gap-1.5 sm:grid-cols-3">
             <div className="rounded-lg border border-mist bg-white px-2.5 py-2">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
                 Coach pack
@@ -470,8 +489,8 @@ function SampleTastePreview() {
 
   return (
     <PreviewChrome title="Sample taste · Writing AI review included" badge="Free once">
-      <div className="grid h-full min-h-0 gap-3 lg:grid-cols-[9.5rem_1fr]">
-        <div className="flex min-h-0 flex-col gap-1.5">
+      <div className="grid items-start gap-3 lg:grid-cols-[9.5rem_1fr]">
+        <div className="flex flex-col gap-1.5">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
             Cross-skill taster
           </p>
@@ -499,7 +518,7 @@ function SampleTastePreview() {
           </ul>
         </div>
 
-        <div className="flex min-h-0 flex-col gap-2 overflow-hidden rounded-lg border border-jade/30 bg-white p-2.5 sm:p-3">
+        <div className="flex flex-col gap-2 rounded-lg border border-jade/30 bg-white p-2.5 sm:p-3">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-wide text-jade">
@@ -548,7 +567,7 @@ function SampleTastePreview() {
             </p>
           </div>
 
-          <div className="grid min-h-0 flex-1 grid-cols-2 gap-1.5 content-start">
+          <div className="grid grid-cols-2 gap-1.5">
             <div className="rounded-md border border-seal/20 bg-seal/5 px-2 py-1.5">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-seal">
                 Grammar
@@ -596,13 +615,13 @@ function SampleTastePreview() {
 function LockedPreviewsPreview() {
   return (
     <PreviewChrome title="Locked previews · your diagnosis, still visible" badge="Look only">
-      <div className="flex h-full min-h-0 flex-col gap-2.5">
+      <div className="flex flex-col gap-2.5">
         <p className="text-xs leading-snug text-ink-muted">
           Paid tasks show real gap content — readable now;{" "}
           <span className="font-medium text-ink">Start stays locked</span> until you buy.
         </p>
 
-        <div className="relative min-h-0 flex-[1.2] overflow-hidden rounded-lg border border-mist bg-white">
+        <div className="relative overflow-hidden rounded-lg border border-mist bg-white">
           <div className="absolute right-2 top-2 z-10 rounded-full bg-ink/80 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white">
             Locked · Week 3
           </div>
@@ -640,7 +659,7 @@ function LockedPreviewsPreview() {
           </div>
         </div>
 
-        <div className="grid min-h-0 flex-1 gap-2 sm:grid-cols-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="relative overflow-hidden rounded-lg border border-mist bg-white p-2.5">
             <div className="absolute right-2 top-2 rounded-full bg-ink/80 px-1.5 py-0.5 text-[9px] font-semibold uppercase text-white">
               Locked
@@ -731,22 +750,19 @@ export default function HowItWorksShowcase() {
           writing review. Click a step to preview it.
         </p>
 
-        <div className="mt-10 grid gap-8 lg:h-[40rem] lg:grid-cols-[minmax(0,18rem)_1fr] lg:items-stretch lg:gap-10">
+        <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,17rem)_1fr] lg:items-start lg:gap-8">
           <ol
-            className="flex gap-2 overflow-x-auto pb-1 lg:h-full lg:flex-col lg:gap-2 lg:overflow-visible lg:pb-0"
+            className="flex gap-2 overflow-x-auto pb-1 lg:sticky lg:top-24 lg:flex-col lg:gap-2 lg:self-start lg:overflow-visible lg:pb-0"
             aria-label="Before you pay steps"
           >
             {STEPS.map((step, index) => {
               const isActive = index === activeIndex;
               return (
-                <li
-                  key={step.id}
-                  className="min-w-[10.5rem] shrink-0 lg:min-h-0 lg:min-w-0 lg:flex-1"
-                >
+                <li key={step.id} className="min-w-[10.5rem] shrink-0 lg:min-w-0">
                   <button
                     type="button"
                     onClick={() => goTo(index)}
-                    className={`flex h-full w-full flex-col justify-center rounded-xl border px-3 py-3 text-left transition-all duration-200 ${
+                    className={`w-full rounded-xl border px-3 py-2.5 text-left transition-all duration-200 ${
                       isActive
                         ? "border-jade/40 bg-jade/5 shadow-card"
                         : "border-mist bg-white hover:border-jade/20 hover:bg-paper-dark/50"
@@ -767,7 +783,7 @@ export default function HowItWorksShowcase() {
                         {step.title}
                       </h3>
                     </div>
-                    <p className="mt-2 text-xs leading-relaxed text-ink-muted">{step.body}</p>
+                    <p className="mt-1.5 text-xs leading-snug text-ink-muted">{step.body}</p>
                   </button>
                 </li>
               );
@@ -776,7 +792,7 @@ export default function HowItWorksShowcase() {
 
           <div
             id="before-you-pay-preview"
-            className="min-h-[24rem] min-w-0 lg:h-full lg:min-h-0"
+            className="min-w-0"
             aria-live="polite"
             aria-label={`Step ${activeStep.step}: ${activeStep.title}`}
           >
