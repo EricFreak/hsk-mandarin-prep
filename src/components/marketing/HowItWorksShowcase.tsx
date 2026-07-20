@@ -72,7 +72,7 @@ function MockExamPreview() {
   return (
     <PreviewChrome title="HSK 3 Diagnosis · Listening & reading" badge="Free">
       <div className="grid h-full min-h-0 gap-2.5 lg:grid-cols-[1fr_12.5rem]">
-        <div className="flex min-h-0 flex-col gap-2">
+        <div className="flex min-h-0 flex-col gap-1.5">
           <div className="flex flex-wrap items-center gap-1.5">
             {["Listening", "Reading", "Writing"].map((section, index) => (
               <span
@@ -90,17 +90,35 @@ function MockExamPreview() {
               24:18 left
             </span>
           </div>
+
+          <div className="rounded-lg border border-mist bg-white px-2.5 py-1.5">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+              Earlier in this section
+            </p>
+            <ul className="mt-1 space-y-1 text-[11px] text-ink-muted">
+              <li className="flex justify-between gap-2">
+                <span>Q1 · 她今天去哪儿？</span>
+                <span className="font-medium text-jade">✓ 商店</span>
+              </li>
+              <li className="flex justify-between gap-2">
+                <span>Q2 · 男的怎么去机场？</span>
+                <span className="font-medium text-jade">✓ 坐地铁</span>
+              </li>
+            </ul>
+          </div>
+
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-wide text-jade">
               Listening · Question 3 of 8
             </p>
             <p className="mt-0.5 text-[11px] text-ink-muted">
-              Audio · plays once · 你明天几点去学校？
+              ▶ Audio · plays once · 你明天几点去学校？
             </p>
             <p className="mt-1 font-display text-lg font-semibold leading-snug text-ink">
               你明天几点去学校？
             </p>
           </div>
+
           <div className="grid grid-cols-2 gap-1.5">
             {["八点", "明天", "学校", "几点"].map((choice, index) => (
               <div
@@ -108,7 +126,7 @@ function MockExamPreview() {
                 className={`rounded-lg border px-2.5 py-2 text-sm ${
                   index === 0
                     ? "border-jade bg-jade/10 font-medium text-jade"
-                    : "border-mist text-ink-muted"
+                    : "border-mist bg-white text-ink-muted"
                 }`}
               >
                 <span className="mr-1.5 font-semibold text-ink-muted">
@@ -118,6 +136,7 @@ function MockExamPreview() {
               </div>
             ))}
           </div>
+
           <div className="grid grid-cols-2 gap-1.5">
             <div className="rounded-lg border border-mist bg-white px-2.5 py-2">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
@@ -126,23 +145,30 @@ function MockExamPreview() {
               <p className="mt-1 text-xs leading-snug text-ink">
                 他常常坐地铁去公司，因为___很方便。
               </p>
+              <p className="mt-1 text-[10px] text-ink-muted">Cloze · pick 1 of 4</p>
             </div>
             <div className="rounded-lg border border-mist bg-white px-2.5 py-2">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
                 Up next · Writing
               </p>
               <p className="mt-1 text-xs leading-snug text-ink">介绍你喜欢的运动（约 80 字）</p>
+              <p className="mt-1 text-[10px] text-ink-muted">AI review in sample step</p>
             </div>
           </div>
-          <div className="flex flex-wrap gap-1.5 rounded-lg border border-mist bg-white px-2.5 py-2 text-[11px] text-ink-muted">
-            <span className="rounded-full bg-paper-dark px-2 py-0.5">Audio once</span>
-            <span className="rounded-full bg-paper-dark px-2 py-0.5">
-              Listening → Reading → Writing
-            </span>
-            <span className="rounded-full bg-paper-dark px-2 py-0.5">Free · no mock quota</span>
+
+          <div className="rounded-lg border border-mist bg-white px-2.5 py-2">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+              Session notes
+            </p>
+            <ul className="mt-1 space-y-1 text-[11px] leading-snug text-ink-muted">
+              <li>· Audio plays once — same as official format</li>
+              <li>· Sections unlock in order: Listening → Reading → Writing</li>
+              <li>· Free diagnosis — doesn&apos;t burn mock-exam quota</li>
+            </ul>
           </div>
         </div>
-        <div className="flex min-h-0 flex-col gap-2">
+
+        <div className="flex min-h-0 flex-col gap-1.5">
           <div className="rounded-lg border border-mist bg-white p-2.5">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
               Exam progress
@@ -170,18 +196,22 @@ function MockExamPreview() {
               ))}
             </div>
           </div>
+
           <div className="rounded-lg border border-mist bg-white p-2.5">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
               After this unlocks
             </p>
             <ul className="mt-2 space-y-1.5 text-[11px] leading-snug text-ink-muted">
               <li>
-                Heatmap L{PERSONA.listening} · R{PERSONA.reading} · V{PERSONA.vocab}
+                Heatmap L{PERSONA.listening} · R{PERSONA.reading} · V{PERSONA.vocab} · G
+                {PERSONA.grammar}
               </li>
               <li>Full coach report · not truncated</li>
-              <li>Outline + one-time quote</li>
+              <li>Exam-dated outline + one-time quote</li>
+              <li>Sample taste with writing AI</li>
             </ul>
           </div>
+
           <div className="rounded-lg border border-seal/20 bg-seal/5 p-2.5">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-seal">
               Detected so far
@@ -196,6 +226,13 @@ function MockExamPreview() {
                 </span>
               ))}
             </div>
+            <ul className="mt-2 space-y-1 text-[10px] leading-snug text-ink-muted">
+              <li>· Time / schedule cluster forming</li>
+              <li>· Seeds Week 3 listening drills by name</li>
+              <li>
+                · Target readiness {PERSONA.readinessPct}% if you follow the plan
+              </li>
+            </ul>
           </div>
         </div>
       </div>
