@@ -63,8 +63,9 @@ function PreviewChrome({
           {badge}
         </span>
       </div>
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-paper-dark/25 p-3 sm:p-3.5">
-        {children}
+      {/* Padding sits outside the overflow clip so bottom cards don't kiss the chrome border */}
+      <div className="flex min-h-0 flex-1 flex-col bg-paper-dark/25 p-3 sm:p-3.5">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{children}</div>
       </div>
     </div>
   );
