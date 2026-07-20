@@ -39,7 +39,7 @@ const STEPS = [
 type StepId = (typeof STEPS)[number]["id"];
 
 const DESKTOP_FRAME =
-  "mt-10 hidden lg:grid lg:h-[30rem] lg:grid-cols-[minmax(0,16rem)_1fr] lg:items-stretch lg:gap-8";
+  "mt-10 hidden lg:grid lg:h-[30rem] lg:max-h-[30rem] lg:grid-cols-[minmax(0,16rem)_1fr] lg:items-stretch lg:gap-8 lg:overflow-hidden";
 
 function PreviewChrome({
   title,
@@ -51,7 +51,7 @@ function PreviewChrome({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-mist bg-white shadow-card">
+    <div className="flex h-full min-h-0 max-h-full flex-col overflow-hidden rounded-2xl border border-mist bg-white shadow-card">
       <div className="flex shrink-0 items-center justify-between gap-2 border-b border-mist bg-paper-dark/60 px-3 py-2 sm:px-4">
         <div className="flex min-w-0 items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-seal/40" />
@@ -63,7 +63,9 @@ function PreviewChrome({
           {badge}
         </span>
       </div>
-      <div className="flex min-h-0 flex-1 flex-col bg-paper-dark/25 p-3 sm:p-3.5">{children}</div>
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-paper-dark/25 p-3 sm:p-3.5">
+        {children}
+      </div>
     </div>
   );
 }
@@ -586,17 +588,19 @@ export default function HowItWorksShowcase() {
           <p className="mt-3 text-sm text-ink-muted">{activeStep.body}</p>
           <div
             id="before-you-pay-preview-mobile"
-            className="mt-4 min-h-[20rem]"
+            className="mt-4 h-[28rem] overflow-hidden"
             aria-live="polite"
           >
-            <StepPreview stepId={activeStep.id} />
+            <div className="h-full min-h-0">
+              <StepPreview stepId={activeStep.id} />
+            </div>
           </div>
         </div>
 
         {/* Desktop: equal-height rail + preview */}
         <div className={DESKTOP_FRAME}>
           <ol
-            className="flex h-full flex-col gap-2"
+            className="flex h-full min-h-0 flex-col gap-2"
             aria-label="Before you pay steps"
           >
             {STEPS.map((step, index) => {
@@ -636,11 +640,13 @@ export default function HowItWorksShowcase() {
 
           <div
             id="before-you-pay-preview"
-            className="min-w-0 lg:h-full"
+            className="min-h-0 min-w-0 lg:h-full lg:overflow-hidden"
             aria-live="polite"
             aria-label={`Step ${activeStep.step}: ${activeStep.title}`}
           >
-            <StepPreview stepId={activeStep.id} />
+            <div className="h-full min-h-0">
+              <StepPreview stepId={activeStep.id} />
+            </div>
           </div>
         </div>
       </div>
