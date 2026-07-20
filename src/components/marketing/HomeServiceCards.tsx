@@ -25,7 +25,7 @@ export default function HomeServiceCards() {
             System-led
           </p>
           <h3 className="mt-1 font-display text-lg font-semibold text-ink">
-            Coach package
+            Coach Package
           </h3>
           <p className="mt-3 text-sm leading-relaxed text-ink-muted">
             Fixed 4 / 8 / 12-week cycles. The system builds the weeks; you follow.
@@ -36,7 +36,7 @@ export default function HomeServiceCards() {
             You-led
           </p>
           <h3 className="mt-1 font-display text-lg font-semibold text-ink">
-            Custom exam plan
+            Custom Exam Plan
           </h3>
           <p className="mt-3 text-sm leading-relaxed text-ink-muted">
             You set the mix. One transparent quote after diagnosis — pay for the work
@@ -48,7 +48,7 @@ export default function HomeServiceCards() {
             Emergency
           </p>
           <h3 className="mt-1 font-display text-lg font-semibold text-ink">
-            Emergency sprint
+            Emergency Sprint
           </h3>
           <p className="mt-3 text-sm leading-relaxed text-ink-muted">
             Exam in ≤6 days. First sprint free once per account; same unit rate after.

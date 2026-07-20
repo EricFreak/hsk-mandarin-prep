@@ -16,7 +16,7 @@ export default function LandingPage() {
       <section>
         <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:py-24">
           <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight text-ink sm:text-5xl">
-            See what&apos;s still between you and HSK Level 3
+            See What&apos;s Still Between You And HSK Level 3
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-muted">
             About 20 minutes. Free diagnosis with listening and reading — then your
@@ -81,7 +81,7 @@ export default function LandingPage() {
             id="plans-heading"
             className="text-center font-display text-3xl font-semibold text-ink"
           >
-            How paid work is shaped
+            How Paid Work Is Shaped
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-center text-sm text-ink-muted">
             After diagnosis you pick an outcome. Until then, one path: free diagnosis.
@@ -102,7 +102,7 @@ export default function LandingPage() {
       <section>
         <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 sm:py-14">
           <h2 className="font-display text-3xl font-semibold text-ink">
-            Get your free diagnosis
+            Get Your Free Diagnosis
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-ink-muted">
             No credit card. See your report, outline, and a real sample — including one
