@@ -42,6 +42,10 @@ const STEPS = [
 
 type StepId = (typeof STEPS)[number]["id"];
 
+/** Shared desktop frame: left steps + all 5 right mocks stretch to this height. */
+const FRAME =
+  "mt-10 grid gap-6 lg:h-[32rem] lg:grid-cols-[minmax(0,17rem)_1fr] lg:items-stretch lg:gap-8";
+
 function PreviewChrome({
   title,
   badge,
@@ -52,8 +56,8 @@ function PreviewChrome({
   children: React.ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-mist bg-white shadow-card">
-      <div className="flex items-center justify-between gap-2 border-b border-mist bg-paper-dark/60 px-3 py-2 sm:px-4">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-mist bg-white shadow-card">
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-mist bg-paper-dark/60 px-3 py-2 sm:px-4">
         <div className="flex min-w-0 items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-seal/40" />
           <span className="h-2.5 w-2.5 rounded-full bg-jade/40" />
@@ -64,7 +68,7 @@ function PreviewChrome({
           {badge}
         </span>
       </div>
-      <div className="p-3 sm:p-4">{children}</div>
+      <div className="flex min-h-0 flex-1 flex-col bg-paper-dark/25 p-3 sm:p-3.5">{children}</div>
     </div>
   );
 }
@@ -72,8 +76,8 @@ function PreviewChrome({
 function MockExamPreview() {
   return (
     <PreviewChrome title="HSK 3 Diagnosis · Listening & reading" badge="Free">
-      <div className="grid items-start gap-3 lg:grid-cols-[1fr_13.5rem]">
-        <div className="flex flex-col gap-2.5">
+      <div className="grid h-full min-h-0 gap-2.5 lg:grid-cols-[1fr_13rem]">
+        <div className="flex min-h-0 flex-col gap-2">
           <div className="flex flex-wrap items-center gap-1.5">
             {["Listening", "Reading", "Writing"].map((section, index) => (
               <span
@@ -99,7 +103,7 @@ function MockExamPreview() {
             <p className="mt-0.5 text-[11px] text-ink-muted">
               Audio · plays once · 你明天几点去学校？
             </p>
-            <p className="mt-1.5 font-display text-lg font-semibold leading-snug text-ink sm:text-xl">
+            <p className="mt-1 font-display text-lg font-semibold leading-snug text-ink">
               你明天几点去学校？
             </p>
           </div>
@@ -122,22 +126,38 @@ function MockExamPreview() {
             ))}
           </div>
 
+          <div className="rounded-lg border border-mist bg-paper-dark/40 px-2.5 py-2">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+              Earlier in this section
+            </p>
+            <ul className="mt-1.5 space-y-1 text-[11px] text-ink-muted">
+              <li className="flex justify-between gap-2">
+                <span>Q1 · 她今天去哪儿？</span>
+                <span className="font-medium text-jade">✓ 商店</span>
+              </li>
+              <li className="flex justify-between gap-2">
+                <span>Q2 · 男的怎么去机场？</span>
+                <span className="font-medium text-jade">✓ 坐地铁</span>
+              </li>
+            </ul>
+          </div>
+
           <div className="grid grid-cols-2 gap-1.5">
-            <div className="rounded-lg border border-mist bg-white px-2.5 py-2">
+            <div className="rounded-lg border border-mist bg-paper-dark/40 px-2.5 py-2">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
                 Up next · Reading
               </p>
               <p className="mt-1 text-xs leading-snug text-ink">
                 他常常坐地铁去公司，因为___很方便。
               </p>
-              <p className="mt-0.5 text-[10px] text-ink-muted">Cloze · pick 1 of 4</p>
+              <p className="mt-1 text-[10px] text-ink-muted">Cloze · pick 1 of 4</p>
             </div>
-            <div className="rounded-lg border border-mist bg-white px-2.5 py-2">
+            <div className="rounded-lg border border-mist bg-paper-dark/40 px-2.5 py-2">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
                 Up next · Writing
               </p>
               <p className="mt-1 text-xs leading-snug text-ink">介绍你喜欢的运动（约 80 字）</p>
-              <p className="mt-0.5 text-[10px] text-ink-muted">AI review in sample</p>
+              <p className="mt-1 text-[10px] text-ink-muted">AI review in sample</p>
             </div>
           </div>
 
@@ -148,7 +168,7 @@ function MockExamPreview() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex min-h-0 flex-col gap-2">
           <div className="rounded-lg border border-mist bg-paper-dark/50 p-2.5">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
               Exam progress
@@ -186,12 +206,10 @@ function MockExamPreview() {
                 <span className="font-medium text-ink">Skill heatmap</span> — L58 · R78 · V85
               </li>
               <li>
-                <span className="font-medium text-ink">Full coach report</span> — DeepSeek, not
-                truncated
+                <span className="font-medium text-ink">Full coach report</span> — DeepSeek
               </li>
               <li>
-                <span className="font-medium text-ink">Sample writing AI</span> — one free
-                red-line review
+                <span className="font-medium text-ink">Sample writing AI</span> — free red-line
               </li>
             </ul>
           </div>
@@ -201,7 +219,7 @@ function MockExamPreview() {
               Detected so far
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {["几点", "明天", "周末"].map((tag) => (
+              {["几点", "明天", "周末", "车票"].map((tag) => (
                 <span
                   key={tag}
                   className="rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-ink"
@@ -210,8 +228,13 @@ function MockExamPreview() {
                 </span>
               ))}
             </div>
-            <p className="mt-2 text-[10px] leading-snug text-ink-muted">
-              Time / schedule cluster — seeds Week 3 listening drills.
+            <ul className="mt-2 space-y-1 text-[10px] leading-snug text-ink-muted">
+              <li>· Q3 misheard time word</li>
+              <li>· Q5 travel phrase miss</li>
+              <li>· Seeds Week 3 listening drills</li>
+            </ul>
+            <p className="mt-2 border-t border-seal/15 pt-2 text-[10px] text-ink-muted">
+              Cluster: time / schedule / travel
             </p>
           </div>
         </div>
@@ -223,8 +246,8 @@ function MockExamPreview() {
 function SummaryPreview() {
   return (
     <PreviewChrome title="AI Learning Coach · Assessment report" badge="Preview">
-      <div className="grid items-start gap-3 lg:grid-cols-[1fr_12.5rem]">
-        <div className="flex flex-col gap-2.5">
+      <div className="grid h-full min-h-0 gap-2.5 lg:grid-cols-[1fr_12.5rem]">
+        <div className="flex min-h-0 flex-col gap-2">
           <div className="flex flex-wrap items-center gap-2">
             <span className="rounded-full bg-jade/10 px-2.5 py-0.5 text-[11px] font-semibold text-jade">
               DeepSeek coach
@@ -233,10 +256,10 @@ function SummaryPreview() {
           </div>
 
           <div>
-            <h3 className="font-display text-xl font-semibold leading-snug text-ink">
+            <h3 className="font-display text-lg font-semibold leading-snug text-ink sm:text-xl">
               You&apos;re close — listening is the bottleneck
             </h3>
-            <div className="mt-2 space-y-1.5 text-xs leading-snug text-ink-muted sm:text-[13px]">
+            <div className="mt-1.5 space-y-1 text-xs leading-snug text-ink-muted">
               <p>
                 Mock score <span className="font-semibold text-ink">72%</span> — vocab and
                 reading solid; most cloze and short passages correct.
@@ -246,7 +269,7 @@ function SummaryPreview() {
                 travel (几点、周末、车票). Two of three misses clustered there.
               </p>
               <p>
-                One week of targeted listening + mistake-bank review → mid-70s to low-80s is
+                One week of targeted listening + mistake-bank → mid-70s to low-80s is
                 realistic.
               </p>
             </div>
@@ -273,11 +296,10 @@ function SummaryPreview() {
               <ul className="mt-1.5 space-y-1 text-[11px] leading-snug text-ink-muted">
                 <li>
                   <span className="font-medium text-seal">Listening · High</span> — time /
-                  travel audio
+                  travel
                 </li>
                 <li>
-                  <span className="font-medium text-ink">Grammar · Medium</span> — particles in
-                  writing
+                  <span className="font-medium text-ink">Grammar · Medium</span> — particles
                 </li>
               </ul>
             </div>
@@ -285,26 +307,49 @@ function SummaryPreview() {
 
           <div className="rounded-lg border border-mist bg-paper-dark/50 px-2.5 py-2">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
-              Mistake bank · started automatically
+              Skill breakdown
             </p>
-            <ul className="mt-1.5 grid gap-x-3 gap-y-1 text-[11px] text-ink-muted sm:grid-cols-3">
-              <li>
-                <span className="font-medium text-ink">Q3</span> 几点 — time
-              </li>
-              <li>
-                <span className="font-medium text-ink">Q5</span> 车票 — travel
-              </li>
-              <li>
-                <span className="font-medium text-ink">Q7</span> 周末 — schedule
-              </li>
-            </ul>
-            <p className="mt-1 text-[10px] text-ink-muted">
-              These misses seed Week 3 drills by name.
-            </p>
+            <div className="mt-2 space-y-2">
+              {[
+                { label: "Listening", pct: 58, tone: "bg-seal" },
+                { label: "Reading", pct: 78, tone: "bg-jade" },
+                { label: "Vocabulary", pct: 85, tone: "bg-jade" },
+                { label: "Grammar", pct: 72, tone: "bg-jade/70" },
+              ].map((row) => (
+                <div key={row.label}>
+                  <div className="mb-0.5 flex justify-between text-[11px]">
+                    <span className="font-medium text-ink">{row.label}</span>
+                    <span className="text-ink-muted">{row.pct}%</span>
+                  </div>
+                  <div className="h-1.5 overflow-hidden rounded-full bg-white">
+                    <div
+                      className={`h-full rounded-full ${row.tone}`}
+                      style={{ width: `${row.pct}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-2 border-t border-mist pt-2">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+                Mistake bank
+              </p>
+              <ul className="mt-1.5 grid gap-x-3 gap-y-1 text-[11px] text-ink-muted sm:grid-cols-3">
+                <li>
+                  <span className="font-medium text-ink">Q3</span> 几点 — time
+                </li>
+                <li>
+                  <span className="font-medium text-ink">Q5</span> 车票 — travel
+                </li>
+                <li>
+                  <span className="font-medium text-ink">Q7</span> 周末 — schedule
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        <div className="flex flex-col rounded-lg border border-mist bg-paper-dark/50 p-3">
+        <div className="flex min-h-0 flex-col rounded-lg border border-mist bg-paper-dark/50 p-3">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
             Exam readiness
           </p>
@@ -323,6 +368,12 @@ function SummaryPreview() {
               <p className="text-[11px] font-semibold text-ink">Heatmap</p>
               <p className="mt-1 text-[11px] leading-snug text-ink-muted">
                 L58 · R78 · V85 · G72
+              </p>
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold text-ink">Focus this week</p>
+              <p className="mt-1 text-[11px] leading-snug text-ink-muted">
+                Numbers &amp; time audio · 24 miss-type items
               </p>
             </div>
             <div>
@@ -356,7 +407,7 @@ function PlanPreview() {
 
   return (
     <PreviewChrome title="Journey Roadmap · Exam Sep 12, 2026" badge="Preview">
-      <div className="flex flex-col gap-2.5">
+      <div className="flex h-full min-h-0 flex-col gap-2">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-wide text-jade">
@@ -423,7 +474,7 @@ function PlanPreview() {
             One quote · three shapes · same unit rate
           </p>
           <div className="mt-1.5 grid gap-1.5 sm:grid-cols-3">
-            <div className="rounded-lg border border-mist bg-white px-2.5 py-2">
+            <div className="rounded-lg border border-mist bg-paper-dark/30 px-2.5 py-2">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
                 Coach pack
               </p>
@@ -438,8 +489,9 @@ function PlanPreview() {
                 <li>96 drills · 8 AI · 4 mocks</li>
                 <li>System builds weeks</li>
               </ul>
+              <p className="mt-2 text-[10px] text-ink-muted">Best if you want a path</p>
             </div>
-            <div className="rounded-lg border border-mist bg-white px-2.5 py-2">
+            <div className="rounded-lg border border-mist bg-paper-dark/30 px-2.5 py-2">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
                 Exam custom
               </p>
@@ -455,8 +507,9 @@ function PlanPreview() {
                 <li>Cut essays ↓ · add mocks ↑</li>
                 <li>Still fit before Sep 12</li>
               </ul>
+              <p className="mt-2 text-[10px] text-ink-muted">Best if you edit workload</p>
             </div>
-            <div className="rounded-lg border border-mist bg-white px-2.5 py-2">
+            <div className="rounded-lg border border-mist bg-paper-dark/30 px-2.5 py-2">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
                 Emergency sprint
               </p>
@@ -471,6 +524,7 @@ function PlanPreview() {
                 <li>After: ~$13 for 6-day push</li>
                 <li>No urgency premium</li>
               </ul>
+              <p className="mt-2 text-[10px] text-ink-muted">Best near the exam</p>
             </div>
           </div>
         </div>
@@ -489,8 +543,8 @@ function SampleTastePreview() {
 
   return (
     <PreviewChrome title="Sample taste · Writing AI review included" badge="Free once">
-      <div className="grid items-start gap-3 lg:grid-cols-[9.5rem_1fr]">
-        <div className="flex flex-col gap-1.5">
+      <div className="grid h-full min-h-0 gap-2.5 lg:grid-cols-[9.5rem_1fr]">
+        <div className="flex min-h-0 flex-col gap-1.5">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
             Cross-skill taster
           </p>
@@ -498,9 +552,7 @@ function SampleTastePreview() {
             <div
               key={item.skill}
               className={`rounded-lg border px-2.5 py-1.5 ${
-                item.highlight
-                  ? "border-jade bg-jade/10"
-                  : "border-jade/25 bg-jade/5"
+                item.highlight ? "border-jade bg-jade/10" : "border-jade/25 bg-jade/5"
               }`}
             >
               <div className="flex items-center justify-between gap-1">
@@ -518,7 +570,7 @@ function SampleTastePreview() {
           </ul>
         </div>
 
-        <div className="flex flex-col gap-2 rounded-lg border border-jade/30 bg-white p-2.5 sm:p-3">
+        <div className="flex min-h-0 flex-col gap-2 rounded-lg border border-jade/30 bg-paper-dark/20 p-2.5">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-wide text-jade">
@@ -543,7 +595,7 @@ function SampleTastePreview() {
             ].map((row) => (
               <div
                 key={row.label}
-                className="rounded-md border border-mist bg-paper-dark/40 px-1.5 py-1 text-center"
+                className="rounded-md border border-mist bg-white px-1.5 py-1 text-center"
               >
                 <p className="font-display text-sm font-semibold text-ink">{row.score}</p>
                 <p className="text-[9px] text-ink-muted">{row.label}</p>
@@ -551,11 +603,11 @@ function SampleTastePreview() {
             ))}
           </div>
 
-          <div className="rounded-md border border-mist bg-paper-dark/40 px-2.5 py-2">
+          <div className="rounded-md border border-mist bg-white px-2.5 py-2">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
               Your draft
             </p>
-            <p className="mt-1 text-xs leading-snug text-ink sm:text-[13px]">
+            <p className="mt-1 text-xs leading-snug text-ink">
               我喜欢打篮球。因为篮球很有意思，我每个周末和朋友一起打。运动以后我觉得很开心，身体也
               <span className="bg-seal/15 text-seal line-through decoration-seal/60">
                 健康的
@@ -596,7 +648,7 @@ function SampleTastePreview() {
             </div>
           </div>
 
-          <div className="rounded-md border border-jade/25 px-2 py-1.5">
+          <div className="rounded-md border border-jade/25 bg-white px-2 py-1.5">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-jade">
               Rewrite to try
             </p>
@@ -604,6 +656,16 @@ function SampleTastePreview() {
               因为打篮球既有意思又能锻炼身体，
               <span className="rounded bg-jade/15 px-0.5 font-medium text-jade">所以</span>
               我每个周末都和朋友一起打。
+            </p>
+          </div>
+
+          <div className="rounded-md border border-mist bg-white px-2 py-1.5">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+              Examiner note
+            </p>
+            <p className="mt-1 text-[11px] leading-snug text-ink-muted">
+              Task score is the soft spot — answer both “what” and “why” in one 因为…所以…
+              chain. Same DeepSeek examiner continues in the pack.
             </p>
           </div>
         </div>
@@ -615,17 +677,17 @@ function SampleTastePreview() {
 function LockedPreviewsPreview() {
   return (
     <PreviewChrome title="Locked previews · your diagnosis, still visible" badge="Look only">
-      <div className="flex flex-col gap-2.5">
-        <p className="text-xs leading-snug text-ink-muted">
+      <div className="flex h-full min-h-0 flex-col gap-2">
+        <p className="shrink-0 text-xs leading-snug text-ink-muted">
           Paid tasks show real gap content — readable now;{" "}
           <span className="font-medium text-ink">Start stays locked</span> until you buy.
         </p>
 
-        <div className="relative overflow-hidden rounded-lg border border-mist bg-white">
+        <div className="relative flex min-h-0 flex-[1.35] flex-col overflow-hidden rounded-lg border border-mist bg-white">
           <div className="absolute right-2 top-2 z-10 rounded-full bg-ink/80 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white">
             Locked · Week 3
           </div>
-          <div className="border-b border-mist bg-seal/5 px-3 py-2 pr-24">
+          <div className="shrink-0 border-b border-mist bg-seal/5 px-3 py-2 pr-24">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-seal">
               Built from your misses
             </p>
@@ -636,12 +698,13 @@ function LockedPreviewsPreview() {
               24 items · same cluster as diagnosis (几点 / 明天 / 周末)
             </p>
           </div>
-          <ul className="divide-y divide-mist/80 px-3">
+          <ul className="min-h-0 flex-1 divide-y divide-mist/80 overflow-hidden px-3">
             {[
               { q: "Q1 · Audio", line: "男的明天几点开会？", tag: "Time · 几点" },
               { q: "Q2 · Audio", line: "他们周末去哪儿？", tag: "Schedule · 周末" },
               { q: "Q3 · Audio", line: "车票多少钱？", tag: "Travel · 车票" },
               { q: "Q4 · Audio", line: "飞机几点起飞？", tag: "Time · 几点" },
+              { q: "Q5 · Audio", line: "地铁站怎么走？", tag: "Travel · 地铁" },
             ].map((row) => (
               <li key={row.q} className="flex items-center justify-between gap-2 py-1.5">
                 <div className="min-w-0">
@@ -654,13 +717,13 @@ function LockedPreviewsPreview() {
               </li>
             ))}
           </ul>
-          <div className="border-t border-dashed border-mist bg-paper-dark/40 px-3 py-1.5 text-center text-[11px] font-medium text-ink-muted">
+          <div className="shrink-0 border-t border-dashed border-mist bg-paper-dark/40 px-3 py-1.5 text-center text-[11px] font-medium text-ink-muted">
             In your pack · Start locked until purchase
           </div>
         </div>
 
-        <div className="grid gap-2 sm:grid-cols-2">
-          <div className="relative overflow-hidden rounded-lg border border-mist bg-white p-2.5">
+        <div className="grid min-h-0 flex-1 gap-2 sm:grid-cols-2">
+          <div className="relative flex flex-col overflow-hidden rounded-lg border border-mist bg-paper-dark/20 p-2.5">
             <div className="absolute right-2 top-2 rounded-full bg-ink/80 px-1.5 py-0.5 text-[9px] font-semibold uppercase text-white">
               Locked
             </div>
@@ -668,7 +731,7 @@ function LockedPreviewsPreview() {
               Week 5 · Writing + AI
             </p>
             <p className="mt-0.5 pr-12 text-sm font-semibold text-ink">Essay: 我的假期计划</p>
-            <div className="mt-1.5 space-y-1 text-[10px] leading-snug text-ink-muted">
+            <div className="mt-1.5 flex-1 space-y-1 text-[10px] leading-snug text-ink-muted">
               <p>
                 <span className="font-medium text-seal">Grammar:</span> 了 / 过 on travel
                 sentences
@@ -676,13 +739,13 @@ function LockedPreviewsPreview() {
               <p>
                 <span className="font-medium text-jade">Vocab:</span> 打算、安排、特别
               </p>
-              <p className="rounded bg-paper-dark/60 px-2 py-1">
+              <p className="mt-auto rounded bg-white px-2 py-1">
                 Full red-line unlocks with pack (7 more after free sample).
               </p>
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-lg border border-mist bg-white p-2.5">
+          <div className="relative flex flex-col overflow-hidden rounded-lg border border-mist bg-paper-dark/20 p-2.5">
             <div className="absolute right-2 top-2 rounded-full bg-ink/80 px-1.5 py-0.5 text-[9px] font-semibold uppercase text-white">
               Locked
             </div>
@@ -690,7 +753,7 @@ function LockedPreviewsPreview() {
               Week 4 · This week&apos;s map
             </p>
             <p className="mt-0.5 pr-12 text-sm font-semibold text-ink">Reading + writing mix</p>
-            <ul className="mt-1.5 space-y-1 text-[10px] text-ink-muted">
+            <ul className="mt-1.5 flex-1 space-y-1 text-[10px] text-ink-muted">
               {[
                 "Mon · 2 short passages",
                 "Tue · 因为…所以… ×10",
@@ -750,19 +813,22 @@ export default function HowItWorksShowcase() {
           writing review. Click a step to preview it.
         </p>
 
-        <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,17rem)_1fr] lg:items-start lg:gap-8">
+        <div className={FRAME}>
           <ol
-            className="flex gap-2 overflow-x-auto pb-1 lg:sticky lg:top-24 lg:flex-col lg:gap-2 lg:self-start lg:overflow-visible lg:pb-0"
+            className="flex gap-2 overflow-x-auto pb-1 lg:h-full lg:flex-col lg:gap-2 lg:overflow-visible lg:pb-0"
             aria-label="Before you pay steps"
           >
             {STEPS.map((step, index) => {
               const isActive = index === activeIndex;
               return (
-                <li key={step.id} className="min-w-[10.5rem] shrink-0 lg:min-w-0">
+                <li
+                  key={step.id}
+                  className="min-w-[10.5rem] shrink-0 lg:min-h-0 lg:min-w-0 lg:flex-1"
+                >
                   <button
                     type="button"
                     onClick={() => goTo(index)}
-                    className={`w-full rounded-xl border px-3 py-2.5 text-left transition-all duration-200 ${
+                    className={`flex h-full w-full flex-col justify-center rounded-xl border px-3 py-2.5 text-left transition-all duration-200 ${
                       isActive
                         ? "border-jade/40 bg-jade/5 shadow-card"
                         : "border-mist bg-white hover:border-jade/20 hover:bg-paper-dark/50"
@@ -792,7 +858,7 @@ export default function HowItWorksShowcase() {
 
           <div
             id="before-you-pay-preview"
-            className="min-w-0"
+            className="min-h-[22rem] min-w-0 lg:h-full lg:min-h-0"
             aria-live="polite"
             aria-label={`Step ${activeStep.step}: ${activeStep.title}`}
           >
