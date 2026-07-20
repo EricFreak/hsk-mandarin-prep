@@ -71,6 +71,17 @@ const FAQ_ITEMS = [
     ),
   },
   {
+    q: "Is this a subscription?",
+    a: (
+      <>
+        No. Coach packs are{" "}
+        <span className="font-medium text-ink">pay once</span> for a fixed number of
+        weeks. When those weeks end, that pack ends — no monthly renewal. Custom plans
+        and sprints use the same unit rate without an urgency premium.
+      </>
+    ),
+  },
+  {
     q: "Do I pick an HSK level in the app?",
     a: (
       <>

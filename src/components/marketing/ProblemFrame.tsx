@@ -3,21 +3,21 @@ import Link from "next/link";
 const POINTS = [
   {
     title: "Exam-Dated, Not Endless",
-    body: "Your plan aims at your exam date — or a fixed coach cycle — not an infinite streak.",
+    body: "Your plan aims at your exam date — or a fixed coach cycle — not an infinite streak. When the pack weeks end, access to that pack ends. No subscription drip.",
   },
   {
     title: "HSK Level 3 Syllabus (GF0025-2021)",
-    body: "Aligned to the current Level 3 map, not older HSK 2.0 word lists.",
+    body: "Aligned to the current Level 3 map, not older HSK 2.0 word lists. Single-track so the journey stays focused through exam day.",
   },
   {
     title: "Diagnosis → Plan → Practice",
-    body: "Weaknesses drive what you do next. You see the full outline and quote before you pay.",
+    body: "Weaknesses drive what you do next. You see the full outline and quote before you pay once.",
   },
 ] as const;
 
 /**
- * Why-us — compressed single column (trust-funnel IA).
- * No mastery-gate / week-unlock freemium language.
+ * Why-us — before Plans in the funnel.
+ * Pre-launch: mechanism trust, not testimonials.
  */
 export default function ProblemFrame() {
   return (
@@ -39,7 +39,19 @@ export default function ProblemFrame() {
           ))}
         </ul>
 
-        <p className="mx-auto mt-10 max-w-2xl text-center text-xs leading-relaxed text-ink-muted">
+        <div className="mx-auto mt-10 max-w-2xl rounded-2xl border border-mist bg-white px-5 py-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
+            Not for
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+            Not for other HSK levels, unlimited free drill farms, or one-to-one human
+            tutoring. Built for learners aiming at{" "}
+            <span className="font-medium text-ink">HSK Level 3</span> who want a dated
+            plan after a free diagnosis.
+          </p>
+        </div>
+
+        <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-relaxed text-ink-muted">
           Aligned to HSK Level 3 (GF0025-2021). Not affiliated with Hanban.{" "}
           <Link href="/hsk-2-vs-3" className="font-medium text-jade hover:text-jade-light">
             Exam guide
