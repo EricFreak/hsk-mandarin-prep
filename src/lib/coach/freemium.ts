@@ -1,28 +1,13 @@
 import type { Plan } from "@/lib/entitlements";
-import type {
-  CoachGap,
-  CoachPlanTaskRow,
-  CoachReportRow,
-  CoachStrength,
-} from "./types";
+import type { CoachPlanTaskRow, CoachReportRow } from "./types";
 
-export function truncateToFirstParagraph(markdown: string): string {
-  const parts = markdown.split(/\n\s*\n/).filter(Boolean);
-  return parts[0] ?? markdown;
-}
-
+/** Free users now receive the complete coach report (spec §2). */
 export function applyFreemiumReport(
   report: CoachReportRow,
-  plan: Plan,
+  _plan: Plan,
 ): CoachReportRow {
-  if (plan === "pro") return report;
-
-  return {
-    ...report,
-    summary_markdown: truncateToFirstParagraph(report.summary_markdown),
-    gaps: report.gaps.slice(0, 1) as CoachGap[],
-    strengths: report.strengths.slice(0, 1) as CoachStrength[],
-  };
+  void _plan;
+  return report;
 }
 
 export function applyFreemiumTasks(

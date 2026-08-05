@@ -1,5 +1,5 @@
-import type { Plan } from "@/lib/entitlements";
-import { canExecuteWeek } from "@/lib/coach/journey/week-unlock";
+import { canExecuteTask, type AccessSource } from "@/lib/lp/access";
+import { selectTasterTaskIds } from "@/lib/lp/sample-taste";
 import type { CoachPlanTaskRow } from "./types";
 
 /**
@@ -26,27 +26,68 @@ export function orderWeekTasks(
   });
 }
 
+/**
+ * Stable partition: executable tasks first, locked previews after, preserving
+ * relative order within each group. No-op when every task is executable (paid).
+ */
+export function partitionTasksByExecutability(
+  tasks: CoachPlanTaskRow[],
+  input: {
+    access: AccessSource | null;
+    weekIndex: number;
+    tasterTaskIds: ReadonlySet<string>;
+  },
+): CoachPlanTaskRow[] {
+  const executable: CoachPlanTaskRow[] = [];
+  const locked: CoachPlanTaskRow[] = [];
+  for (const task of tasks) {
+    if (
+      canExecuteTask({
+        access: input.access,
+        weekIndex: input.weekIndex,
+        taskId: task.id,
+        tasterTaskIds: input.tasterTaskIds,
+      })
+    ) {
+      executable.push(task);
+    } else {
+      locked.push(task);
+    }
+  }
+  return [...executable, ...locked];
+}
+
+/**
+ * Week-level display gate for the dashboard task list. A non-current week is
+ * hidden (executionLocked). The current week is shown in full; per-task
+ * execution for free users is the cross-skill taster set (not calendar Day 1).
+ */
 export function gateOrderedWeekTasks(
   tasks: CoachPlanTaskRow[],
   topGapSkill: string | null,
-  plan: Plan,
-  journey?: { weekIndex: number; currentWeekIndex: number },
+  journey?: {
+    weekIndex: number;
+    currentWeekIndex: number;
+  },
+  options?: {
+    access: AccessSource | null;
+  },
 ): { tasks: CoachPlanTaskRow[]; hiddenTaskCount: number; executionLocked: boolean } {
   const ordered = orderWeekTasks(tasks, topGapSkill);
-  if (
-    journey &&
-    !canExecuteWeek({
-      weekIndex: journey.weekIndex,
-      currentWeekIndex: journey.currentWeekIndex,
-      plan,
-    })
-  ) {
+  if (journey && journey.weekIndex !== journey.currentWeekIndex) {
     return { tasks: [], hiddenTaskCount: ordered.length, executionLocked: true };
   }
-  if (plan === "free") {
-    return { tasks: ordered, hiddenTaskCount: 0, executionLocked: false };
-  }
-  return { tasks: ordered, hiddenTaskCount: 0, executionLocked: false };
+  const weekIndex = journey?.weekIndex ?? 1;
+  const tasterTaskIds = selectTasterTaskIds(ordered);
+  const displayTasks =
+    options != null
+      ? partitionTasksByExecutability(ordered, {
+          access: options.access,
+          weekIndex,
+          tasterTaskIds,
+        })
+      : ordered;
+  return { tasks: displayTasks, hiddenTaskCount: 0, executionLocked: false };
 }
 
 export function taskTypeLabel(taskType: CoachPlanTaskRow["task_type"]): string {

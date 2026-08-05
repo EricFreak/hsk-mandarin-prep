@@ -141,6 +141,11 @@ Optional later: “补练” on a past week does **not** advance `current_week_i
 
 ## 6. Freemium (amends positioning §5)
 
+> **2026-07-16 修订：** 本节「Week 1 → Pro 解锁 W2+ / 月费叙事」已被  
+> [`2026-07-16-unit-time-fair-pricing-scheme.md`](./2026-07-16-unit-time-fair-pricing-scheme.md)（**Locked**）取代为：  
+> **Coach-day 单价 R** · **Runway pack** · **exam_sprint 每账号 lifetime 一次 Free**。  
+> 下表保留作历史基线对照；实施与冲突裁决以定价终案为准。
+
 Narrative A retained: report = trust hook; continued journey execution = paid main dish.
 
 | Capability | Free | Pro |

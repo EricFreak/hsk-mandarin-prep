@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import UpgradeModal from "@/components/paywall/UpgradeModal";
+import Link from "next/link";
 
 type UpgradeCTAProps = {
   title: string;
@@ -14,25 +13,15 @@ export default function UpgradeCTA({
   description,
   className = "",
 }: UpgradeCTAProps) {
-  const [modalOpen, setModalOpen] = useState(false);
-
   return (
-    <>
-      <div
-        className={`rounded-xl border border-jade/20 bg-jade/5 p-6 text-center ${className}`}
-      >
-        <h2 className="font-display text-lg font-semibold text-ink">{title}</h2>
-        <p className="mt-2 text-sm text-ink-muted">{description}</p>
-        <button
-          type="button"
-          className="mt-4 inline-block btn-primary"
-          onClick={() => setModalOpen(true)}
-        >
-          Upgrade to Pro
-        </button>
-      </div>
-
-      <UpgradeModal open={modalOpen} onClose={() => setModalOpen(false)} />
-    </>
+    <div
+      className={`rounded-xl border border-jade/20 bg-jade/5 p-6 text-center ${className}`}
+    >
+      <h2 className="font-display text-lg font-semibold text-ink">{title}</h2>
+      <p className="mt-2 text-sm text-ink-muted">{description}</p>
+      <Link href="/plan/quote" className="mt-4 inline-block btn-primary">
+        See my quote
+      </Link>
+    </div>
   );
 }

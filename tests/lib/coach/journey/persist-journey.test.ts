@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  ensureJourney,
   isTaskCleared,
   isWeekCleared,
   type PlanTaskForClearance,
@@ -11,6 +12,74 @@ function task(overrides: Partial<PlanTaskForClearance>): PlanTaskForClearance {
     status: "pending",
     ...overrides,
   };
+}
+
+type StubProfile = {
+  service_intent?: string | null;
+  target_exam_date?: string | null;
+  journey_horizon_weeks?: number | null;
+  current_week_index?: number | null;
+  current_stage?: string | null;
+  stage_calendar?: unknown;
+  journey_started_at?: string | null;
+};
+
+function baseProfile(overrides: Partial<StubProfile> = {}): StubProfile {
+  return {
+    service_intent: "coach",
+    target_exam_date: null,
+    journey_horizon_weeks: 12,
+    current_week_index: null,
+    current_stage: null,
+    stage_calendar: {},
+    journey_started_at: null,
+    ...overrides,
+  };
+}
+
+/** Chainable thenable supabase stub: returns the given profile for the
+ *  learner_profiles maybeSingle() read, empty outlines (forces init), and
+ *  succeeds on upsert/update. Records upsert rows and update payloads per
+ *  table in `writes` so callers can assert persisted writes. Mirrors the
+ *  style in fulfill-order.test.ts. */
+function stubClient(profile: StubProfile) {
+  const writes: Record<string, { upsert?: unknown; update?: Record<string, unknown> }> = {};
+  const record = (table: string) => {
+    if (!writes[table]) writes[table] = {};
+    return writes[table];
+  };
+  const from = (table: string) => {
+    const state: { update?: Record<string, unknown> } = {};
+    const chain: any = {
+      select: () => chain,
+      order: () => chain,
+      upsert: (rows: unknown) => {
+        record(table).upsert = rows;
+        return chain;
+      },
+      update: (values: Record<string, unknown>) => {
+        state.update = values;
+        record(table).update = values;
+        return chain;
+      },
+      eq: () => chain,
+      maybeSingle: async () => ({
+        data: table === "learner_profiles" ? profile : null,
+        error: null,
+      }),
+      then: (resolve: (v: unknown) => void) => {
+        if (state.update) {
+          resolve({ data: null, error: null });
+        } else if (table === "journey_week_outlines") {
+          resolve({ data: [], error: null });
+        } else {
+          resolve({ data: null, error: null });
+        }
+      },
+    };
+    return chain;
+  };
+  return { from, writes } as any;
 }
 
 describe("isTaskCleared", () => {
@@ -63,5 +132,55 @@ describe("isWeekCleared", () => {
       task({ status: "pending" }),
     ];
     expect(isWeekCleared(tasks)).toBe(false);
+  });
+});
+
+describe("ensureJourney sprint branch", () => {
+  it("builds a single sprint window when service_intent=sprint and exam within 6 days", async () => {
+    const profile = baseProfile({
+      service_intent: "sprint",
+      target_exam_date: "2026-07-19", // today stub = 2026-07-16
+      stage_calendar: {},
+    });
+    const client = stubClient(profile);
+    const result = await ensureJourney(client, "u1", {
+      gaps: [],
+      today: "2026-07-16",
+    });
+    expect(result.stageCalendar).toEqual([
+      { stage: "sprint", startDate: "2026-07-16", endDate: "2026-07-19" },
+    ]);
+    expect(result.outline).toHaveLength(1);
+    expect(result.outline[0]).toMatchObject({
+      weekIndex: 1,
+      stage: "sprint",
+      status: "available",
+    });
+
+    // Persisted writes: one sprint outline row upserted, profile advanced to sprint.
+    const outlineRows = client.writes["journey_week_outlines"].upsert as Record<
+      string,
+      unknown
+    >[];
+    expect(outlineRows).toHaveLength(1);
+    expect(outlineRows[0]).toMatchObject({
+      user_id: "u1",
+      week_index: 1,
+      stage: "sprint",
+      status: "available",
+    });
+
+    const profileUpdate = client.writes["learner_profiles"].update as Record<
+      string,
+      unknown
+    >;
+    expect(profileUpdate).toMatchObject({
+      current_stage: "sprint",
+      current_week_index: 1,
+      stage_calendar: [
+        { stage: "sprint", startDate: "2026-07-16", endDate: "2026-07-19" },
+      ],
+    });
+    expect(profileUpdate.journey_started_at).toBeTruthy();
   });
 });

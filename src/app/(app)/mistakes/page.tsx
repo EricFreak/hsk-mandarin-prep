@@ -1,8 +1,10 @@
 import Link from "next/link";
 import UpgradeCTA from "@/components/paywall/UpgradeCTA";
+import { requireJourneyRoute } from "@/lib/auth/continue-destination";
 import { planLabel, type Plan } from "@/lib/entitlements";
+import { fetchAccess } from "@/lib/lp/access-server";
+import { hasFullAccess } from "@/lib/lp/access";
 import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -105,19 +107,16 @@ export default async function MistakesPage({
     );
   }
 
+  const { userId } = await requireJourneyRoute({ intent: "/mistakes" });
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const [plan, access] = await Promise.all([
+    getUserPlan(supabase, userId),
+    fetchAccess(supabase, userId),
+  ]);
+  const fullAccess = hasFullAccess(access);
 
-  if (!user) {
-    redirect("/login");
-  }
-
-  const plan = await getUserPlan(supabase, user.id);
-
-  const practiceLimit = plan === "pro" ? 100 : 10;
-  const mockLimit = plan === "pro" ? 25 : 5;
+  const practiceLimit = plan === "pro" || fullAccess ? 100 : 10;
+  const mockLimit = plan === "pro" || fullAccess ? 25 : 5;
 
   const [{ data: practiceRows }, { data: mockRows }] = await Promise.all([
     supabase
@@ -125,14 +124,14 @@ export default async function MistakesPage({
       .select(
         "created_at, correct, skill, practice_question_id, practice_questions(id, level, stem, choices, answer_index, explanation, skill)",
       )
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("correct", false)
       .order("created_at", { ascending: false })
       .limit(practiceLimit),
     supabase
       .from("mock_exam_attempts")
       .select("id, created_at, answers")
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .order("created_at", { ascending: false })
       .limit(mockLimit),
   ]);
@@ -184,7 +183,7 @@ export default async function MistakesPage({
 
   const skills = Array.from(new Set(allItems.map((item) => item.skill))).filter(Boolean);
 
-  const freeLocked = plan === "free";
+  const freeLocked = plan !== "pro" && !fullAccess;
 
   return (
     <div className="space-y-8">
@@ -205,14 +204,14 @@ export default async function MistakesPage({
         <div className="surface-card p-6">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h2 className="font-display text-lg font-semibold text-ink">Pro feature</h2>
+              <h2 className="font-display text-lg font-semibold text-ink">Unlock your full mistake bank</h2>
               <p className="mt-2 text-sm text-ink-muted">
-                Free accounts can preview your 10 most recent mistakes. Upgrade to Pro for a full
+                Free accounts can preview your 10 most recent mistakes. Get a plan for a full
                 mistake bank with filters and unlimited review.
               </p>
             </div>
-            <Link href="/pricing" className="btn-primary">
-              Upgrade
+            <Link href="/plan/quote" className="btn-primary">
+              Get plan quote
             </Link>
           </div>
         </div>
@@ -251,7 +250,7 @@ export default async function MistakesPage({
             >
               All
             </Link>
-            {skills.slice(0, plan === "pro" ? 6 : 3).map((skill) => (
+            {skills.slice(0, plan === "pro" || fullAccess ? 6 : 3).map((skill) => (
               <Link
                 key={skill}
                 href={`/mistakes?type=${typeFilter}&skill=${encodeURIComponent(skill)}`}

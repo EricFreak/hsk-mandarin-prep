@@ -2,6 +2,8 @@ import { canStartPractice, FREE_DAILY_PRACTICE_LIMIT, type Plan } from "@/lib/en
 import { generatePracticeQuestion } from "@/lib/openai/practice";
 import { getWordsForLevel } from "@/lib/syllabus";
 import { createClient } from "@/lib/supabase/server";
+import { fetchAccess } from "@/lib/lp/access-server";
+import { hasFullAccess } from "@/lib/lp/access";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -129,12 +131,14 @@ export async function GET(request: Request) {
       });
     }
 
-    const [plan, usedToday] = await Promise.all([
+    const [plan, usedToday, access] = await Promise.all([
       getUserPlan(supabase, user.id),
       countPracticeAttemptsToday(supabase, user.id),
+      fetchAccess(supabase, user.id),
     ]);
+    const fullAccess = hasFullAccess(access);
 
-    if (!canStartPractice(plan, usedToday)) {
+    if (!canStartPractice(plan, fullAccess, usedToday)) {
       return NextResponse.json(
         { error: "limit_reached", upgrade: true },
         { status: 402 },
@@ -181,7 +185,7 @@ export async function GET(request: Request) {
       level,
       plan,
       usedToday,
-      limit: plan === "pro" ? null : FREE_DAILY_PRACTICE_LIMIT,
+      limit: plan === "pro" || fullAccess ? null : FREE_DAILY_PRACTICE_LIMIT,
     });
   } catch (err) {
     console.error("Practice generate GET failed:", err);
@@ -220,10 +224,14 @@ export async function POST(request: Request) {
   const { questionId, correct, skill, level } = parsed.data;
 
   try {
-    const plan = await getUserPlan(supabase, user.id);
-    const usedToday = await countPracticeAttemptsToday(supabase, user.id);
+    const [plan, usedToday, access] = await Promise.all([
+      getUserPlan(supabase, user.id),
+      countPracticeAttemptsToday(supabase, user.id),
+      fetchAccess(supabase, user.id),
+    ]);
+    const fullAccess = hasFullAccess(access);
 
-    if (!canStartPractice(plan, usedToday)) {
+    if (!canStartPractice(plan, fullAccess, usedToday)) {
       return NextResponse.json(
         { error: "limit_reached", upgrade: true },
         { status: 402 },
@@ -248,8 +256,8 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       usedToday: usedAfter,
-      limit: plan === "pro" ? null : FREE_DAILY_PRACTICE_LIMIT,
-      limitReached: plan === "free" && usedAfter >= FREE_DAILY_PRACTICE_LIMIT,
+      limit: plan === "pro" || fullAccess ? null : FREE_DAILY_PRACTICE_LIMIT,
+      limitReached: plan !== "pro" && !fullAccess && usedAfter >= FREE_DAILY_PRACTICE_LIMIT,
     });
   } catch (err) {
     console.error("Practice generate POST failed:", err);

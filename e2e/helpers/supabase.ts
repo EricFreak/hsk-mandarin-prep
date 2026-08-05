@@ -73,13 +73,16 @@ export async function ensureOnboardingComplete(
   admin: SupabaseClient,
   userId: string,
 ): Promise<void> {
+  const now = new Date().toISOString();
   const { error } = await admin.from("learner_profiles").upsert(
     {
       user_id: userId,
       target_level: 3,
       target_exam_date: "2026-12-01",
       journey_horizon_weeks: 12,
-      journey_started_at: new Date().toISOString(),
+      onboarding_prefs_at: now,
+      diagnosis_completed_at: now,
+      journey_started_at: now,
       current_week_index: 1,
       current_stage: "foundation",
     },
@@ -87,6 +90,34 @@ export async function ensureOnboardingComplete(
   );
   if (error) {
     throw new Error(`learner_profiles onboarding seed: ${error.message}`);
+  }
+}
+
+/** Prefs done, diagnosis not done — lands on /diagnosis. */
+export async function prepareNeedsDiagnosis(
+  admin: SupabaseClient,
+  userId: string,
+): Promise<void> {
+  const now = new Date().toISOString();
+  await admin.from("mock_exam_attempts").delete().eq("user_id", userId);
+  const { error } = await admin.from("learner_profiles").upsert(
+    {
+      user_id: userId,
+      target_level: 3,
+      target_exam_date: "2026-12-01",
+      journey_horizon_weeks: 12,
+      onboarding_prefs_at: now,
+      diagnosis_completed_at: null,
+      journey_started_at: null,
+      w1_cleared_at: null,
+      current_week_index: 1,
+      current_stage: "foundation",
+      service_intent: "coach",
+    },
+    { onConflict: "user_id" },
+  );
+  if (error) {
+    throw new Error(`prepareNeedsDiagnosis: ${error.message}`);
   }
 }
 

@@ -1,5 +1,8 @@
 import type { Plan } from "@/lib/entitlements";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { fetchAccess } from "@/lib/lp/access-server";
+import type { AccessSource } from "@/lib/lp/access";
+import { selectTasterTaskIds } from "@/lib/lp/sample-taste";
 import {
   applyFreemiumReport,
   pickTodayTask,
@@ -10,7 +13,7 @@ import {
 } from "./journey/journey-summary";
 import { isWeekCleared, type PlanTaskForClearance } from "./journey/persist-journey";
 import type { JourneyStageId, StageWindow, WeekOutlineRow } from "./journey/types";
-import { shouldShowWeek1ProCta } from "./journey/week-unlock";
+import { shouldShowQuoteCta } from "./journey/week-unlock";
 import { isCoachLLMConfigured } from "./llm";
 import type {
   CoachPlanTaskRow,
@@ -31,6 +34,7 @@ export type CoachJourneyPayload = {
 
 export type CoachDashboardPayload = {
   plan: Plan;
+  access: AccessSource | null;
   llmConfigured: boolean;
   status: "ready" | "pending" | "none";
   report: CoachReportRow | null;
@@ -46,8 +50,10 @@ export type CoachDashboardPayload = {
   weekIndex: number;
   currentWeekIndex: number;
   stageCalendar: StageWindow[];
-  shouldShowWeek1ProCta: boolean;
+  shouldShowQuoteCta: boolean;
   weekCleared: boolean;
+  /** Week-1 free cross-skill taster task ids (empty when paid). */
+  tasterTaskIds: string[];
 };
 
 export type CoachReportsPayload = {
@@ -238,6 +244,8 @@ export async function fetchCoachDashboard(
 
   let tasks: CoachPlanTaskRow[] = [];
   let clearanceTasks: PlanTaskForClearance[] = [];
+  let tasterTaskIds = new Set<string>();
+  let tasterTasks: { required: boolean; status: string }[] = [];
   if (planRow?.id) {
     const { data: taskRows } = await supabase
       .from("coach_plan_tasks")
@@ -253,6 +261,13 @@ export async function fetchCoachDashboard(
       mastery_status: (row.mastery_status as string | null) ?? null,
       required: typeof row.required === "boolean" ? row.required : true,
     }));
+    tasterTaskIds = selectTasterTaskIds(tasks);
+    tasterTasks = tasks
+      .filter((t) => tasterTaskIds.has(t.id))
+      .map((t) => ({
+        required: true,
+        status: t.status,
+      }));
   }
 
   const report = reportRow ? applyFreemiumReport(mapReport(reportRow), userPlan) : null;
@@ -277,16 +292,18 @@ export async function fetchCoachDashboard(
       : null);
   const daysToExam = computeDaysToExam(targetExamDate, stageCalendar);
   const weekCleared = clearanceTasks.length > 0 && isWeekCleared(clearanceTasks);
-  const showWeek1ProCta = shouldShowWeek1ProCta({
-    plan: userPlan,
-    currentWeekIndex,
-    weekCleared,
-  });
+  const access = await fetchAccess(supabase, userId);
+  const showQuoteCta = shouldShowQuoteCta({ access, tasterTasks });
   const { tasks: gatedTasks, hiddenTaskCount, executionLocked } =
-    gateOrderedWeekTasks(tasks, topGapSkill, userPlan, {
-      weekIndex,
-      currentWeekIndex,
-    });
+    gateOrderedWeekTasks(
+      tasks,
+      topGapSkill,
+      {
+        weekIndex,
+        currentWeekIndex,
+      },
+      { access },
+    );
   const todayTask = studyPlan ? pickTodayTask(gatedTasks, studyPlan.week_start) : null;
 
   let status: CoachDashboardPayload["status"] = "none";
@@ -305,6 +322,7 @@ export async function fetchCoachDashboard(
 
   return {
     plan: userPlan,
+    access,
     llmConfigured: isCoachLLMConfigured(),
     status,
     report,
@@ -320,8 +338,9 @@ export async function fetchCoachDashboard(
     weekIndex,
     currentWeekIndex,
     stageCalendar,
-    shouldShowWeek1ProCta: showWeek1ProCta,
+    shouldShowQuoteCta: showQuoteCta,
     weekCleared,
+    tasterTaskIds: Array.from(tasterTaskIds),
   };
 }
 

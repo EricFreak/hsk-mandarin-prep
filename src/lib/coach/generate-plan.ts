@@ -45,7 +45,6 @@ export function buildFallbackPlan(
   }
 
   const primary = focusSkills[0];
-  const secondary = focusSkills[1] ?? "vocabulary";
   const minutes = snapshot.minutesPerDay ?? 20;
   const questionCount = minutes >= 30 ? 20 : 15;
 
@@ -53,37 +52,37 @@ export function buildFallbackPlan(
     {
       dayOffset: 0,
       taskType: "practice",
-      skill: primary,
-      targetCount: questionCount,
-      title: `Practice ${primary}: targeted drills`,
+      skill: "vocabulary",
+      targetCount: Math.min(12, questionCount),
+      title: "Practice vocabulary: sample taste",
     },
     {
       dayOffset: 1,
-      taskType: "flashcards",
-      skill: secondary,
-      targetCount: 20,
-      title: `Review ${secondary} flashcards`,
+      taskType: "practice",
+      skill: "listening",
+      targetCount: Math.min(8, questionCount),
+      title: "Practice listening: sample taste",
     },
     {
       dayOffset: 2,
       taskType: "practice",
-      skill: primary,
-      targetCount: questionCount,
-      title: `${primary} listening patterns`,
+      skill: "grammar",
+      targetCount: Math.min(8, questionCount),
+      title: "Practice grammar: sample taste",
     },
     {
       dayOffset: 3,
-      taskType: "review_mistakes",
-      skill: null,
-      targetCount: 10,
-      title: "Review mistake bank",
+      taskType: "practice",
+      skill: "writing",
+      targetCount: 1,
+      title: "Writing sample + AI review",
     },
     {
       dayOffset: 4,
       taskType: "practice",
-      skill: secondary,
+      skill: primary,
       targetCount: questionCount,
-      title: `${secondary} reinforcement`,
+      title: `${primary} reinforcement`,
     },
     {
       dayOffset: 5,

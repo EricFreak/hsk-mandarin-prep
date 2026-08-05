@@ -1,33 +1,11 @@
 import ProgressView from "@/components/dashboard/ProgressView";
-import { createClient } from "@/lib/supabase/server";
+import { requireJourneyRoute } from "@/lib/auth/continue-destination";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
-function hasSupabaseEnv() {
-  return Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  );
-}
+export const dynamic = "force-dynamic";
 
 export default async function DashboardProgressPage() {
-  if (!hasSupabaseEnv()) {
-    return (
-      <div>
-        <h1 className="font-display text-2xl font-semibold text-ink">Progress</h1>
-        <p className="mt-2 text-sm text-ink-muted">Supabase is not configured.</p>
-      </div>
-    );
-  }
-
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
+  await requireJourneyRoute({ intent: "/dashboard/progress", allowDiagnosisHome: true });
 
   return (
     <div className="space-y-6">

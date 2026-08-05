@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Compact cards + hover — comparison</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --paper: #faf8f5; --paper-dark: #f0ebe3; --ink: #1a1a2e; --ink-muted: #5c5c6f;
+      --jade: #2d6a6a; --seal: #c23b3b; --mist: #e8e4df;
+    }
+    body { font-family: system-ui, sans-serif; background: var(--paper); color: var(--ink); padding: 2rem 1.25rem 4rem; }
+    h1 { font-family: Georgia, serif; font-size: 1.35rem; font-weight: 600; text-align: center; }
+    .sub { text-align: center; font-size: 0.85rem; color: var(--ink-muted); margin-top: 0.5rem; max-width: 36rem; margin-inline: auto; }
+    .compare { display: grid; gap: 2.5rem; max-width: 64rem; margin: 2rem auto 0; }
+    @media (min-width: 900px) { .compare { grid-template-columns: 1fr 1fr; } }
+    .panel { background: white; border: 1px solid var(--mist); border-radius: 1rem; padding: 1.25rem; }
+    .panel h2 { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-muted); margin-bottom: 0.35rem; }
+    .panel .badge { display: inline-block; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; margin-bottom: 1rem; }
+    .badge-bad { background: rgba(194,59,59,0.1); color: var(--seal); }
+    .badge-good { background: rgba(45,106,106,0.12); color: var(--jade); }
+    .fold-line {
+      border-top: 2px dashed var(--seal);
+      margin: 1rem 0;
+      position: relative;
+      opacity: 0.6;
+    }
+    .fold-line::after {
+      content: "↑ laptop fold (~700px) — preview often starts here";
+      position: absolute; top: -1.5rem; left: 0;
+      font-size: 0.65rem; color: var(--seal); font-weight: 600;
+    }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+    @media (max-width: 640px) { .steps { grid-template-columns: repeat(2, 1fr); } }
+
+    /* OLD: full description always visible */
+    .card-old {
+      border: 1px solid var(--mist); border-radius: 0.65rem; padding: 0.75rem;
+      background: white; text-align: left;
+    }
+    .card-old .num {
+      width: 1.75rem; height: 1.75rem; border-radius: 50%;
+      background: rgba(194,59,59,0.1); color: var(--seal);
+      display: flex; align-items: center; justify-content: center;
+      font-family: Georgia, serif; font-size: 0.8rem; font-weight: 600;
+    }
+    .card-old h3 { font-family: Georgia, serif; font-size: 0.82rem; margin-top: 0.5rem; }
+    .card-old p { font-size: 0.68rem; color: var(--ink-muted); margin-top: 0.35rem; line-height: 1.45; }
+
+    /* NEW: compact + hover tooltip */
+    .card-new-wrap { position: relative; }
+    .card-new-wrap:hover { z-index: 5; }
+    .card-new {
+      border: 1px solid var(--mist); border-radius: 0.65rem; padding: 0.55rem 0.65rem;
+      background: white; text-align: left; cursor: pointer;
+      display: flex; align-items: flex-start; gap: 0.5rem; width: 100%;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .card-new-wrap:hover .card-new { border-color: rgba(45,106,106,0.3); background: var(--paper-dark); }
+    .card-new.active { border-color: rgba(45,106,106,0.4); background: rgba(45,106,106,0.06); }
+    .card-new .num {
+      width: 1.5rem; height: 1.5rem; border-radius: 50%; flex-shrink: 0;
+      background: rgba(194,59,59,0.1); color: var(--seal);
+      display: flex; align-items: center; justify-content: center;
+      font-family: Georgia, serif; font-size: 0.72rem; font-weight: 600;
+    }
+    .card-new.active .num { background: var(--jade); color: white; }
+    .card-new h3 { font-family: Georgia, serif; font-size: 0.78rem; line-height: 1.25; }
+    .card-new .tagline { font-size: 0.62rem; color: var(--ink-muted); margin-top: 0.15rem; }
+    .tooltip {
+      position: absolute; left: 50%; top: calc(100% + 4px);
+      transform: translateX(-50%) translateY(4px);
+      width: min(100%, 14rem);
+      background: white; border: 1px solid var(--mist);
+      border-radius: 0.65rem; padding: 0.55rem 0.65rem;
+      font-size: 0.65rem; color: var(--ink-muted); line-height: 1.45;
+      box-shadow: 0 8px 24px -8px rgba(26,26,46,0.15);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .card-new-wrap:hover .tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .preview-placeholder {
+      margin-top: 1rem; border: 1px solid var(--mist); border-radius: 0.75rem;
+      background: var(--paper-dark); min-height: 140px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.78rem; color: var(--ink-muted);
+    }
+    .height-note { font-size: 0.68rem; color: var(--ink-muted); margin-top: 0.75rem; text-align: center; }
+    .height-note strong { color: var(--jade); }
+    .insight {
+      max-width: 40rem; margin: 2rem auto 0;
+      padding: 1rem 1.25rem; border-radius: 0.75rem;
+      background: rgba(45,106,106,0.06); border: 1px solid rgba(45,106,106,0.2);
+      font-size: 0.82rem; color: var(--ink-muted); line-height: 1.55;
+    }
+    .insight strong { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <h1>Why not just compress the 6 cards?</h1>
+  <p class="sub">Same information architecture — inactive cards show title only; hover reveals full copy; active card shows one-line tagline.</p>
+
+  <div class="compare">
+    <div class="panel">
+      <h2>Before</h2>
+      <span class="badge badge-bad">Problem</span>
+      <div class="steps">
+        <div class="card-old"><div class="num">1</div><h3>Mock exam</h3><p>Full HSK 3 format — listening, reading, and writing under realistic conditions.</p></div>
+        <div class="card-old"><div class="num">2</div><h3>Score & skills</h3><p>Instant score plus structured weakness metrics from your mock exam.</p></div>
+        <div class="card-old"><div class="num">3</div><h3>AI summary</h3><p>A natural-language coach report explains what your score means and what to fix first.</p></div>
+        <div class="card-old"><div class="num">4</div><h3>Roadmap</h3><p>Enter your target exam date. The coach maps stages to your calendar — each week has a theme until exam day.</p></div>
+        <div class="card-old"><div class="num">5</div><h3>This week</h3><p>On Dashboard, start the top-ranked task. Plan-driven practice targets your gaps — pass the bar to clear the week.</p></div>
+        <div class="card-old"><div class="num">6</div><h3>Progress</h3><p>See readiness trends on Dashboard. Take another mock to refresh your report and adjust the journey.</p></div>
+      </div>
+      <div class="fold-line"></div>
+      <div class="preview-placeholder">Preview area (often below fold)</div>
+      <p class="height-note">Step grid ≈ <strong>~280px</strong> before preview</p>
+    </div>
+
+    <div class="panel">
+      <h2>After · compact + hover</h2>
+      <span class="badge badge-good">Shipped in HowItWorksShowcase</span>
+      <div class="steps" id="new-steps"></div>
+      <div class="fold-line" style="margin-top:0.5rem"></div>
+      <div class="preview-placeholder">Preview visible much earlier ↑</div>
+      <p class="height-note">Step grid ≈ <strong>~110px</strong> · hover any card for full text</p>
+    </div>
+  </div>
+
+  <div class="insight">
+    <strong>You were right.</strong> The cinema / orbit prototypes compressed subtitles because space was tight —
+    but the original 6-card layout never needed full paragraphs on every card. Inactive: number + short title.
+    Active: + one-line tagline. Hover/focus: tooltip with full description. Mobile: active tagline + caption below preview.
+  </div>
+
+  <script>
+    const STEPS = [
+      { n: 1, short: "Mock exam", tagline: "Full HSK 3 · listening, reading, writing.", desc: "Full HSK 3 format — listening, reading, and writing under realistic conditions." },
+      { n: 2, short: "Score & skills", tagline: "Instant score + skill breakdown.", desc: "Instant score plus structured weakness metrics from your mock exam." },
+      { n: 3, short: "AI summary", tagline: "Coach report — what to fix first.", desc: "A natural-language coach report explains what your score means and what to fix first." },
+      { n: 4, short: "Roadmap", tagline: "Exam date → weekly themes until exam day.", desc: "Enter your target exam date. The coach maps stages to your calendar — each week has a theme until exam day." },
+      { n: 5, short: "This week", tagline: "Dashboard → practice → mastery gate.", desc: "On Dashboard, start the top-ranked task. Plan-driven practice targets your gaps — pass the bar to clear the week." },
+      { n: 6, short: "Progress", tagline: "Readiness trends → follow-up mock.", desc: "See readiness trends on Dashboard. Take another mock to refresh your report and adjust the journey." },
+    ];
+    let active = 0;
+    const el = document.getElementById("new-steps");
+    STEPS.forEach((s, i) => {
+      const wrap = document.createElement("div");
+      wrap.className = "card-new-wrap";
+      wrap.innerHTML = `
+        <button type="button" class="card-new${i === 0 ? " active" : ""}" data-i="${i}">
+          <span class="num">${s.n}</span>
+          <span><h3>${s.short}</h3>${i === 0 ? `<div class="tagline">${s.tagline}</div>` : ""}</span>
+        </button>
+        <div class="tooltip" role="tooltip">${s.desc}</div>`;
+      wrap.querySelector("button").onclick = (e) => {
+        active = parseInt(e.currentTarget.dataset.i, 10);
+        el.querySelectorAll(".card-new").forEach((c, j) => {
+          c.classList.toggle("active", j === active);
+          const tag = c.querySelector(".tagline");
+          if (j === active && !tag) {
+            const span = c.querySelector("span:last-child");
+            span.insertAdjacentHTML("beforeend", `<div class="tagline">${STEPS[j].tagline}</div>`);
+          } else if (j !== active && tag) tag.remove();
+        });
+      };
+      el.appendChild(wrap);
+    });
+  </script>
+</body>
+</html>

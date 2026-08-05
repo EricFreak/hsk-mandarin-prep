@@ -1,34 +1,41 @@
-import { describe, expect, it } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   canExecuteWeek,
+  shouldShowQuoteCta,
   nextWeekAfterClear,
 } from "@/lib/coach/journey/week-unlock";
 
-describe("canExecuteWeek", () => {
-  it("allows week 1 for free", () => {
-    expect(
-      canExecuteWeek({ weekIndex: 1, plan: "free", currentWeekIndex: 1 }),
-    ).toBe(true);
+describe("canExecuteWeek (access-based)", () => {
+  it("paid access executes the current week", () => {
+    expect(canExecuteWeek({ weekIndex: 3, currentWeekIndex: 3, access: "paid_order" })).toBe(true);
   });
-  it("blocks week 2 for free even if current is 2", () => {
+  it("never executes a non-current week", () => {
+    expect(canExecuteWeek({ weekIndex: 2, currentWeekIndex: 3, access: "paid_order" })).toBe(false);
+  });
+  it("no access → cannot execute any full week (sample taste is task-level)", () => {
+    expect(canExecuteWeek({ weekIndex: 1, currentWeekIndex: 1, access: null })).toBe(false);
+  });
+});
+
+describe("shouldShowQuoteCta", () => {
+  const doneTaster = [
+    { required: true, status: "done" },
+    { required: true, status: "skipped" },
+  ];
+  it("fires when free user finishes the taster set", () => {
+    expect(shouldShowQuoteCta({ access: null, tasterTasks: doneTaster })).toBe(true);
+  });
+  it("silent while taster incomplete or when user has access", () => {
     expect(
-      canExecuteWeek({ weekIndex: 2, plan: "free", currentWeekIndex: 2 }),
+      shouldShowQuoteCta({
+        access: null,
+        tasterTasks: [{ required: true, status: "pending" }],
+      }),
     ).toBe(false);
-  });
-  it("allows week 2 for pro when currentWeekIndex is 2", () => {
-    expect(
-      canExecuteWeek({ weekIndex: 2, plan: "pro", currentWeekIndex: 2 }),
-    ).toBe(true);
-  });
-  it("blocks future week even for pro", () => {
-    expect(
-      canExecuteWeek({ weekIndex: 3, plan: "pro", currentWeekIndex: 2 }),
-    ).toBe(false);
+    expect(shouldShowQuoteCta({ access: "paid_order", tasterTasks: doneTaster })).toBe(false);
   });
 });
 
 describe("nextWeekAfterClear", () => {
-  it("increments", () => {
-    expect(nextWeekAfterClear(1)).toBe(2);
-  });
+  it("advances by one", () => expect(nextWeekAfterClear(2)).toBe(3));
 });

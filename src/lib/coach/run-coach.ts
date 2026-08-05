@@ -95,6 +95,17 @@ export async function runCoach(
     planResult = await generatePlan(snapshot, reportResult.report, journeyContext);
   } catch (err) {
     runError = err instanceof Error ? err.message : "Coach generation failed";
+    try {
+      await supabase
+        .from("learner_profiles")
+        .update({
+          coach_last_error: runError,
+          coach_last_run_at: new Date().toISOString(),
+        })
+        .eq("user_id", input.userId);
+    } catch {
+      // Migration 009 columns may be missing.
+    }
     return { ok: false, error: runError, status: 503 };
   }
 
@@ -189,6 +200,18 @@ export async function runCoach(
     latency_ms: Date.now() - started,
     error: runError,
   });
+
+  try {
+    await supabase
+      .from("learner_profiles")
+      .update({
+        coach_last_error: null,
+        coach_last_run_at: new Date().toISOString(),
+      })
+      .eq("user_id", input.userId);
+  } catch {
+    // Migration 009 columns may be missing.
+  }
 
   return { ok: true, reportId: reportRow.id, planId: planRow.id };
 }

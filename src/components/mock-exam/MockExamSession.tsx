@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SpeakChineseButton from "@/components/audio/SpeakChineseButton";
 import PracticeStem from "@/components/practice/PracticeStem";
 import UpgradeCTA from "@/components/paywall/UpgradeCTA";
-import { canUseAiWritingScore, type Plan } from "@/lib/entitlements";
+import { FUNNEL_EVENTS, track } from "@/lib/analytics/track";
 import {
   HSK3_MOCK_EXAM,
   HSK3_MOCK_EXAM_MCQ_COUNT,
@@ -47,19 +47,27 @@ type SubmitResponse = {
 };
 
 type MockExamSessionProps = {
-  plan?: Plan;
+  /**
+   * Whether the AI writing score should be shown for this session. Derived
+   * server-side from access (hasFullAccess) — plan alone is wrong because
+   * free_sprint/paid_order users have plan='free' but full access.
+   */
+  canScoreWriting?: boolean;
   exam?: ExamConfig;
   completePrimaryHref?: string;
   completePrimaryLabel?: string;
   hideReviewLink?: boolean;
+  /** Diagnosis setup: don't offer tool links until coach ready; soften dashboard CTA while pending. */
+  setupFlow?: boolean;
 };
 
 export default function MockExamSession({
-  plan = "free",
+  canScoreWriting = false,
   exam = DEFAULT_EXAM,
   completePrimaryHref = "/dashboard",
   completePrimaryLabel = "View dashboard",
   hideReviewLink = false,
+  setupFlow = false,
 }: MockExamSessionProps) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, AnswerState>>({});
@@ -71,11 +79,20 @@ export default function MockExamSession({
   const [writingScoreLoading, setWritingScoreLoading] = useState(false);
   const [writingScoreError, setWritingScoreError] = useState<string | null>(null);
   const [coachStatus, setCoachStatus] = useState<"idle" | "running" | "ready" | "error">("idle");
+  const diagnosisStartedRef = useRef(false);
 
   const { questions, templateId, mcqCount } = exam;
   const writingQuestion = questions.find((q) => q.section === "writing");
 
-  const canScoreWriting = canUseAiWritingScore(plan);
+  useEffect(() => {
+    if (!setupFlow || diagnosisStartedRef.current) return;
+    diagnosisStartedRef.current = true;
+    track(FUNNEL_EVENTS.diagnosisStarted, {
+      template_id: templateId,
+      question_count: questions.length,
+    });
+  }, [setupFlow, templateId, questions.length]);
+
   const writingAnswer = writingQuestion
     ? answers[writingQuestion.id]?.writingText?.trim()
     : undefined;
@@ -141,6 +158,16 @@ export default function MockExamSession({
 
       setResult(data);
 
+      if (setupFlow) {
+        track(FUNNEL_EVENTS.diagnosisCompleted, {
+          template_id: templateId,
+          score: data.score ?? null,
+          correct_count: data.correctCount ?? null,
+          total_mcq: data.totalMcq ?? null,
+          duration_seconds: durationSeconds,
+        });
+      }
+
       if (data.coachPending && data.attemptId) {
         setCoachStatus("running");
         void fetch("/api/coach/run", {
@@ -154,12 +181,34 @@ export default function MockExamSession({
           .then(async (response) => {
             if (response.ok) {
               setCoachStatus("ready");
+              if (setupFlow) {
+                track(FUNNEL_EVENTS.coachReady, {
+                  template_id: templateId,
+                  attempt_id: data.attemptId ?? null,
+                  source: "client",
+                });
+              }
               return;
             }
             setCoachStatus("error");
+            if (setupFlow) {
+              track(FUNNEL_EVENTS.coachError, {
+                template_id: templateId,
+                error_kind: "http",
+                status: response.status,
+                source: "client",
+              });
+            }
           })
           .catch(() => {
             setCoachStatus("error");
+            if (setupFlow) {
+              track(FUNNEL_EVENTS.coachError, {
+                template_id: templateId,
+                error_kind: "network",
+                source: "client",
+              });
+            }
           });
       }
     } catch {
@@ -379,10 +428,14 @@ export default function MockExamSession({
 
         {coachStatus !== "idle" ? (
           <div className="surface-card p-6">
-            <h3 className="text-sm font-semibold text-ink">AI coach report</h3>
+            <h3 className="text-sm font-semibold text-ink">
+              {setupFlow ? "Building your Week 1 plan" : "AI coach report"}
+            </h3>
             {coachStatus === "running" ? (
               <p className="mt-2 text-sm text-ink-muted">
-                Generating your personalized summary and study plan…
+                Your score is saved. We&apos;re building your personalized summary and Week 1
+                plan — usually under a couple of minutes. You can open the dashboard anytime;
+                tools unlock when the plan is ready.
               </p>
             ) : coachStatus === "ready" ? (
               <p className="mt-2 text-sm text-ink-muted">
@@ -390,7 +443,8 @@ export default function MockExamSession({
               </p>
             ) : (
               <p className="mt-2 text-sm text-ink-muted">
-                Report generation is delayed. Open your dashboard to retry shortly.
+                Plan generation is delayed. Open your dashboard and use Retry — your score is
+                kept; you do not need to retake the level check.
               </p>
             )}
           </div>
@@ -404,16 +458,26 @@ export default function MockExamSession({
           ) : null}
           <Link
             href={completePrimaryHref}
-            className={result.attemptId && !hideReviewLink ? "btn-secondary" : "btn-primary"}
+            className={
+              result.attemptId && !hideReviewLink ? "btn-secondary" : "btn-primary"
+            }
           >
-            {completePrimaryLabel}
+            {setupFlow
+              ? coachStatus === "ready"
+                ? "Open your Week 1"
+                : "Open dashboard"
+              : completePrimaryLabel}
           </Link>
-          <Link
-            href="/practice"
-            className="btn-secondary"
-          >
-            Practice weak areas
-          </Link>
+          {setupFlow ? null : (
+            <Link href="/practice" className="btn-secondary">
+              Practice weak areas
+            </Link>
+          )}
+          {setupFlow && coachStatus === "running" ? (
+            <p className="w-full text-xs text-ink-muted">
+              Practice and full mock exam unlock after Week 1 is ready.
+            </p>
+          ) : null}
         </div>
       </div>
     );

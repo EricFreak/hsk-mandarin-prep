@@ -38,6 +38,12 @@ export default defineConfig({
         storageState: freeAuthFile,
       },
     },
+    {
+      // Isolated funnel smoke — no project deps; globalSetup still prepares auth.
+      name: "funnel-smoke",
+      testMatch: /(public\/funnel-cta|authenticated\/diagnosis-funnel)\.spec\.ts/,
+      use: { ...devices["Desktop Chrome"] },
+    },
   ],
   globalSetup: "./e2e/global-setup.ts",
   webServer: {

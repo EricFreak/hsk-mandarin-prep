@@ -3,7 +3,6 @@ import {
   applyFreemiumReport,
   applyFreemiumTasks,
   pickTodayTask,
-  truncateToFirstParagraph,
 } from "@/lib/coach/freemium";
 import type { CoachPlanTaskRow, CoachReportRow } from "@/lib/coach/types";
 
@@ -30,14 +29,14 @@ const sampleReport: CoachReportRow = {
 };
 
 describe("coach freemium", () => {
-  it("truncates free report to first paragraph and one gap", () => {
+  it("returns the complete report for free users (no truncation)", () => {
     const gated = applyFreemiumReport(sampleReport, "free");
-    expect(gated.summary_markdown).toBe("Paragraph one.");
-    expect(gated.gaps).toHaveLength(1);
-    expect(gated.strengths).toHaveLength(1);
+    expect(gated.summary_markdown).toBe("Paragraph one.\n\nParagraph two.");
+    expect(gated.gaps).toHaveLength(2);
+    expect(gated.strengths).toHaveLength(2);
   });
 
-  it("keeps full report for pro", () => {
+  it("returns the complete report for pro users", () => {
     const gated = applyFreemiumReport(sampleReport, "pro");
     expect(gated.summary_markdown).toContain("Paragraph two");
     expect(gated.gaps).toHaveLength(2);
@@ -77,11 +76,5 @@ describe("coach freemium", () => {
       },
     ];
     expect(pickTodayTask(tasks, weekStart)?.id).toBe("t1");
-  });
-});
-
-describe("truncateToFirstParagraph", () => {
-  it("returns first paragraph only", () => {
-    expect(truncateToFirstParagraph("A\n\nB")).toBe("A");
   });
 });

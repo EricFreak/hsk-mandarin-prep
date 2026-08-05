@@ -15,8 +15,10 @@ test.describe("MST — Mistake bank", () => {
 test.describe("PAY — Pricing (authenticated)", () => {
   test("PAY-001: pricing while logged in", async ({ page }) => {
     await page.goto("/pricing");
-    await expect(page.getByText(/pro/i).first()).toBeVisible();
     await expect(page.getByText(/free/i).first()).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /coach packages/i }),
+    ).toBeVisible();
   });
 });
 

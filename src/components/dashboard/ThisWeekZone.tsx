@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import UpgradeCTA from "@/components/paywall/UpgradeCTA";
+import { LockedTaskCard } from "@/components/journey/LockedTaskCard";
+import { PreviewCards } from "@/components/journey/PreviewCards";
 import type { CoachDashboardPayload } from "@/lib/coach/fetch-coach";
 import type { CoachPlanTaskRow } from "@/lib/coach/types";
 import { taskTypeLabel } from "@/lib/coach/week-tasks";
+import { canExecuteTask, hasFullAccess } from "@/lib/lp/access";
 
 function capitalizeSkill(skill: string): string {
   return skill.charAt(0).toUpperCase() + skill.slice(1);
@@ -88,35 +90,44 @@ export default function ThisWeekZone({
   );
   const tasks = data.tasks;
   const passedCount = tasks.filter((task) => task.status === "done").length;
-  const firstActionableIndex = tasks.findIndex((task) => task.status !== "done");
-  const allPassed = tasks.length > 0 && firstActionableIndex === -1;
+  const firstActionableIndex = tasks.findIndex(
+    (task) =>
+      task.status !== "done" &&
+      canExecuteTask({
+        access: data.access,
+        weekIndex: data.weekIndex,
+        taskId: task.id,
+        tasterTaskIds: new Set(data.tasterTaskIds ?? []),
+      }),
+  );
+  const allPassed = tasks.length > 0 && tasks.every((task) => task.status === "done");
+  const reportGaps = data.report?.gaps ?? [];
 
   if (data.executionLocked) {
+    const free = !hasFullAccess(data.access);
     return (
       <div className="surface-card border-jade/25 bg-jade/5 p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-jade">
-            This week · Week {data.currentWeekIndex}
+            This week · Week {data.weekIndex}
           </p>
           <Link href="/dashboard/journey" className="text-sm text-link">
             Full journey →
           </Link>
         </div>
         <h2 className="mt-3 font-display text-lg font-semibold text-ink">
-          Week {data.currentWeekIndex} is locked
+          Week {data.weekIndex} is locked
         </h2>
         <p className="mt-2 text-sm text-ink-muted">
-          {data.plan === "free"
-            ? "Free includes full Week 1 execution. Upgrade to Pro to unlock Week 2 and beyond."
+          {free
+            ? "Free includes a multi-skill sample taste plus a preview of every task. Get a plan quote to unlock the full week and beyond."
             : "Complete your current week with mastery before this week unlocks."}
         </p>
-        {data.plan === "free" ? (
+        {free ? (
           <div className="mt-4">
-            <UpgradeCTA
-              title="Unlock Week 2 and your full journey"
-              description="Pro unlocks sequential weeks, full plan execution, and complete progress trends."
-              className="text-left"
-            />
+            <Link href="/plan/quote" className="btn-primary inline-flex">
+              Get plan quote
+            </Link>
           </div>
         ) : null}
       </div>
@@ -133,7 +144,7 @@ export default function ThisWeekZone({
           <Link href="/dashboard/journey" className="text-sm text-link">
             Full journey →
           </Link>
-          {data.plan === "pro" && onRefreshCoach ? (
+          {hasFullAccess(data.access) && onRefreshCoach ? (
             <button type="button" className="text-sm text-link" onClick={onRefreshCoach}>
               Refresh coach
             </button>
@@ -184,17 +195,34 @@ export default function ThisWeekZone({
           </p>
           <p className="mt-1 text-xs text-ink-muted">
             {passedCount} of {tasks.length} passed
-            {data.hiddenTaskCount > 0 ? ` · +${data.hiddenTaskCount} more on Pro` : null}
           </p>
         </>
       )}
 
       <ol className="mt-4 space-y-2">
         {tasks.map((task, index) => {
+          const rank = index + 1;
+          const executable = canExecuteTask({
+            access: data.access,
+            weekIndex: data.weekIndex,
+            taskId: task.id,
+            tasterTaskIds: new Set(data.tasterTaskIds ?? []),
+          });
+
+          if (!executable) {
+            return (
+              <LockedTaskCard
+                key={task.id}
+                rank={rank}
+                title={task.title}
+                skill={task.skill}
+              />
+            );
+          }
+
           const chip = statusChip(task);
           const isPrimary = index === firstActionableIndex;
           const href = taskHref(task);
-          const rank = index + 1;
 
           return (
             <li
@@ -245,24 +273,27 @@ export default function ThisWeekZone({
         })}
       </ol>
 
-      {data.shouldShowWeek1ProCta ? (
-        <div className="mt-4">
-          <UpgradeCTA
-            title="Week 1 complete — unlock your full journey"
-            description="Upgrade to Pro to continue into Week 2 and beyond with sequential unlock and full plan execution."
-            className="text-left"
-          />
+      {data.shouldShowQuoteCta ? (
+        <div className="mt-4 rounded-lg border-2 border-jade/40 bg-jade/5 p-4">
+          <p className="text-sm font-semibold text-ink">
+            Sample day complete — continue your full journey
+          </p>
+          <p className="mt-1 text-sm text-ink-muted">
+            Get a plan quote to unlock the rest of your weeks and full plan execution.
+          </p>
+          <Link href="/plan/quote" className="btn-primary mt-3 inline-flex">
+            Get plan quote
+          </Link>
         </div>
       ) : null}
 
-      {data.hiddenTaskCount > 0 ? (
-        <div className="mt-4">
-          <UpgradeCTA
-            title="Unlock your full week plan"
-            description="Pro unlocks the rest of this week’s tasks, all plan-driven practice, and full progress trends."
-            className="text-left"
-          />
-        </div>
+      {!hasFullAccess(data.access) ? (
+        <PreviewCards
+          gaps={reportGaps.map((gap) => ({
+            skill: gap.skill,
+            severity: gap.severity,
+          }))}
+        />
       ) : null}
 
       <div className="mt-4">

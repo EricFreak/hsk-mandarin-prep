@@ -20,25 +20,21 @@ Status snapshot after Friday evening brand work. Branch: `feature/mvp-implementa
 
 Commit `ee3bca5` on `feature/mvp-implementation`.
 
-### 2. Brand assets still mismatched (Lovart) — IN PROGRESS
+### 2. Brand assets — logo SKIPPED 2026-07-13
 
-| Asset | Why | Prompt location |
-|-------|-----|-----------------|
-| **App logo** | Header still uses `logo-seal.png` (old seal); hero is AI orb | See below / prior chat “Lovart 提示词 1” |
-| **Favicon** | `src/app/icon.png` still seal-era | Same logo mark |
-| **OG / share image** (optional) | Social previews won’t match AI Coach | Prior chat “Lovart 提示词 2” |
-| **Hero 2×** (optional) | Current `hero-visual.png` is 1024×764 | Prior chat “Lovart 提示词 3” |
+Founder decision: **keep current `logo-seal.png` / favicon** — do not replace with AI Coach mark.
 
-After logo export:
+Optional later (only if needed):
 
-- Save as `public/brand/logo-ai-coach.png`
-- Update `BrandLogo.tsx` + `src/app/icon.png`
-- Retire or keep `logo-seal.png` as archive only
+| Asset | Notes |
+|-------|-------|
+| **OG / share image** | Social previews |
+| **Hero 2×** | Current `hero-visual.png` is 1024×764 |
 
 ### 3. Product / coach follow-ups
 
 - [ ] Confirm Vercel has `DEEPSEEK_*` + `COACH_LLM_MODEL=deepseek-v4-pro`
-- [ ] Manual prod loop: mock exam → wait for AI report on Dashboard → start today’s plan task
+- [x] Manual / automated prod loop: mock → AI report → plan task — **PASSED 2026-07-13** (`scripts/prod-coach-loop-smoke.mjs`)
 - [ ] Optional: `TUTORING_WECHAT_ID` for coach tutoring CTA
 - [ ] Creem KYC / live payments when ready (`docs/launch/04-creem-setup.md`)
 - [x] Fix stale Stripe E2E expectations (auth-first 401; no hardcoded “payments not configured” copy)

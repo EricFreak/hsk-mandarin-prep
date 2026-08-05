@@ -10,7 +10,7 @@ import {
 const freeEmail =
   getEnv().E2E_FREE_EMAIL ?? "hsk-e2e-free@test.hskprep.app";
 
-test.describe("FREE-JNY — Week 1 execution & Week 2 gate", () => {
+test.describe("FREE-JNY — Sample-day gate & quote CTA", () => {
   test.beforeEach(async () => {
     const admin = createAdminClient();
     const { data: profile } = await admin
@@ -28,7 +28,7 @@ test.describe("FREE-JNY — Week 1 execution & Week 2 gate", () => {
     await resetCoachJourney(admin, profile.id);
   });
 
-  test("FREE-JNY-001: Week 1 shows full task list (beyond legacy 3-task cap)", async ({
+  test("FREE-JNY-001: Week 1 — cross-skill taster is executable, later skills are locked preview cards", async ({
     page,
   }) => {
     const admin = createAdminClient();
@@ -41,19 +41,34 @@ test.describe("FREE-JNY — Week 1 execution & Week 2 gate", () => {
     await seedJourneyCoachState(admin, profile!.id, {
       currentWeekIndex: 1,
       planWeekIndex: 1,
-      taskCount: 4,
+      taskCount: 5,
     });
 
     await page.goto("/dashboard");
     await expect(page.getByText(/this week · week 1/i)).toBeVisible({ timeout: 45_000 });
-    await expect(page.getByText(/listening drills/i)).toBeVisible();
-    await expect(page.getByText(/vocabulary review/i)).toBeVisible();
-    await expect(page.getByText(/grammar practice/i)).toBeVisible();
-    await expect(page.getByText(/flashcard sprint/i)).toBeVisible();
-    await expect(page.getByText(/week 2 is locked/i)).not.toBeVisible();
+
+    // Taster skills (vocab/listen/grammar/writing) are executable.
+    const listening = page.locator("li").filter({ hasText: /listening drills/i });
+    await expect(listening).toBeVisible();
+    await expect(listening.getByRole("link", { name: /^start$/i })).toBeVisible();
+
+    const writing = page.locator("li").filter({ hasText: /writing sample/i });
+    await expect(writing).toBeVisible();
+    await expect(writing.getByRole("link", { name: /^start$/i })).toBeVisible();
+
+    // Reading is not in the taster set → locked preview.
+    const lockedReading = page.locator("li").filter({ hasText: /reading passage/i });
+    await expect(lockedReading).toBeVisible();
+    await expect(
+      lockedReading.getByRole("link", { name: /included in your package/i }),
+    ).toBeVisible();
+    await expect(lockedReading.getByRole("link", { name: /^start$|^open$/i })).toHaveCount(0);
+
+    // No week-level lock message while on the current week.
+    await expect(page.getByText(/week 1 is locked/i)).toHaveCount(0);
   });
 
-  test("FREE-JNY-002: Week 2 execution gated with Pro upgrade CTA", async ({
+  test("FREE-JNY-002: a later week is locked with a quote CTA (no Pro checkout)", async ({
     page,
   }) => {
     const admin = createAdminClient();
@@ -63,33 +78,25 @@ test.describe("FREE-JNY — Week 1 execution & Week 2 gate", () => {
       .eq("email", freeEmail)
       .single();
 
-    const { week2Theme } = await seedJourneyCoachState(admin, profile!.id, {
-      currentWeekIndex: 2,
+    await seedJourneyCoachState(admin, profile!.id, {
+      currentWeekIndex: 1,
       planWeekIndex: 2,
       taskCount: 4,
     });
 
     await page.goto("/dashboard");
     await expect(page.getByText(/week 2 is locked/i)).toBeVisible({ timeout: 45_000 });
-    await expect(
-      page.getByText(/free includes full week 1 execution/i),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: /unlock week 2 and your full journey/i }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /upgrade to pro/i }).first(),
-    ).toBeVisible();
+    await expect(page.getByText(/free includes the sample day/i)).toBeVisible();
 
-    await page.goto("/dashboard/journey");
-    const week2 = page.locator("li").filter({ hasText: /Week 2/i });
-    await expect(week2.getByText(new RegExp(week2Theme, "i"))).toBeVisible({
-      timeout: 45_000,
-    });
-    await expect(week2.getByText(/^available$/i)).toBeVisible();
+    const quoteCta = page.getByRole("link", { name: /get plan quote/i });
+    await expect(quoteCta).toBeVisible();
+    await expect(quoteCta).toHaveAttribute("href", "/plan/quote");
+
+    // The old subscription upgrade CTA is gone.
+    await expect(page.getByRole("button", { name: /upgrade to pro/i })).toHaveCount(0);
   });
 
-  test("FREE-JNY-003: Week 1 cleared shows Pro CTA for full journey", async ({
+  test("FREE-JNY-003: completing the sample day surfaces the quote CTA", async ({
     page,
   }) => {
     const admin = createAdminClient();
@@ -102,13 +109,17 @@ test.describe("FREE-JNY — Week 1 execution & Week 2 gate", () => {
     await seedJourneyCoachState(admin, profile!.id, {
       currentWeekIndex: 1,
       planWeekIndex: 1,
-      taskCount: 4,
+      taskCount: 1,
       allTasksDone: true,
     });
 
     await page.goto("/dashboard");
     await expect(
-      page.getByRole("heading", { name: /week 1 complete — unlock your full journey/i }),
+      page.getByText(/sample day complete — continue your full journey/i),
     ).toBeVisible({ timeout: 45_000 });
+
+    const quoteCta = page.getByRole("link", { name: /get plan quote/i });
+    await expect(quoteCta).toBeVisible();
+    await expect(quoteCta).toHaveAttribute("href", "/plan/quote");
   });
 });

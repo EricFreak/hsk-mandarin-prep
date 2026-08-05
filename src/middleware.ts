@@ -10,6 +10,7 @@ export const config = {
     "/dashboard/:path*",
     "/onboarding",
     "/placement",
+    "/diagnosis",
     "/practice/:path*",
     "/flashcards/:path*",
     "/mock-exam/:path*",

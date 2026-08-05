@@ -1,13 +1,5 @@
 import Stripe from "stripe";
-import { getAppUrl, type PriceType } from "@/lib/payments/types";
-
-export function isStripeConfigured(): boolean {
-  return Boolean(
-    process.env.STRIPE_SECRET_KEY &&
-      process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY &&
-      process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY,
-  );
-}
+import { getAppUrl } from "@/lib/payments/types";
 
 function getStripe(): Stripe | null {
   const secretKey = process.env.STRIPE_SECRET_KEY;
@@ -18,46 +10,40 @@ function getStripe(): Stripe | null {
   return new Stripe(secretKey);
 }
 
-function getStripePriceId(priceType: PriceType): string | null {
-  if (priceType === "monthly") {
-    return process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY || null;
-  }
-
-  return process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY || null;
-}
-
-export async function createStripeCheckout(params: {
-  priceType: PriceType;
+export async function createLpCheckout(input: {
+  orderId: string;
   userId: string;
-  userEmail?: string | null;
+  userEmail?: string;
+  priceCents: number;
+  productName: string;
 }): Promise<{ url: string }> {
   const stripe = getStripe();
-  const priceId = getStripePriceId(params.priceType);
-
-  if (!stripe || !priceId) {
+  if (!stripe) {
     throw new Error("Stripe is not configured");
   }
 
   const appUrl = getAppUrl();
   const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    customer_email: params.userEmail ?? undefined,
-    client_reference_id: params.userId,
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${appUrl}/dashboard?upgraded=1`,
-    cancel_url: `${appUrl}/pricing`,
-    metadata: {
-      userId: params.userId,
-    },
-    subscription_data: {
-      metadata: {
-        userId: params.userId,
+    mode: "payment",
+    client_reference_id: input.userId,
+    customer_email: input.userEmail,
+    line_items: [
+      {
+        quantity: 1,
+        price_data: {
+          currency: "usd",
+          unit_amount: input.priceCents,
+          product_data: { name: input.productName },
+        },
       },
-    },
+    ],
+    success_url: `${appUrl}/dashboard?purchased=1`,
+    cancel_url: `${appUrl}/plan/quote`,
+    metadata: { userId: input.userId, orderId: input.orderId },
   });
 
   if (!session.url) {
-    throw new Error("Stripe checkout did not return a URL");
+    throw new Error("stripe_checkout_no_url");
   }
 
   return { url: session.url };

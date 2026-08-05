@@ -20,7 +20,7 @@ export default function ProductShowcase() {
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-semibold text-ink">
-            Built for HSK Level 3 success
+            Built For HSK Level 3 Success
           </h2>
           <p className="mt-3 text-ink-muted">
             Listening, vocabulary, and study planning — in one English-first workspace.

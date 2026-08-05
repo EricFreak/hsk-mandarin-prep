@@ -1,5 +1,8 @@
 import { getAuthenticatedCoachUser } from "@/lib/coach/api-auth";
 import { clearWeekAndUnlockNext } from "@/lib/coach/journey/persist-journey";
+import { canExecuteTask } from "@/lib/lp/access";
+import { selectTasterTaskIds } from "@/lib/lp/sample-taste";
+import { fetchAccess } from "@/lib/lp/access-server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -105,7 +108,7 @@ export async function PATCH(request: Request, context: RouteContext) {
   const { data: existing, error: loadError } = await supabase
     .from("coach_plan_tasks")
     .select(
-      "id, title, skill, task_type, status, target_count, completed_at, mastery_status, mastery_score",
+      "id, title, skill, task_type, status, target_count, completed_at, mastery_status, mastery_score, plan_id, day_offset",
     )
     .eq("id", taskId)
     .eq("user_id", user.id)
@@ -118,6 +121,56 @@ export async function PATCH(request: Request, context: RouteContext) {
 
   if (!existing) {
     return NextResponse.json({ error: "Task not found" }, { status: 404 });
+  }
+
+  // Gate execution by access: free users may only update taster tasks
+  // (cross-skill sample in week 1). Enforced server-side so locked tasks
+  // cannot be completed via API.
+  const existingRow = existing as Record<string, unknown>;
+  const planId = existingRow.plan_id as string;
+  let weekIndex = 1;
+  try {
+    const { data: planRow } = await supabase
+      .from("coach_study_plans")
+      .select("week_index")
+      .eq("id", planId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (typeof planRow?.week_index === "number") weekIndex = planRow.week_index;
+  } catch {
+    // Default to week 1 if the plan lookup fails.
+  }
+
+  const { data: weekTaskRows } = await supabase
+    .from("coach_plan_tasks")
+    .select("id, skill, day_offset, task_type")
+    .eq("plan_id", planId)
+    .eq("user_id", user.id);
+
+  const tasterTaskIds = selectTasterTaskIds(
+    ((weekTaskRows ?? []) as {
+      id: string;
+      skill: string | null;
+      day_offset: number;
+      task_type: string;
+    }[]).map((row) => ({
+      id: row.id,
+      skill: row.skill,
+      day_offset: row.day_offset,
+      task_type: row.task_type,
+    })),
+  );
+
+  const access = await fetchAccess(supabase, user.id);
+  if (
+    !canExecuteTask({
+      access,
+      weekIndex,
+      taskId,
+      tasterTaskIds,
+    })
+  ) {
+    return NextResponse.json({ error: "quote_required" }, { status: 402 });
   }
 
   const { data: progressRow } = await supabase

@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HSK Prep — How it works (Cinema prototype)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --paper: #faf8f5;
+      --paper-dark: #f0ebe3;
+      --ink: #1a1a2e;
+      --ink-muted: #5c5c6f;
+      --jade: #2d6a6a;
+      --jade-light: #3d9a9a;
+      --seal: #c23b3b;
+      --mist: #e8e4df;
+      --shadow: 0 8px 40px -8px rgba(26, 26, 46, 0.12);
+      --shadow-lg: 0 24px 64px -16px rgba(26, 26, 46, 0.18);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+    .font-display { font-family: "Instrument Serif", Georgia, serif; }
+
+    /* Ambient bg */
+    .ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(45,106,106,0.08), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 80%, rgba(194,59,59,0.04), transparent);
+    }
+
+    .page { position: relative; z-index: 1; }
+
+    /* Marketing section shell */
+    .section {
+      border-top: 1px solid var(--mist);
+      border-bottom: 1px solid var(--mist);
+      background: white;
+    }
+    .section-inner {
+      max-width: 72rem;
+      margin: 0 auto;
+      padding: 4rem 1.25rem 5rem;
+    }
+    @media (min-width: 640px) { .section-inner { padding: 4rem 1.5rem 5rem; } }
+
+    .section-header { text-align: center; max-width: 36rem; margin: 0 auto; }
+    .section-header h2 {
+      font-family: "Instrument Serif", Georgia, serif;
+      font-size: clamp(1.75rem, 4vw, 2.25rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+    .section-header p {
+      margin-top: 0.75rem;
+      font-size: 0.875rem;
+      color: var(--ink-muted);
+    }
+    .brush-rule {
+      width: 6rem;
+      height: 1px;
+      margin: 1rem auto 0;
+      background: linear-gradient(90deg, transparent, var(--jade), transparent);
+      opacity: 0.5;
+    }
+
+    /* Loop legend */
+    .loop-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem 1.25rem;
+      margin-top: 1.75rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--ink-muted);
+    }
+    .loop-legend span { display: flex; align-items: center; gap: 0.4rem; }
+    .loop-legend .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--jade);
+    }
+    .loop-legend .arrow { color: var(--mist); font-weight: 400; }
+
+    /* Cinema layout */
+    .cinema {
+      margin-top: 2.5rem;
+      display: grid;
+      gap: 1.5rem;
+    }
+    @media (min-width: 1024px) {
+      .cinema {
+        grid-template-columns: 200px 1fr;
+        gap: 2rem;
+        align-items: start;
+      }
+    }
+
+    /* Side rail — NOT cards, thin timeline */
+    .rail {
+      display: none;
+    }
+    @media (min-width: 1024px) {
+      .rail {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        position: sticky;
+        top: 2rem;
+      }
+    }
+    .rail-act {
+      margin-bottom: 0.25rem;
+    }
+    .rail-act-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--ink-muted);
+      padding: 0.5rem 0 0.35rem 0.75rem;
+    }
+    .rail-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      width: 100%;
+      border: none;
+      background: transparent;
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s, opacity 0.2s;
+      opacity: 0.45;
+    }
+    .rail-step:hover { opacity: 0.75; background: var(--paper-dark); }
+    .rail-step.active { opacity: 1; background: rgba(45,106,106,0.08); }
+    .rail-step .num {
+      flex-shrink: 0;
+      width: 1.5rem; height: 1.5rem;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Instrument Serif", Georgia, serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: rgba(194,59,59,0.1);
+      color: var(--seal);
+      transition: all 0.25s;
+    }
+    .rail-step.active .num { background: var(--jade); color: white; }
+    .rail-step .label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      line-height: 1.3;
+      color: var(--ink);
+    }
+    .rail-step .sub {
+      font-size: 0.65rem;
+      color: var(--ink-muted);
+      margin-top: 1px;
+    }
+
+    /* Mobile act pills */
+    .mobile-acts {
+      display: flex;
+      gap: 0.35rem;
+      overflow-x: auto;
+      padding-bottom: 0.25rem;
+      -webkit-overflow-scrolling: touch;
+    }
+    @media (min-width: 1024px) { .mobile-acts { display: none; } }
+    .mobile-acts button {
+      flex-shrink: 0;
+      border: 1px solid var(--mist);
+      background: white;
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--ink-muted);
+      cursor: pointer;
+    }
+    .mobile-acts button.active {
+      background: var(--jade);
+      border-color: var(--jade);
+      color: white;
+    }
+
+    /* Stage — orbit + preview */
+    .stage-wrap { position: relative; }
+
+    .orbit-wrap {
+      position: relative;
+      padding: 0.5rem;
+    }
+    @media (min-width: 768px) {
+      .orbit-wrap { padding: 1.5rem 2rem 2rem; }
+    }
+
+    /* SVG orbit ring */
+    .orbit-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .orbit-track {
+      fill: none;
+      stroke: var(--mist);
+      stroke-width: 2;
+    }
+    .orbit-progress {
+      fill: none;
+      stroke: var(--jade);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .orbit-dot {
+      cursor: pointer;
+      pointer-events: all;
+      transition: transform 0.25s;
+    }
+    .orbit-dot:hover { transform: scale(1.15); }
+    .orbit-dot circle.outer {
+      fill: white;
+      stroke: var(--mist);
+      stroke-width: 2;
+      transition: all 0.3s;
+    }
+    .orbit-dot.active circle.outer {
+      stroke: var(--jade);
+      stroke-width: 2.5;
+      filter: drop-shadow(0 0 6px rgba(45,106,106,0.35));
+    }
+    .orbit-dot.done circle.outer { stroke: var(--jade); fill: rgba(45,106,106,0.12); }
+    .orbit-dot text {
+      font-family: "Instrument Serif", Georgia, serif;
+      font-size: 11px;
+      font-weight: 600;
+      fill: var(--ink-muted);
+      text-anchor: middle;
+      dominant-baseline: central;
+      pointer-events: none;
+    }
+    .orbit-dot.active text { fill: var(--jade); }
+    .orbit-dot.done text { fill: var(--jade); }
+
+    .act-labels {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .act-label {
+      position: absolute;
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--ink-muted);
+      opacity: 0.6;
+      transition: opacity 0.3s, color 0.3s;
+    }
+    .act-label.highlight { opacity: 1; color: var(--jade); }
+
+    /* Preview viewport */
+    .viewport {
+      position: relative;
+      z-index: 2;
+      max-width: 56rem;
+      margin: 0 auto;
+      min-height: 420px;
+    }
+    @media (min-width: 768px) { .viewport { min-height: 480px; } }
+
+    .preview-layer {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: translateY(12px) scale(0.985);
+      transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
+    .preview-layer.active {
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+      position: relative;
+    }
+
+    /* Preview chrome */
+    .chrome {
+      overflow: hidden;
+      border-radius: 1rem;
+      border: 1px solid var(--mist);
+      background: white;
+      box-shadow: var(--shadow-lg);
+    }
+    .chrome-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--mist);
+      background: rgba(240,235,227,0.6);
+    }
+    .chrome-dots { display: flex; gap: 0.35rem; align-items: center; }
+    .chrome-dots span { width: 0.55rem; height: 0.55rem; border-radius: 50%; }
+    .chrome-title {
+      flex: 1;
+      min-width: 0;
+      margin-left: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--ink-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .chrome-badge {
+      flex-shrink: 0;
+      font-size: 0.58rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: rgba(45,106,106,0.1);
+      color: var(--jade);
+    }
+    .chrome-body { padding: 1.25rem; }
+    @media (min-width: 640px) { .chrome-body { padding: 1.75rem 2rem; } }
+
+    /* Journey strip inside preview */
+    .journey-bar {
+      margin-bottom: 1rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 0.65rem;
+      border: 1px solid var(--mist);
+      background: var(--paper-dark);
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+    .journey-bar.visible {
+      opacity: 1;
+      max-height: 80px;
+      margin-bottom: 1rem;
+    }
+    .journey-bar .eyebrow {
+      font-size: 0.58rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--ink-muted);
+    }
+    .journey-pills {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 0.4rem;
+    }
+    .pill {
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid var(--mist);
+      background: white;
+      color: var(--ink-muted);
+    }
+    .pill.done { background: rgba(45,106,106,0.12); color: var(--jade); border-color: transparent; }
+    .pill.current { background: var(--jade); color: white; border-color: var(--jade); }
+    .pill-days { margin-left: auto; font-size: 0.65rem; color: var(--ink-muted); }
+
+    /* Shared preview components */
+    .fade { opacity: 0; transform: translateY(6px); transition: all 0.5s ease; }
+    .fade.in { opacity: 1; transform: none; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
+    .tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+    }
+    .tag-jade { background: var(--jade); color: white; }
+    .tag-muted { border: 1px solid var(--mist); background: var(--paper-dark); color: var(--ink-muted); }
+    .tag-seal { border: 1px solid rgba(194,59,59,0.2); background: rgba(194,59,59,0.05); color: var(--seal); }
+    .eyebrow { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--jade); }
+    .grid-2 { display: grid; gap: 1rem; }
+    @media (min-width: 640px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+    .grid-2-asym { display: grid; gap: 1.25rem; }
+    @media (min-width: 768px) { .grid-2-asym { grid-template-columns: 220px 1fr; } }
+    .choice {
+      border: 1px solid var(--mist);
+      border-radius: 0.65rem;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      color: var(--ink-muted);
+      transition: all 0.4s;
+    }
+    .choice.hl { border-color: var(--jade); background: rgba(45,106,106,0.08); color: var(--jade); font-weight: 600; }
+    .bar-track { height: 0.45rem; background: var(--paper-dark); border-radius: 999px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; width: 0; transition: width 1s ease; }
+    .bar-fill.jade { background: var(--jade); }
+    .bar-fill.seal { background: var(--seal); }
+    .card-soft {
+      border: 1px solid var(--mist);
+      border-radius: 0.75rem;
+      background: var(--paper-dark);
+      padding: 1rem;
+    }
+    .card-accent { border-color: rgba(45,106,106,0.3); background: rgba(45,106,106,0.05); }
+    .btn-jade {
+      display: inline-block;
+      background: var(--jade);
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.55rem 1rem;
+      border-radius: 0.5rem;
+    }
+
+    /* Score ring */
+    .score-ring-wrap { position: relative; width: 9rem; height: 9rem; margin: 0 auto; }
+    .score-ring-wrap svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+    .score-ring-wrap .score-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .score-text .pct { font-family: "Instrument Serif", Georgia, serif; font-size: 2.25rem; font-weight: 400; }
+
+    /* Caption + controls */
+    .caption-row {
+      margin-top: 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .caption-text { font-size: 0.85rem; color: var(--ink-muted); }
+    .caption-text strong { color: var(--ink); font-weight: 600; }
+    .caption-act {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--jade);
+      margin-right: 0.5rem;
+    }
+    .controls { display: flex; gap: 0.5rem; align-items: center; }
+    .controls button {
+      border: 1px solid var(--mist);
+      background: white;
+      padding: 0.45rem 0.85rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--ink-muted);
+      transition: all 0.2s;
+    }
+    .controls button:hover { border-color: var(--jade); color: var(--ink); }
+    .controls button.primary { background: var(--jade); border-color: var(--jade); color: white; }
+    .progress-line {
+      margin-top: 0.75rem;
+      height: 3px;
+      background: var(--mist);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-line-fill {
+      height: 100%;
+      background: var(--jade);
+      width: 0%;
+      border-radius: 2px;
+    }
+    .progress-line-fill.animate {
+      animation: progress 6.5s linear forwards;
+    }
+    @keyframes progress { from { width: 0%; } to { width: 100%; } }
+
+    /* Loop close flash */
+    @keyframes loopPulse {
+      0%, 100% { box-shadow: var(--shadow-lg); }
+      50% { box-shadow: 0 0 0 3px rgba(45,106,106,0.25), var(--shadow-lg); }
+    }
+    .chrome.loop-close { animation: loopPulse 0.8s ease; }
+
+    .proto-note {
+      max-width: 72rem;
+      margin: 0 auto;
+      padding: 1rem 1.25rem 2rem;
+      font-size: 0.72rem;
+      color: var(--ink-muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient"></div>
+  <div class="page">
+    <section class="section">
+      <div class="section-inner">
+        <header class="section-header">
+          <h2>How it works</h2>
+          <p>Assess → roadmap to exam day → do this week&apos;s tasks → track and re-test. One continuous coach loop.</p>
+          <div class="brush-rule"></div>
+          <div class="loop-legend">
+            <span><span class="dot"></span> Assess</span>
+            <span class="arrow">→</span>
+            <span><span class="dot"></span> Roadmap</span>
+            <span class="arrow">→</span>
+            <span><span class="dot"></span> Train</span>
+            <span class="arrow">→</span>
+            <span><span class="dot"></span> Track</span>
+            <span class="arrow">↻</span>
+            <span style="font-weight:500;letter-spacing:0.05em;text-transform:none">repeat</span>
+          </div>
+        </header>
+
+        <div class="cinema" id="cinema">
+          <!-- Side rail (desktop) -->
+          <nav class="rail" id="rail" aria-label="Coach loop steps"></nav>
+
+          <!-- Main stage -->
+          <div class="stage-wrap">
+            <div class="mobile-acts" id="mobile-acts"></div>
+
+            <div class="orbit-wrap" id="orbit-wrap">
+              <svg class="orbit-svg" id="orbit-svg" viewBox="0 0 800 520" preserveAspectRatio="xMidYMid meet">
+                <ellipse class="orbit-track" cx="400" cy="270" rx="370" ry="240" />
+                <ellipse class="orbit-progress" id="orbit-progress" cx="400" cy="270" rx="370" ry="240"
+                  stroke-dasharray="2010" stroke-dashoffset="2010" />
+                <g id="orbit-dots"></g>
+              </svg>
+              <div class="act-labels" id="act-labels"></div>
+
+              <div class="viewport" id="viewport">
+                <div class="journey-bar" id="journey-bar">
+                  <div class="eyebrow">Journey · Foundation · Week 1</div>
+                  <div class="journey-pills">
+                    <span class="pill done">✓ Diagnose</span>
+                    <span class="pill current">Foundation</span>
+                    <span class="pill">Skills</span>
+                    <span class="pill">Sprint</span>
+                    <span class="pill-days">42 days to exam</span>
+                  </div>
+                </div>
+
+                <!-- Step 0: Mock -->
+                <div class="preview-layer active" data-step="0">
+                  <div class="chrome" id="chrome-main">
+                    <div class="chrome-bar">
+                      <div class="chrome-dots"><span style="background:rgba(194,59,59,0.4)"></span><span style="background:rgba(45,106,106,0.4)"></span><span style="background:var(--mist)"></span></div>
+                      <span class="chrome-title">HSK 3 Mock Exam · Live session</span>
+                      <span class="chrome-badge">Preview</span>
+                    </div>
+                    <div class="chrome-body">
+                      <div class="grid-2-asym">
+                        <div>
+                          <div class="tag-row fade" data-delay="0">
+                            <span class="tag tag-jade">Listening</span>
+                            <span class="tag tag-muted">Reading</span>
+                            <span class="tag tag-muted">Writing</span>
+                            <span class="tag tag-seal" style="margin-left:auto">24:18 left</span>
+                          </div>
+                          <p class="eyebrow fade" data-delay="100" style="margin-top:1.25rem">Listening · Question 3 of 8</p>
+                          <p class="fade" data-delay="100" style="font-size:0.75rem;color:var(--ink-muted);margin-top:0.35rem">Audio: 你明天几点去学校？</p>
+                          <p class="font-display fade" data-delay="150" style="font-size:1.5rem;margin-top:0.75rem">你明天几点去学校？</p>
+                          <div class="grid-2 fade" data-delay="200" style="margin-top:1rem">
+                            <div class="choice hl">A. 八点</div>
+                            <div class="choice">B. 明天</div>
+                            <div class="choice">C. 学校</div>
+                            <div class="choice">D. 几点</div>
+                          </div>
+                        </div>
+                        <div class="card-soft fade" data-delay="350">
+                          <p class="eyebrow" style="color:var(--ink-muted)">Exam progress</p>
+                          <div style="margin-top:0.75rem">
+                            <div style="display:flex;justify-content:space-between;font-size:0.72rem;margin-bottom:0.25rem"><span>Listening</span><span style="color:var(--ink-muted)">3/8</span></div>
+                            <div class="bar-track"><div class="bar-fill jade" data-w="37.5"></div></div>
+                          </div>
+                          <div style="margin-top:0.6rem">
+                            <div style="display:flex;justify-content:space-between;font-size:0.72rem;margin-bottom:0.25rem"><span>Reading</span><span style="color:var(--ink-muted)">0/8</span></div>
+                            <div class="bar-track"><div class="bar-fill jade" data-w="0"></div></div>
+                          </div>
+                          <p style="margin-top:0.85rem;font-size:0.68rem;color:var(--ink-muted)">Same timing as official HSK 3.0 format.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Step 1: Score -->
+                <div class="preview-layer" data-step="1">
+                  <div class="chrome">
+                    <div class="chrome-bar">
+                      <div class="chrome-dots"><span style="background:rgba(194,59,59,0.4)"></span><span style="background:rgba(45,106,106,0.4)"></span><span style="background:var(--mist)"></span></div>
+                      <span class="chrome-title">Mock Exam Result</span>
+                      <span class="chrome-badge">Preview</span>
+                    </div>
+                    <div class="chrome-body">
+                      <div class="grid-2-asym">
+                        <div>
+                          <div class="score-ring-wrap fade" data-delay="0">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="#E8E4DF" stroke-width="8"/><circle cx="50" cy="50" r="42" fill="none" stroke="#2D6A6A" stroke-width="8" stroke-linecap="round" stroke-dasharray="190 264" class="ring-fill"/></svg>
+                            <div class="score-text"><span class="pct">72%</span><span style="font-size:0.7rem;color:var(--ink-muted)">HSK 3</span></div>
+                          </div>
+                          <p class="fade" data-delay="200" style="text-align:center;font-size:0.8rem;color:var(--ink-muted);margin-top:0.5rem"><strong style="color:var(--ink)">58</strong>/80 MCQ correct</p>
+                        </div>
+                        <div>
+                          <p class="eyebrow" style="color:var(--ink-muted)">Skill breakdown</p>
+                          <div style="margin-top:0.85rem;display:flex;flex-direction:column;gap:0.85rem">
+                            <div class="fade" data-delay="250"><div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:0.3rem"><span>Listening</span><span style="color:var(--seal);font-size:0.72rem;font-weight:600">Focus area</span></div><div class="bar-track"><div class="bar-fill seal" data-w="58"></div></div></div>
+                            <div class="fade" data-delay="350"><div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:0.3rem"><span>Reading</span><span style="color:var(--jade);font-size:0.72rem;font-weight:600">Solid</span></div><div class="bar-track"><div class="bar-fill jade" data-w="78"></div></div></div>
+                            <div class="fade" data-delay="450"><div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:0.3rem"><span>Vocabulary</span><span style="color:var(--jade);font-size:0.72rem;font-weight:600">Strong</span></div><div class="bar-track"><div class="bar-fill jade" data-w="85"></div></div></div>
+                          </div>
+                          <div class="card-soft fade" data-delay="600" style="margin-top:1rem;border-color:rgba(194,59,59,0.2);background:rgba(194,59,59,0.05);font-size:0.82rem;color:var(--ink-muted)">Top gap: <strong style="color:var(--seal)">Listening</strong> — time expressions &amp; transport phrases.</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Step 2: AI Summary -->
+                <div class="preview-layer" data-step="2">
+                  <div class="chrome">
+                    <div class="chrome-bar">
+                      <div class="chrome-dots"><span style="background:rgba(194,59,59,0.4)"></span><span style="background:rgba(45,106,106,0.4)"></span><span style="background:var(--mist)"></span></div>
+                      <span class="chrome-title">AI Learning Coach · Assessment report</span>
+                      <span class="chrome-badge">Preview</span>
+                    </div>
+                    <div class="chrome-body">
+                      <div class="grid-2-asym" style="grid-template-columns:1fr 200px">
+                        <div>
+                          <div class="tag-row fade" data-delay="0"><span class="tag" style="background:rgba(45,106,106,0.1);color:var(--jade);font-size:0.65rem">DeepSeek coach</span></div>
+                          <h3 class="font-display fade" data-delay="100" style="font-size:1.5rem;margin-top:0.85rem;font-weight:400">You&apos;re close — listening is the bottleneck</h3>
+                          <p class="fade" data-delay="180" style="font-size:0.82rem;color:var(--ink-muted);margin-top:0.75rem;line-height:1.6">Your mock score of <strong style="color:var(--ink)">72%</strong> shows solid vocabulary and reading. The main gap is <strong style="color:var(--seal)">listening</strong> — time expressions (几点、明天) and transport phrases (车票、地铁).</p>
+                          <div class="grid-2 fade" data-delay="300" style="margin-top:1rem">
+                            <div class="card-accent" style="padding:0.85rem;border-radius:0.65rem"><p class="eyebrow">Strengths</p><p style="font-size:0.78rem;color:var(--ink-muted);margin-top:0.4rem">Vocabulary 85% · Reading strong</p></div>
+                            <div style="padding:0.85rem;border-radius:0.65rem;border:1px solid rgba(194,59,59,0.25);background:rgba(194,59,59,0.05)"><p class="eyebrow" style="color:var(--seal)">Priority</p><p style="font-size:0.78rem;color:var(--ink-muted);margin-top:0.4rem">Listening · 3 misses on travel audio</p></div>
+                          </div>
+                        </div>
+                        <div class="card-soft fade" data-delay="220" style="display:flex;flex-direction:column;justify-content:space-between">
+                          <div><p class="eyebrow" style="color:var(--ink-muted)">Exam readiness</p><p class="font-display" style="font-size:3rem;color:var(--jade);margin-top:0.25rem">68%</p></div>
+                          <p style="font-size:0.68rem;color:var(--ink-muted);border-top:1px solid var(--mist);padding-top:0.75rem;margin-top:0.75rem">Start with 15 listening questions today.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Step 3: Roadmap -->
+                <div class="preview-layer" data-step="3">
+                  <div class="chrome">
+                    <div class="chrome-bar">
+                      <div class="chrome-dots"><span style="background:rgba(194,59,59,0.4)"></span><span style="background:rgba(45,106,106,0.4)"></span><span style="background:var(--mist)"></span></div>
+                      <span class="chrome-title">Journey Roadmap · Exam Sep 12, 2026</span>
+                      <span class="chrome-badge">Preview</span>
+                    </div>
+                    <div class="chrome-body">
+                      <div class="fade" data-delay="0" style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;align-items:flex-end">
+                        <div><p class="eyebrow">Target exam date</p><h3 class="font-display" style="font-size:1.35rem;margin-top:0.25rem">September 12, 2026</h3><p style="font-size:0.82rem;color:var(--ink-muted)">42 days · from mock 72%</p></div>
+                        <div class="card-soft" style="text-align:right;padding:0.65rem 1rem"><p style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--ink-muted)">You are here</p><p class="font-display" style="color:var(--jade);font-size:1.1rem">Foundation</p></div>
+                      </div>
+                      <div class="fade" data-delay="120" style="margin-top:1.25rem;padding:0.75rem 1rem;border-radius:0.65rem;border:1px solid var(--mist);background:rgba(240,235,227,0.5)">
+                        <p style="font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--ink-muted)">Stage calendar</p>
+                        <div class="journey-pills" style="margin-top:0.5rem"><span class="pill done">✓ Diagnose</span><span class="pill current">Foundation</span><span class="pill">Skills</span><span class="pill">Sprint</span></div>
+                      </div>
+                      <p class="fade" data-delay="200" style="font-size:0.68rem;font-weight:700;text-transform:uppercase;color:var(--ink-muted);margin-top:1.25rem">Full journey outline</p>
+                      <ul class="grid-2 fade" data-delay="250" style="margin-top:0.5rem;list-style:none">
+                        <li class="card-accent" style="display:flex;justify-content:space-between;padding:0.65rem 0.85rem;border-radius:0.65rem;font-size:0.82rem"><span><strong>Week 1</strong> · Vocabulary</span><span style="color:var(--jade);font-size:0.65rem;font-weight:700">AVAILABLE</span></li>
+                        <li style="display:flex;justify-content:space-between;padding:0.65rem 0.85rem;border-radius:0.65rem;border:1px solid var(--mist);font-size:0.82rem;color:var(--ink-muted)"><span>Week 2 · Grammar</span><span style="font-size:0.65rem">LOCKED</span></li>
+                        <li style="display:flex;justify-content:space-between;padding:0.65rem 0.85rem;border-radius:0.65rem;border:1px solid var(--mist);font-size:0.82rem;color:var(--ink-muted)"><span>Week 3 · Listening</span><span style="font-size:0.65rem">LOCKED</span></li>
+                        <li style="display:flex;justify-content:space-between;padding:0.65rem 0.85rem;border-radius:0.65rem;border:1px solid var(--mist);font-size:0.82rem;color:var(--ink-muted)"><span>Week 4 · Reading</span><span style="font-size:0.65rem">LOCKED</span></li>
+                      </ul>
+                      <div class="card-soft fade" data-delay="400" style="margin-top:1rem;font-size:0.82rem;color:var(--ink-muted)"><span class="eyebrow">Map only</span><p style="margin-top:0.35rem">Shows <strong style="color:var(--ink)">when</strong> and <strong style="color:var(--ink)">themes</strong> — drills happen on Dashboard next.</p></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Step 4: Practice -->
+                <div class="preview-layer" data-step="4">
+                  <div class="chrome">
+                    <div class="chrome-bar">
+                      <div class="chrome-dots"><span style="background:rgba(194,59,59,0.4)"></span><span style="background:rgba(45,106,106,0.4)"></span><span style="background:var(--mist)"></span></div>
+                      <span class="chrome-title">Dashboard → Practice · Week 1 task</span>
+                      <span class="chrome-badge">Preview</span>
+                    </div>
+                    <div class="chrome-body">
+                      <div class="tag-row fade" data-delay="0" style="font-size:0.65rem;font-weight:700;text-transform:uppercase;color:var(--ink-muted)">
+                        <span class="tag" style="background:rgba(45,106,106,0.12);color:var(--jade)">1 · Dashboard</span> →
+                        <span class="tag" style="background:rgba(45,106,106,0.12);color:var(--jade)">2 · Practice</span> →
+                        <span class="tag tag-muted">3 · Mastery gate</span>
+                      </div>
+                      <div class="grid-2-asym fade" data-delay="100" style="margin-top:1.25rem;grid-template-columns:minmax(0,200px) 1fr">
+                        <div class="card-accent" style="padding:0.85rem;border-radius:0.65rem">
+                          <p class="eyebrow">This week</p>
+                          <p style="font-size:0.82rem;font-weight:600;margin-top:0.35rem">Problem: Listening</p>
+                          <div style="margin-top:0.65rem;display:flex;flex-direction:column;gap:0.35rem">
+                            <div class="choice hl" style="padding:0.5rem 0.65rem;font-size:0.75rem"><span style="display:inline-flex;width:1.25rem;height:1.25rem;border-radius:50%;background:rgba(45,106,106,0.12);align-items:center;justify-content:center;font-size:0.65rem;margin-right:0.35rem">1</span>Listening drills</div>
+                            <div class="choice" style="padding:0.5rem 0.65rem;font-size:0.75rem;opacity:0.6">2 · Vocabulary review</div>
+                            <div class="choice" style="padding:0.5rem 0.65rem;font-size:0.75rem;opacity:0.6">3 · Grammar practice</div>
+                          </div>
+                        </div>
+                        <div>
+                          <p class="eyebrow fade" data-delay="180">Plan task · Listening</p>
+                          <p class="font-display fade" data-delay="220" style="font-size:1.35rem;margin-top:0.5rem">他想买一张去上海的____。</p>
+                          <div class="grid-2 fade" data-delay="280" style="margin-top:0.85rem">
+                            <div class="choice hl">车票</div><div class="choice">水果</div>
+                            <div class="choice">电脑</div><div class="choice">书包</div>
+                          </div>
+                          <div class="card-accent fade" data-delay="450" style="margin-top:1rem;padding:0.85rem 1rem;border-radius:0.65rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem">
+                            <div><p class="eyebrow">Mastery gate</p><p class="font-display" style="font-size:1.75rem">8 <span style="font-size:0.9rem;color:var(--ink-muted)">/ 10</span></p><p style="font-size:0.68rem;color:var(--ink-muted)">Passed · Week 1 cleared</p></div>
+                            <span class="btn-jade">Continue week</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Step 5: Progress -->
+                <div class="preview-layer" data-step="5">
+                  <div class="chrome">
+                    <div class="chrome-bar">
+                      <div class="chrome-dots"><span style="background:rgba(194,59,59,0.4)"></span><span style="background:rgba(45,106,106,0.4)"></span><span style="background:var(--mist)"></span></div>
+                      <span class="chrome-title">Dashboard · Progress &amp; re-test</span>
+                      <span class="chrome-badge">Preview</span>
+                    </div>
+                    <div class="chrome-body">
+                      <div class="grid-2-asym" style="grid-template-columns:1.2fr 1fr">
+                        <div>
+                          <p class="eyebrow fade" data-delay="0">Progress glance</p>
+                          <p class="fade" data-delay="80" style="font-size:0.82rem;color:var(--ink-muted);margin-top:0.5rem">Listening accuracy trending up. Ready for follow-up mock.</p>
+                          <div class="grid-2 fade" data-delay="150" style="margin-top:1rem">
+                            <div class="card-soft"><p style="font-size:0.65rem;color:var(--ink-muted)">Readiness</p><p class="font-display" style="font-size:1.5rem">68%</p><p style="font-size:0.62rem;color:var(--ink-muted)">Up from 61%</p></div>
+                            <div class="card-soft"><p style="font-size:0.65rem;color:var(--ink-muted)">Days to exam</p><p class="font-display" style="font-size:1.5rem">42</p></div>
+                            <div class="card-soft"><p style="font-size:0.65rem;color:var(--ink-muted)">Week 1 tasks</p><p class="font-display" style="font-size:1.5rem">2/3</p></div>
+                            <div class="card-soft"><p style="font-size:0.65rem;color:var(--ink-muted)">Listening gap</p><p class="font-display" style="font-size:1.5rem">−12%</p></div>
+                          </div>
+                        </div>
+                        <div class="card-soft fade" data-delay="250" style="display:flex;flex-direction:column">
+                          <p style="font-size:0.68rem;font-weight:700;text-transform:uppercase;color:var(--ink-muted)">Close the loop</p>
+                          <ul style="margin-top:0.75rem;font-size:0.8rem;color:var(--ink-muted);list-style:none;display:flex;flex-direction:column;gap:0.5rem">
+                            <li><span style="color:var(--jade)">✓</span> Week 1 cleared — Week 2 unlocked</li>
+                            <li><span style="color:var(--jade)">✓</span> Listening +9% since last report</li>
+                            <li><span style="color:var(--ink-muted)">→</span> Take another mock to re-weight journey</li>
+                          </ul>
+                          <div style="margin-top:auto;padding-top:1.25rem">
+                            <span class="btn-jade">Take follow-up mock</span>
+                            <p style="font-size:0.65rem;color:var(--ink-muted);margin-top:0.5rem">New mock → updated report → back to This week ↻</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="caption-row">
+              <p class="caption-text" id="caption"></p>
+              <div class="controls">
+                <button type="button" id="btn-prev">←</button>
+                <button type="button" class="primary" id="btn-play">▶ Play loop</button>
+                <button type="button" id="btn-next">→</button>
+              </div>
+            </div>
+            <div class="progress-line"><div class="progress-line-fill" id="progress-fill"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p class="proto-note">Cinema prototype v2 — high-fidelity previews + orbit navigation. Open full-width on desktop for best effect.</p>
+  </div>
+
+  <script>
+    const STEPS = [
+      { n: 1, short: "Mock exam", title: "Take a mock exam", act: 0, actName: "Assess" },
+      { n: 2, short: "Score", title: "Get score & skill breakdown", act: 0, actName: "Assess" },
+      { n: 3, short: "AI summary", title: "Read your AI coach report", act: 0, actName: "Assess" },
+      { n: 4, short: "Roadmap", title: "See your journey roadmap", act: 1, actName: "Roadmap" },
+      { n: 5, short: "This week", title: "Do this week's tasks", act: 2, actName: "Train" },
+      { n: 6, short: "Progress", title: "Track and re-test", act: 3, actName: "Track" },
+    ];
+    const ACTS = [
+      { name: "Assess", steps: [0, 1, 2] },
+      { name: "Roadmap", steps: [3] },
+      { name: "Train", steps: [4] },
+      { name: "Track", steps: [5] },
+    ];
+    const STEP_MS = 6500;
+    const ORBIT_LEN = 2010; // approx ellipse circumference
+
+    let idx = 0;
+    let playing = false;
+    let timer = null;
+
+    const rail = document.getElementById("rail");
+    const mobileActs = document.getElementById("mobile-acts");
+    const orbitDots = document.getElementById("orbit-dots");
+    const actLabelsEl = document.getElementById("act-labels");
+    const orbitProgress = document.getElementById("orbit-progress");
+    const journeyBar = document.getElementById("journey-bar");
+    const caption = document.getElementById("caption");
+    const progressFill = document.getElementById("progress-fill");
+    const chromeMain = document.getElementById("chrome-main");
+
+    // Build rail
+    ACTS.forEach((act) => {
+      const group = document.createElement("div");
+      group.className = "rail-act";
+      group.innerHTML = `<div class="rail-act-label">${act.name}</div>`;
+      act.steps.forEach((si) => {
+        const s = STEPS[si];
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "rail-step";
+        btn.dataset.index = si;
+        btn.innerHTML = `<span class="num">${s.n}</span><span><div class="label">${s.short}</div><div class="sub">${s.title}</div></span>`;
+        btn.onclick = () => goTo(si);
+        group.appendChild(btn);
+      });
+      rail.appendChild(group);
+    });
+
+    // Mobile act pills
+    ACTS.forEach((act, ai) => {
+      const btn = document.createElement("button");
+      btn.textContent = act.name;
+      btn.dataset.act = ai;
+      btn.onclick = () => goTo(act.steps[0]);
+      mobileActs.appendChild(btn);
+    });
+
+    // Orbit dots on ellipse
+    function ellipsePoint(t, cx, cy, rx, ry) {
+      const angle = t * Math.PI * 2 - Math.PI / 2;
+      return { x: cx + rx * Math.cos(angle), y: cy + ry * Math.sin(angle) };
+    }
+
+    STEPS.forEach((s, i) => {
+      const t = i / STEPS.length;
+      const p = ellipsePoint(t, 400, 270, 370, 240);
+      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      g.classList.add("orbit-dot");
+      g.dataset.index = i;
+      g.setAttribute("transform", `translate(${p.x}, ${p.y})`);
+      g.innerHTML = `<circle class="outer" r="14"/><text>${s.n}</text>`;
+      g.onclick = () => goTo(i);
+      orbitDots.appendChild(g);
+    });
+
+    // Act labels around orbit
+    const actPositions = [
+      { t: 0.08, name: "Assess" },
+      { t: 0.42, name: "Roadmap" },
+      { t: 0.58, name: "Train" },
+      { t: 0.75, name: "Track" },
+    ];
+    actPositions.forEach((ap) => {
+      const p = ellipsePoint(ap.t, 400, 270, 400, 265);
+      const el = document.createElement("div");
+      el.className = "act-label";
+      el.textContent = ap.name;
+      el.style.left = (p.x / 800 * 100) + "%";
+      el.style.top = (p.y / 520 * 100) + "%";
+      el.style.transform = "translate(-50%, -50%)";
+      el.dataset.act = ACTS.findIndex(a => a.name === ap.name);
+      actLabelsEl.appendChild(el);
+    });
+
+    function animateLayer(layer) {
+      layer.querySelectorAll(".fade").forEach((el) => {
+        el.classList.remove("in");
+        const delay = parseInt(el.dataset.delay || "0", 10);
+        setTimeout(() => el.classList.add("in"), 80 + delay);
+      });
+      layer.querySelectorAll(".bar-fill").forEach((bar) => {
+        bar.style.width = "0%";
+        setTimeout(() => { bar.style.width = bar.dataset.w + "%"; }, 200);
+      });
+    }
+
+    function goTo(i, fromLoop = false) {
+      const prev = idx;
+      idx = i;
+      const s = STEPS[idx];
+
+      document.querySelectorAll(".preview-layer").forEach((el, j) => {
+        el.classList.toggle("active", j === idx);
+        if (j === idx) animateLayer(el);
+      });
+
+      document.querySelectorAll(".rail-step").forEach((el) => {
+        el.classList.toggle("active", parseInt(el.dataset.index, 10) === idx);
+      });
+
+      document.querySelectorAll(".orbit-dot").forEach((el, j) => {
+        el.classList.toggle("active", j === idx);
+        el.classList.toggle("done", j < idx);
+      });
+
+      document.querySelectorAll(".act-label").forEach((el) => {
+        el.classList.toggle("highlight", parseInt(el.dataset.act, 10) === s.act);
+      });
+
+      document.querySelectorAll("#mobile-acts button").forEach((el, ai) => {
+        el.classList.toggle("active", ACTS[ai].steps.includes(idx));
+      });
+
+      journeyBar.classList.toggle("visible", idx >= 3);
+
+      const progress = idx / (STEPS.length - 1);
+      orbitProgress.style.strokeDashoffset = ORBIT_LEN * (1 - progress);
+
+      caption.innerHTML = `<span class="caption-act">${s.actName}</span><strong>Step ${s.n}/6 · ${s.title}</strong>`;
+
+      progressFill.classList.remove("animate");
+      void progressFill.offsetWidth;
+      if (playing) progressFill.classList.add("animate");
+
+      if (fromLoop && prev === 5 && idx === 0) {
+        const chrome = document.querySelector(".preview-layer.active .chrome");
+        if (chrome) {
+          chrome.classList.add("loop-close");
+          setTimeout(() => chrome.classList.remove("loop-close"), 800);
+        }
+      }
+    }
+
+    function next() {
+      const n = (idx + 1) % STEPS.length;
+      goTo(n, true);
+    }
+
+    function startPlay() {
+      playing = true;
+      document.getElementById("btn-play").textContent = "⏸ Pause";
+      progressFill.classList.add("animate");
+      clearInterval(timer);
+      timer = setInterval(next, STEP_MS);
+    }
+
+    function stopPlay() {
+      playing = false;
+      document.getElementById("btn-play").textContent = "▶ Play loop";
+      progressFill.classList.remove("animate");
+      clearInterval(timer);
+    }
+
+    document.getElementById("btn-play").onclick = () => playing ? stopPlay() : startPlay();
+    document.getElementById("btn-prev").onclick = () => { stopPlay(); goTo((idx + 5) % 6); };
+    document.getElementById("btn-next").onclick = () => { stopPlay(); next(); };
+
+    document.getElementById("cinema").addEventListener("mouseenter", stopPlay);
+    document.getElementById("cinema").addEventListener("mouseleave", () => { if (!playing) startPlay(); });
+
+    goTo(0);
+    startPlay();
+  </script>
+</body>
+</html>

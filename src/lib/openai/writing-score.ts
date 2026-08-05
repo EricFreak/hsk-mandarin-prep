@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+import { getCoachLLM, getCoachModel } from "@/lib/coach/llm";
 import { z } from "zod";
 
 export type WritingScoreResult = {
@@ -17,12 +17,6 @@ const writingScoreSchema = z.object({
 
 export function parseWritingScore(json: unknown): WritingScoreResult {
   return writingScoreSchema.parse(json);
-}
-
-function getOpenAIClient(): OpenAI | null {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return null;
-  return new OpenAI({ apiKey });
 }
 
 function hashString(input: string): number {
@@ -86,6 +80,7 @@ Return valid JSON with:
 Be constructive and specific to the student's text.`;
 }
 
+/** Score writing via DeepSeek (same client as coach). Falls back to mock if unset. */
 export async function scoreWriting(
   prompt: string,
   userText: string,
@@ -100,14 +95,14 @@ export async function scoreWriting(
     };
   }
 
-  const client = getOpenAIClient();
+  const client = getCoachLLM();
   if (!client) {
     return buildMockScore(prompt, trimmed);
   }
 
   try {
     const response = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: getCoachModel(),
       temperature: 0.4,
       response_format: { type: "json_object" },
       messages: [

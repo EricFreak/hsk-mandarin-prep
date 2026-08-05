@@ -7,6 +7,7 @@ import ProgressGlance from "@/components/dashboard/ProgressGlance";
 import ThisWeekZone from "@/components/dashboard/ThisWeekZone";
 import type { CoachDashboardPayload } from "@/lib/coach/fetch-coach";
 import { planLabel } from "@/lib/entitlements";
+import { hasFullAccess } from "@/lib/lp/access";
 import type { DashboardPayload } from "@/lib/dashboard-data";
 import useSWR from "swr";
 
@@ -36,11 +37,7 @@ function formatPercent(value: number): string {
 }
 
 export default function DashboardView() {
-  const {
-    data,
-    error,
-    isValidating,
-  } = useSWR("/api/dashboard", dashboardFetcher, {
+  const { data, error } = useSWR("/api/dashboard", dashboardFetcher, {
     revalidateOnFocus: true,
     dedupingInterval: 3_000,
     keepPreviousData: true,
@@ -72,16 +69,10 @@ export default function DashboardView() {
   }
 
   const plan = data?.plan ?? coach?.plan ?? "free";
+  const showQuoteUpsell = !hasFullAccess(coach?.access ?? null);
 
   return (
     <div className="space-y-6">
-      {isValidating || coachValidating ? (
-        <div className="flex items-center gap-2 text-xs text-ink-muted">
-          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-jade" />
-          Syncing latest progress
-        </div>
-      ) : null}
-
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-semibold text-ink">Dashboard</h1>
@@ -94,13 +85,38 @@ export default function DashboardView() {
           <p className="font-display text-lg font-semibold text-ink">
             {data || coach ? planLabel(plan) : "—"}
           </p>
-          {plan === "free" ? (
-            <Link href="/pricing" className="text-sm text-link">
-              Upgrade to Pro
+          {showQuoteUpsell ? (
+            <Link href="/plan/quote" className="text-sm text-link">
+              View plans &amp; pricing
             </Link>
           ) : null}
         </div>
       </div>
+
+      {coach?.status === "pending" ? (
+        <div className="rounded-xl border border-jade/30 bg-jade/5 p-5">
+          <h2 className="font-display text-base font-semibold text-ink">
+            Building your Week 1 plan
+          </h2>
+          <p className="mt-2 text-sm text-ink-muted">
+            Your diagnosis score is saved. Tools unlock when Week 1 tasks are ready. You can
+            stay here — this page refreshes automatically.
+          </p>
+          <button
+            type="button"
+            className="btn-secondary mt-4"
+            onClick={() => {
+              void fetch("/api/coach/run", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ trigger: "mock_exam_completed" }),
+              }).then(() => mutateCoach());
+            }}
+          >
+            Retry build
+          </button>
+        </div>
+      ) : null}
 
       {coach?.currentStage ? (
         <JourneyStrip

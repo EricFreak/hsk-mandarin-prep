@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import ContinueCta from "@/components/marketing/ContinueCta";
 
 export const metadata: Metadata = {
-  title: "HSK 2.0 vs 3.0: Which Exam Should You Take in 2026?",
+  title: "HSK Exam Guide: 2.0 vs 3.0, Levels & Which Test to Take",
   description:
-    "Compare HSK 2.0 and HSK 3.0 level structures, vocabulary counts, and difficulty. Learn which Chinese proficiency test to prepare for in 2026.",
+    "Guide to HSK exam standards: compare HSK 2.0 and 3.0, level structures and vocabulary, and how to choose the right test for your goals.",
 };
 
 const HSK20_LEVELS = [
@@ -30,20 +31,19 @@ export default function Hsk2Vs3Page() {
   return (
     <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
       <header>
-        <p className="section-eyebrow">Guide</p>
+        <p className="section-eyebrow">HSK exam guide</p>
         <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-          HSK 2.0 vs 3.0: Which Exam Should You Take in 2026?
+          HSK Standards, Levels &amp; Which Exam To Take
         </h1>
         <p className="mt-4 text-lg text-ink-muted">
-          China&apos;s official Chinese proficiency test was overhauled in 2021.
-          Here&apos;s what changed and how to choose the right version for your
-          goals.
+          Compare HSK 2.0 and 3.0, understand level structures and vocabulary
+          changes, and choose the right test for your goals.
         </p>
       </header>
 
       <div className="mt-10 max-w-none">
         <h2 className="font-display text-xl font-semibold text-ink">
-          What is the HSK?
+          What Is The HSK?
         </h2>
         <p className="mt-3 text-ink-muted">
           The HSK (Hànyǔ Shuǐpíng Kǎoshì) is China&apos;s standardized test of
@@ -61,7 +61,7 @@ export default function Hsk2Vs3Page() {
         </p>
 
         <h2 className="mt-10 text-xl font-semibold text-ink">
-          Key differences at a glance
+          Key Differences At A Glance
         </h2>
         <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-muted">
           <li>
@@ -83,7 +83,7 @@ export default function Hsk2Vs3Page() {
         </ul>
 
         <h2 className="mt-10 text-xl font-semibold text-ink">
-          HSK 2.0 level structure
+          HSK 2.0 Level Structure
         </h2>
         <p className="mt-3 text-ink-muted">
           The original HSK had six levels. Vocabulary counts below are cumulative
@@ -119,7 +119,7 @@ export default function Hsk2Vs3Page() {
         </div>
 
         <h2 className="mt-10 text-xl font-semibold text-ink">
-          HSK 3.0 level structure
+          HSK 3.0 Level Structure
         </h2>
         <p className="mt-3 text-ink-muted">
           The new standard, published in 2021 as GF0025-2021, expands to nine
@@ -167,7 +167,7 @@ export default function Hsk2Vs3Page() {
         </div>
 
         <h2 className="mt-10 text-xl font-semibold text-ink">
-          Level mapping: rough equivalents
+          Level Mapping: Rough Equivalents
         </h2>
         <p className="mt-3 text-ink-muted">
           There is no official 1:1 mapping, but these approximations help if
@@ -211,12 +211,12 @@ export default function Hsk2Vs3Page() {
         </div>
 
         <h2 className="mt-10 text-xl font-semibold text-ink">
-          Which exam should you take in 2026?
+          Which Exam Should You Take?
         </h2>
         <p className="mt-3 text-ink-muted">
-          As of 2026, China is gradually rolling out HSK 3.0 exams, but HSK 2.0
-          tests are still offered in many test centers worldwide during the
-          transition period. Here&apos;s our recommendation:
+          China is gradually rolling out HSK 3.0 exams, but HSK 2.0 tests are
+          still offered in many test centers worldwide during the transition
+          period. Here&apos;s our recommendation:
         </p>
         <ul className="mt-4 list-disc space-y-2 pl-5 text-ink-muted">
           <li>
@@ -250,21 +250,26 @@ export default function Hsk2Vs3Page() {
         </ul>
 
         <h2 className="mt-10 text-xl font-semibold text-ink">
-          Prepare for HSK Level 3 with AI Coach
+          Prepare For HSK Level 3 With AI Coach
         </h2>
         <p className="mt-3 text-ink-muted">
           Most commercial apps still use HSK 2.0 vocabulary lists. HSK Prep is
           built on the official GF0025-2021 syllabus with AI-generated practice
-          and a free HSK 3 mock exam.
+          and a free HSK Level 3 mock exam.
         </p>
-        <div className="mt-6">
-          <Link
-            href="/mock-exam"
-            className="btn-primary px-5 py-2.5 text-sm"
-          >
-            Take free HSK 3 mock exam
+        <div className="mt-6 flex flex-wrap gap-3">
+          <ContinueCta className="btn-primary px-5 py-2.5 text-sm">
+            Start free Week 1
+          </ContinueCta>
+          <Link href="/#before-you-pay" className="btn-secondary px-5 py-2.5 text-sm">
+            See the AI coach loop
           </Link>
         </div>
+        <p className="mt-4 text-sm text-ink-muted">
+          <Link href="/" className="font-medium text-jade transition hover:text-jade-light">
+            ← Back to HSK Prep
+          </Link>
+        </p>
       </div>
     </article>
   );
